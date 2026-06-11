@@ -804,3 +804,23 @@ Next improvement:
 - add walking animation frames
 - add task-to-room animation history
 - add canvas/PixiJS renderer if needed
+
+## INTERNAL-046 Handover
+
+JIK character pipeline and custom office map direction selected.
+
+Decision:
+
+- Use JIK-A-4 MetroCity character sprites for employees/agents.
+- Keep office map custom-built by AI Company OS.
+- Do not use LimeZu office map assets yet.
+
+New validation runner:
+
+    runners/validate_jik_assets.sh
+
+Next step:
+
+- Upload JIK character pack archive into apps/dashboard/public/assets/jik/_incoming/
+- Extract and select sprites for PM, Engineer, QA, DevOps, and Owner
+- Replace CSS agents with real character sprites

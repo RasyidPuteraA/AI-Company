@@ -20,6 +20,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-046 - Add JIK Character Pipeline and Custom Office Map** (Owner: engineer_agent; Status: DONE)
+- **INTERNAL-045 - Add Tilemap Office Renderer v1** (Owner: engineer_agent; Status: IN_PROGRESS)
+- **INTERNAL-044 - Clean Pixel Office and Add AI Usage Widget** (Owner: engineer_agent; Status: IN_PROGRESS)
 - **INTERNAL-043 - Add Pixel Office Simulation Stage v1** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-042 - Improve Pixel Office Visual v1** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-041 - Improve Dashboard UX v1** (Owner: engineer_agent; Status: DONE)
@@ -66,18 +69,18 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | JIK character pipeline completed (Impact: Prepared JIK character asset pipeline and custom office map asset structure.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-046: Add JIK Character Pipeline and Custom Office Map)
+- 2026-06-11: internal_task_created | pm_agent | Add JIK Character Pipeline and Custom Office Map (Impact: PM Agent created internal task INTERNAL-046: Add JIK-A-4 MetroCity character asset pipeline and keep the office map custom-built instead of using external office tiles.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-045: Add Tilemap Office Renderer v1)
+- 2026-06-11: internal_task_created | pm_agent | Add Tilemap Office Renderer v1 (Impact: PM Agent created internal task INTERNAL-045: Replace room-card Pixel Office layout with a single top-down tilemap office renderer inspired by MetroCity interior assets, using wall/floor/prop tiles and coordinate-based agent placement.)
+- 2026-06-11: internal_task_created | pm_agent | Clean Pixel Office and Add AI Usage Widget (Impact: PM Agent created internal task INTERNAL-044: Clean conflicting Pixel Office CSS, rebuild a stable office simulation layout, and add an AI Usage summary widget showing local/API/Codex usage status.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-044: Clean Pixel Office and Add AI Usage Widget)
+- 2026-06-11: internal_task_created | pm_agent | Clean Pixel Office and Add AI Usage Widget (Impact: PM Agent created internal task INTERNAL-044: Clean conflicting Pixel Office CSS, rebuild a stable office simulation layout, and add an AI Usage summary widget showing local/API/Codex usage status.)
 - 2026-06-11: engineering_completed | engineer_agent | Pixel Office Simulation Stage v1 completed (Impact: Refactored dashboard Pixel Office toward Claude Office and Pixel Agents style simulation.)
 - 2026-06-11: internal_task_created | pm_agent | Add Pixel Office Simulation Stage v1 (Impact: PM Agent created internal task INTERNAL-043: Refactor Pixel Office from CSS grid rooms into a simulation-style office stage inspired by Claude Office and Pixel Agents, with absolute-position rooms, hallway, agent sprites, movement states, and status bubbles.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-043: Add Pixel Office Simulation Stage v1)
 - 2026-06-11: internal_task_created | pm_agent | Add Pixel Office Simulation Stage v1 (Impact: PM Agent created internal task INTERNAL-043: Refactor Pixel Office from CSS grid rooms into a simulation-style office stage inspired by Claude Office and Pixel Agents, with absolute-position rooms, hallway, agent sprites, movement states, and status bubbles.)
-- 2026-06-11: engineering_completed | engineer_agent | Pixel Office Visual v1 completed (Impact: Improved Pixel Office visual style using Pixel Agents and MetroCity-inspired references.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-042: Improve Pixel Office Visual v1)
-- 2026-06-11: internal_task_created | pm_agent | Improve Pixel Office Visual v1 (Impact: PM Agent created internal task INTERNAL-042: Improve Pixel Office visual style using Pixel Agents and MetroCity-inspired top-down office references with pixel rooms, desks, agent sprites, status bubbles, and better activity states.)
-- 2026-06-11: engineering_completed | engineer_agent | Dashboard UX v1 completed (Impact: Improved office map size, VPS performance widget, and scrollbar styling.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-041: Improve Dashboard UX v1)
-- 2026-06-11: internal_task_created | pm_agent | Improve Dashboard UX v1 (Impact: PM Agent created internal task INTERNAL-041: Improve dashboard UX by resizing office map, adding VPS performance metrics, adding hide/unhide for VPS performance, and styling scrollbars.)
-- 2026-06-11: engineering_completed | engineer_agent | Dashboard wireframe layout completed (Impact: Restructured dashboard UI according to owner sketch.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-040: Restructure Dashboard Layout from Wireframe)
 
 ## QA Status
 
