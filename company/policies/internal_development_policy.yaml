@@ -1,0 +1,100 @@
+internal_development_mode:
+  name: "Internal Development Mode"
+  purpose: "Allow agents to improve AI Company OS when client work is completed or waiting for owner acceptance."
+
+activation_conditions:
+  - "No active urgent client task"
+  - "Client task is waiting for owner acceptance"
+  - "Agent has remaining operational budget"
+  - "Task is safe and does not require owner approval"
+
+allowed_internal_work:
+  documentation:
+    allowed: true
+    examples:
+      - "Improve README"
+      - "Write SOP"
+      - "Improve handover format"
+      - "Improve report format"
+
+  runner_automation:
+    allowed: true
+    requires_qa: true
+    examples:
+      - "Improve task runner"
+      - "Improve QA runner"
+      - "Improve daily report generator"
+
+  dashboard_visual:
+    allowed: true
+    examples:
+      - "Create dashboard prototype"
+      - "Improve event display"
+      - "Prepare pixel office design"
+
+  security_review:
+    allowed: true
+    requires_owner_approval_for_changes: true
+    examples:
+      - "Check .env is ignored"
+      - "Check Docker ports"
+      - "Create security checklist"
+
+  infrastructure_changes:
+    allowed: "proposal_only"
+    requires_owner_approval: true
+    examples:
+      - "Firewall changes"
+      - "SSH changes"
+      - "Docker daemon changes"
+      - "Production deployment changes"
+      - "Database destructive migration"
+
+forbidden_without_owner_approval:
+  - "Modify SSH configuration"
+  - "Modify firewall rules"
+  - "Delete Docker volumes"
+  - "Delete databases"
+  - "Deploy production"
+  - "Use owner/master reserve"
+  - "Access secrets"
+  - "Modify client project that is waiting owner acceptance except for bugfix"
+
+status_flow:
+  internal_task:
+    - INTERNAL_BACKLOG
+    - IN_PROGRESS
+    - QA_READY
+    - QA_FAILED
+    - WAITING_OWNER_ACCEPTANCE
+    - ACCEPTED
+    - DONE
+
+priority_order:
+  - "Client urgent bug"
+  - "Active client task"
+  - "Client QA/revision"
+  - "Waiting owner acceptance"
+  - "Internal infrastructure improvement"
+  - "R&D / visual experiments"
+
+owner_review:
+  daily_review:
+    include:
+      - "Waiting owner acceptance"
+      - "Internal work completed"
+      - "Internal work requiring approval"
+
+  three_day_review:
+    include:
+      - "Infrastructure progress"
+      - "Security improvement"
+      - "Automation quality"
+      - "Budget/fatigue trend"
+
+  weekly_review:
+    include:
+      - "Company OS roadmap"
+      - "Agent performance"
+      - "Risk review"
+      - "Next internal development priorities"
