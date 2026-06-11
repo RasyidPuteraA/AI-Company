@@ -10,21 +10,21 @@ STATUS_NOTE="${5:-}"
 if [ -z "$AGENT_KEY" ] || [ -z "$RUNTIME_STATUS" ]; then
   echo "Usage:"
   echo "  ./runners/update_agent_runtime_status.sh <agent_key> <runtime_status> [task_key] [location] [note]"
-  echo
-  echo "Examples:"
-  echo "  ./runners/update_agent_runtime_status.sh engineer_agent working INTERNAL-019 engineering_desk 'Implementing runtime status tracking.'"
-  echo "  ./runners/update_agent_runtime_status.sh engineer_agent idle '' engineering_desk 'No active task.'"
   exit 1
 fi
 
+SQL_ESCAPE() {
+  printf "%s" "$1" | sed "s/'/''/g"
+}
+
+AGENT_KEY_SQL="$(SQL_ESCAPE "$AGENT_KEY")"
+RUNTIME_STATUS_SQL="$(SQL_ESCAPE "$RUNTIME_STATUS")"
+CURRENT_TASK_KEY_SQL="$(SQL_ESCAPE "$CURRENT_TASK_KEY")"
+LOCATION_SQL="$(SQL_ESCAPE "$LOCATION")"
+STATUS_NOTE_SQL="$(SQL_ESCAPE "$STATUS_NOTE")"
+
 docker exec ai_company_postgres \
-  psql -U ai_company -d ai_company \
-  -v agent_key="$AGENT_KEY" \
-  -v runtime_status="$RUNTIME_STATUS" \
-  -v current_task_key="$CURRENT_TASK_KEY" \
-  -v location="$LOCATION" \
-  -v status_note="$STATUS_NOTE" \
-  -c "
+  psql -U ai_company -d ai_company -P pager=off -c "
 INSERT INTO agent_runtime_status (
   agent_key,
   runtime_status,
@@ -34,11 +34,11 @@ INSERT INTO agent_runtime_status (
   updated_at
 )
 VALUES (
-  :'agent_key',
-  :'runtime_status',
-  NULLIF(:'current_task_key', ''),
-  :'location',
-  :'status_note',
+  '$AGENT_KEY_SQL',
+  '$RUNTIME_STATUS_SQL',
+  NULLIF('$CURRENT_TASK_KEY_SQL', ''),
+  '$LOCATION_SQL',
+  '$STATUS_NOTE_SQL',
   now()
 )
 ON CONFLICT (agent_key)

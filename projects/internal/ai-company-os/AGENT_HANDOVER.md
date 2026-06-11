@@ -312,3 +312,15 @@ New commands:
 Task claiming now updates runtime status to claimed.
 
 This is the foundation for better dashboard and pixel office agent state display.
+
+## INTERNAL-020 Handover
+
+Agent Runtime Status Runner SQL fixed.
+
+The runtime status update and per-agent display commands now work without SQL syntax errors.
+
+Commands verified:
+
+    ./runners/update_agent_runtime_status.sh engineer_agent working INTERNAL-020 engineering_desk "Fixing runtime status runner SQL."
+    ./runners/agent_runtime_status.sh engineer_agent
+    ./runners/agent_runtime_status.sh

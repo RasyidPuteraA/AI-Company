@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-020 - Fix Agent Runtime Status Runner SQL** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-019 - Add Agent Runtime Status Tracking** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-018 - Add Worker Service Control Runner** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-017 - Add Disabled Agent Worker Service Template** (Owner: devops_agent; Status: DONE)
@@ -37,6 +38,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status Runner SQL fixed (Impact: Fixed SQL quoting in runtime status update and display runners.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-020: Fix Agent Runtime Status Runner SQL)
+- 2026-06-11: internal_task_created | pm_agent | Fix Agent Runtime Status Runner SQL (Impact: PM Agent created internal task INTERNAL-020: Fix SQL quoting in agent runtime status runners so status update and per-agent display work correctly.)
 - 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status Tracking completed (Impact: Added runtime status table and runners for agent status visibility.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-019: Add Agent Runtime Status Tracking)
 - 2026-06-11: internal_task_created | pm_agent | Add Agent Runtime Status Tracking (Impact: PM Agent created internal task INTERNAL-019: Add runtime status tracking for agents so the system can record and display whether each agent is idle, queued, claimed, working, safety_blocked, done, or failed.)
@@ -46,9 +50,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-018: Add Worker Service Control Runner)
 - 2026-06-11: internal_task_created | pm_agent | Add Worker Service Control Runner (Impact: PM Agent created internal task INTERNAL-018: Add a safe owner-facing runner to control disabled-by-default agent worker systemd services with status, start, stop, logs, and reset-failed commands.)
 - 2026-06-11: devops_completed | devops_agent | Disabled agent worker service template completed (Impact: Added disabled-by-default systemd template for safe bounded agent worker loops.)
-- 2026-06-11: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-017: Add Disabled Agent Worker Service Template)
-- 2026-06-11: internal_task_created | pm_agent | Add Disabled Agent Worker Service Template (Impact: PM Agent created internal task INTERNAL-017: Add disabled-by-default systemd service templates for safe agent worker loops without enabling autonomous 24/7 execution.)
-- 2026-06-11: engineering_completed | engineer_agent | Empty claim handling fixed (Impact: Fixed claim_next_task.sh handling for no claimable task.)
 
 ## QA Status
 
