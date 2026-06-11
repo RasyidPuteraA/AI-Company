@@ -194,3 +194,106 @@ h1 {
   color: #fecaca;
   background: rgba(239, 68, 68, 0.16);
 }
+
+/* Pixel Office v0 */
+.pixel-office {
+  width: 420px;
+  min-height: 260px;
+  background: #020617;
+  border: 4px solid #334155;
+  image-rendering: pixelated;
+  position: relative;
+  padding: 10px;
+  box-shadow: inset 0 0 0 4px rgba(15, 23, 42, 0.9);
+}
+
+.office-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 110px);
+  gap: 8px;
+  height: 100%;
+}
+
+.office-room {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 10px;
+  background:
+    linear-gradient(45deg, rgba(30, 41, 59, 1) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(30, 41, 59, 1) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(30, 41, 59, 1) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(30, 41, 59, 1) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  background-color: #0f172a;
+  border: 2px solid #475569;
+  overflow: hidden;
+}
+
+.office-room.active {
+  border-color: #38bdf8;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.36);
+}
+
+.office-room.owner-active {
+  border-color: #fbbf24;
+  box-shadow: 0 0 18px rgba(251, 191, 36, 0.36);
+}
+
+.room-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #bfdbfe;
+}
+
+.room-status {
+  width: fit-content;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 6px;
+  border-radius: 999px;
+  color: #dbeafe;
+  background: rgba(59, 130, 246, 0.14);
+}
+
+.office-agent {
+  position: absolute;
+  font-size: 26px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.4));
+  transition: transform 450ms ease, left 450ms ease, top 450ms ease;
+  animation: agentBob 1.2s infinite ease-in-out;
+  z-index: 4;
+}
+
+.office-agent.busy {
+  animation: agentWork 0.7s infinite steps(2);
+}
+
+#pmAgent { left: 34px; top: 62px; }
+#engineerAgent { left: 168px; top: 62px; }
+#qaAgent { left: 300px; top: 62px; }
+#devopsAgent { left: 34px; top: 180px; }
+#ownerAgent { left: 168px; top: 180px; }
+
+.office-agent[data-room="pm"] { left: 34px; top: 62px; }
+.office-agent[data-room="engineer"] { left: 168px; top: 62px; }
+.office-agent[data-room="qa"] { left: 300px; top: 62px; }
+.office-agent[data-room="devops"] { left: 34px; top: 180px; }
+.office-agent[data-room="owner"] { left: 168px; top: 180px; }
+.office-agent[data-room="meeting"] { left: 300px; top: 180px; }
+
+@keyframes agentBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes agentWork {
+  0% { transform: translateY(0) rotate(-2deg); }
+  100% { transform: translateY(-5px) rotate(2deg); }
+}

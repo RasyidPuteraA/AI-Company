@@ -26,12 +26,40 @@
         <h1>AI Company Control Center</h1>
         <p>Visual office layer will show agents working in real time.</p>
       </div>
+
       <div class="pixel-office">
-        <div class="room">PM</div>
-        <div class="room">ENG</div>
-        <div class="room">QA</div>
-        <div class="room">DEVOPS</div>
-        <div class="agent">🤖</div>
+        <div class="office-grid">
+          <div class="office-room" data-room="pm">
+            <span class="room-label">PM</span>
+            <span class="room-status" id="pmStatus">idle</span>
+          </div>
+          <div class="office-room" data-room="engineer">
+            <span class="room-label">ENGINEER</span>
+            <span class="room-status" id="engineerStatus">idle</span>
+          </div>
+          <div class="office-room" data-room="qa">
+            <span class="room-label">QA</span>
+            <span class="room-status" id="qaStatus">idle</span>
+          </div>
+          <div class="office-room" data-room="devops">
+            <span class="room-label">DEVOPS</span>
+            <span class="room-status" id="devopsStatus">idle</span>
+          </div>
+          <div class="office-room" data-room="owner">
+            <span class="room-label">OWNER</span>
+            <span class="room-status" id="ownerStatus">idle</span>
+          </div>
+          <div class="office-room" data-room="meeting">
+            <span class="room-label">MEETING</span>
+            <span class="room-status" id="meetingStatus">standby</span>
+          </div>
+
+          <div class="office-agent" id="pmAgent" data-agent="pm">🧠</div>
+          <div class="office-agent" id="engineerAgent" data-agent="engineer">🤖</div>
+          <div class="office-agent" id="qaAgent" data-agent="qa">🔍</div>
+          <div class="office-agent" id="devopsAgent" data-agent="devops">🛠️</div>
+          <div class="office-agent" id="ownerAgent" data-agent="owner">👑</div>
+        </div>
       </div>
     </section>
 

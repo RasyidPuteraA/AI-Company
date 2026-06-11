@@ -176,3 +176,21 @@ Frontend uses:
 Latest Events updates without manual refresh.
 
 This is the foundation for future pixel office animation.
+
+## INTERNAL-012 Handover
+
+Pixel Office Visualization v0 implemented.
+
+Dashboard now includes room-based pixel office visualization.
+
+Rooms:
+- PM
+- Engineer
+- QA
+- DevOps
+- Owner
+- Meeting
+
+Realtime events update active rooms and agent sprite states.
+
+This is the first visual layer for the future AI Company pixel office.

@@ -89,3 +89,98 @@ function startEventStream() {
 }
 
 startEventStream();
+
+const agentRoomMap = {
+  pm_agent: "pm",
+  engineer_agent: "engineer",
+  qa_agent: "qa",
+  devops_agent: "devops",
+  budget_manager: "meeting"
+};
+
+const agentElementMap = {
+  pm_agent: "pmAgent",
+  engineer_agent: "engineerAgent",
+  qa_agent: "qaAgent",
+  devops_agent: "devopsAgent",
+  budget_manager: "pmAgent"
+};
+
+function resetOfficeRooms() {
+  document.querySelectorAll(".office-room").forEach(room => {
+    room.classList.remove("active", "owner-active");
+  });
+
+  document.querySelectorAll(".office-agent").forEach(agent => {
+    agent.classList.remove("busy");
+  });
+}
+
+function setRoomStatus(room, text) {
+  const el = document.getElementById(`${room}Status`);
+  if (el) el.textContent = text;
+}
+
+function activateRoom(room, mode = "active") {
+  const el = document.querySelector(`.office-room[data-room="${room}"]`);
+  if (!el) return;
+  el.classList.add(mode);
+}
+
+function moveAgent(agentId, room, busy = true) {
+  const el = document.getElementById(agentId);
+  if (!el) return;
+  el.dataset.room = room;
+  if (busy) el.classList.add("busy");
+}
+
+function updatePixelOffice(events) {
+  if (!Array.isArray(events) || events.length === 0) return;
+
+  resetOfficeRooms();
+
+  const latest = events.slice(0, 8);
+
+  latest.forEach(event => {
+    const eventType = event.event_type || "";
+    const agent = event.agent || "";
+    const state = event.state || "";
+
+    let room = agentRoomMap[agent] || "meeting";
+    let agentId = agentElementMap[agent] || "pmAgent";
+    let statusText = state.toLowerCase() || "active";
+
+    if (eventType.includes("owner_")) {
+      room = "owner";
+      agentId = "ownerAgent";
+      activateRoom("owner", "owner-active");
+      setRoomStatus("owner", statusText);
+      moveAgent(agentId, "owner", true);
+      return;
+    }
+
+    if (eventType.includes("qa_")) {
+      room = "qa";
+      agentId = "qaAgent";
+    } else if (eventType.includes("engineering_")) {
+      room = "engineer";
+      agentId = "engineerAgent";
+    } else if (eventType.includes("devops_")) {
+      room = "devops";
+      agentId = "devopsAgent";
+    } else if (eventType.includes("internal_task_created") || eventType.includes("task_created")) {
+      room = "pm";
+      agentId = "pmAgent";
+    }
+
+    activateRoom(room);
+    setRoomStatus(room, statusText);
+    moveAgent(agentId, room, true);
+  });
+}
+
+const originalRenderEvents = renderEvents;
+renderEvents = function(events) {
+  updatePixelOffice(events);
+  return originalRenderEvents(events);
+};

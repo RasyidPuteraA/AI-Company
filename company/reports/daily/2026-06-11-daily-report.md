@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-012 - Add Pixel Office Visualization v0** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-011 - Add Realtime Event Stream** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-010 - Run Web Dashboard as Managed Service** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-009 - Add Web Dashboard Foundation** (Owner: engineer_agent; Status: DONE)
@@ -29,28 +30,28 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Pixel Office Visualization v0 completed (Impact: Implemented first realtime pixel office visual layer.)
+- 2026-06-11: owner_accepted | pm_agent | Pixel office owner test (Impact: Testing owner room activity.)
+- 2026-06-11: qa_completed | qa_agent | Pixel office QA test (Impact: Testing QA sprite movement.)
+- 2026-06-11: engineering_started | engineer_agent | Pixel office engineer test (Impact: Testing engineer sprite movement.)
+- 2026-06-11: internal_task_created | pm_agent | Add Pixel Office Visualization v0 (Impact: PM Agent created internal task INTERNAL-012: Add a first pixel office visualization to the web dashboard where rooms and agent sprites react to realtime events from the Server-Sent Events stream.)
+- 2026-06-11: internal_task_created | pm_agent | Add Pixel Office Visualization v0 (Impact: PM Agent created internal task INTERNAL-012: Add a first pixel office visualization to the web dashboard where rooms and agent sprites react to realtime events from the Server-Sent Events stream.)
 - 2026-06-11: engineering_completed | engineer_agent | Realtime Event Stream completed (Impact: Implemented SSE realtime events for dashboard.)
 - 2026-06-11: dashboard_event_test | engineer_agent | Realtime dashboard test (Impact: Testing SSE event stream from PostgreSQL to web dashboard.)
 - 2026-06-11: internal_task_created | pm_agent | Add Realtime Event Stream (Impact: PM Agent created internal task INTERNAL-011: Add a read-only realtime event stream to the web dashboard using Server-Sent Events so latest agent events update without manual refresh.)
 - 2026-06-11: devops_completed | devops_agent | Dashboard systemd service completed (Impact: Configured local-only managed dashboard service.)
 - 2026-06-11: internal_task_created | pm_agent | Run Web Dashboard as Managed Service (Impact: PM Agent created internal task INTERNAL-010: Run the web dashboard as a local-only systemd service so it stays online after terminal sessions close and remains accessible through SSH tunnel.)
 - 2026-06-11: engineering_completed | engineer_agent | Web Dashboard Foundation completed (Impact: Implemented read-only web dashboard foundation.)
-- 2026-06-11: internal_task_created | pm_agent | Add Web Dashboard Foundation (Impact: PM Agent created internal task INTERNAL-009: Add a read-only web dashboard foundation with CasaOS-style layout, pixel office placeholder, company status cards, owner inbox, task summary, events feed, and daily report link.)
-- 2026-06-11: engineering_completed | engineer_agent | Terminal Company Dashboard completed (Impact: Implemented read-only company status dashboard.)
-- 2026-06-11: internal_task_created | pm_agent | Add Terminal Company Dashboard (Impact: PM Agent created internal task INTERNAL-008: Add a read-only terminal dashboard that summarizes company health, client tasks, internal tasks, owner decisions, QA issues, accepted deliveries, and latest agent events.)
-- 2026-06-11: engineering_completed | engineer_agent | Owner Inbox runner completed (Impact: Implemented read-only owner inbox command for owner decision visibility.)
-- 2026-06-11: internal_task_created | pm_agent | Add Owner Inbox Runner (Impact: PM Agent created internal task INTERNAL-007: Add a read-only owner inbox runner that lists tasks needing owner decisions, QA failures, revision requests, blockers, and recently accepted deliveries.)
-- 2026-06-11: engineering_completed | engineer_agent | Owner decision report improved (Impact: Improved daily report owner decision visibility and recent event titles.)
 
 ## QA Status
 
+- **Pixel office QA test**: PASS - Testing QA sprite movement.
 - **Automated QA completed**: PASS - QA runner completed for projects/sandbox/company-profile-demo with result: PASS. Mode: node_project. Notes: npm test passed.
 - **Automated QA completed**: PASS - QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.
 - **Automated QA completed**: PASS - QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.
 - **Automated QA completed**: PASS - QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.
 - **Automated QA completed**: PASS - QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.
 - **Automated QA completed**: FAIL - QA runner completed for projects/internal/ai-company-os with result: FAIL. Notes: Missing one or more static files.
-- **Automated QA completed**: PASS - QA runner completed for projects/sandbox/company-profile-demo with result: PASS. Notes: npm test passed.
 - **Automated QA completed**: PASS - QA runner completed for projects/sandbox/company-profile-demo with result: PASS. Notes: npm test passed.
 
 ## Recommended Owner Decisions
