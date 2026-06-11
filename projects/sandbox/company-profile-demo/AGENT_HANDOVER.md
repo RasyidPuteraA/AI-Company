@@ -1,29 +1,27 @@
 # Agent Handover
 
-Task: TASK-001 - Build Company Profile Demo Website
+Task: TASK-002 - Add Testimonials Section
 
 ## Implementation
 
-- Created a dependency-free static website for fictional EV workshop `VoltForge EV Works`.
-- Added required sections: Hero, About, Services, Why Choose Us, and Contact.
-- Implemented responsive mobile navigation and a non-networking demo contact form.
-- Used a dark navy visual base with electric green accents and industrial workshop styling.
+- Added a `Customer Signals` testimonials section with 3 fictional customer testimonials.
+- Added a primary navigation link to the new testimonials section.
+- Styled testimonial cards to match the existing dark navy, electric green, industrial EV workshop visual system.
+- Added responsive layout rules for 3-column desktop, 2-column tablet, and 1-column mobile testimonial grids.
+- Updated `README.md` to mention the testimonials section.
 
-## Files Created
+## Files Updated
 
 - `index.html`
 - `styles.css`
-- `script.js`
-- `package.json`
 - `README.md`
 - `AGENT_HANDOVER.md`
 
 ## Build/Test Result
 
-- Required source files exist: PASS
-- `npm test`: NOT RUN, `npm` is not installed in this environment (`/bin/bash: npm: command not found`).
-- Manual equivalent of build script completed: PASS
-- Verified `dist/index.html`, `dist/styles.css`, and `dist/script.js` exist after manual build: PASS
+- `npm test`: PASS
+- `npm test` ran `npm run build`, which rebuilt `dist/`.
+- Verified `dist/index.html`, `dist/styles.css`, and `dist/script.js` exist after build: PASS
 
 ## Notes
 
