@@ -63,3 +63,18 @@
 - `INTERNAL-003`: Added `runners/generate_daily_report.sh`, the main daily report command wrapper, and integrated the improved Python generator into it.
 - `INTERNAL-002`: Added `scripts/generate_daily_report.py`, sample input, and tests for the clean five-section daily report format.
 - `INTERNAL-001`: Created `INTERNAL_DEVELOPMENT_ROADMAP.md` with improvement priorities for reporting, security, dashboard, backup, and automation.
+
+## INTERNAL-005 Handover
+
+Owner approval workflow implemented.
+
+Client task QA PASS now routes to `WAITING_OWNER_ACCEPTANCE`.
+Internal task QA PASS still routes to `DONE`.
+
+New owner review command:
+
+```bash
+./runners/owner_review_task.sh TASK-KEY ACCEPT "Owner accepted this delivery."
+./runners/owner_review_task.sh TASK-KEY REVISION "Owner requested changes."
+
+

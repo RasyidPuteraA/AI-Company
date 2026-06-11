@@ -159,7 +159,11 @@ cd "$ROOT_DIR"
 
 if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
   if [ "$QA_RESULT" = "PASS" ]; then
-    FINAL_TASK_STATUS="DONE"
+    if [[ "$TASK_KEY" == INTERNAL-* ]]; then
+      FINAL_TASK_STATUS="DONE"
+    else
+      FINAL_TASK_STATUS="WAITING_OWNER_ACCEPTANCE"
+    fi
   else
     FINAL_TASK_STATUS="QA_FAILED"
   fi
