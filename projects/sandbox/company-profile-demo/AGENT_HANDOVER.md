@@ -1,20 +1,18 @@
 # Agent Handover
 
-Task: TASK-002 - Add Testimonials Section
+Task: TASK-003 - Add Service Hours Note
 
 ## Implementation
 
-- Added a `Customer Signals` testimonials section with 3 fictional customer testimonials.
-- Added a primary navigation link to the new testimonials section.
-- Styled testimonial cards to match the existing dark navy, electric green, industrial EV workshop visual system.
-- Added responsive layout rules for 3-column desktop, 2-column tablet, and 1-column mobile testimonial grids.
-- Updated `README.md` to mention the testimonials section.
+- Added the required service hours text to the Contact section:
+  `Service hours: Monday to Friday, 08:00 - 17:00.`
+- Styled the service hours note as a compact inline panel using the existing dark navy, electric green, and 8px radius visual style.
+- Kept the note inside the existing responsive Contact grid so it stacks cleanly with the section content on smaller screens.
 
 ## Files Updated
 
 - `index.html`
 - `styles.css`
-- `README.md`
 - `AGENT_HANDOVER.md`
 
 ## Build/Test Result
