@@ -6,233 +6,153 @@
   <title>AI Company OS</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
-<body>
-  <aside class="sidebar">
+<body class="wireframe-dashboard">
+  <aside class="sidebar app-sidebar">
     <div class="brand">AI Company OS</div>
     <nav>
-      <a>Dashboard</a>
-      <a>Owner Inbox</a>
+      <a>Command Center</a>
+      <a>Projects</a>
       <a>Tasks</a>
       <a>Agents</a>
       <a>Reports</a>
-      <a>Pixel Office</a>
+      <a>Settings</a>
     </nav>
   </aside>
 
-  <main class="main">
-    <section class="hero">
+  <main class="main app-shell">
+    <header class="app-topbar">
       <div>
-        <p class="eyebrow">Pixel Office Preview</p>
-        <h1>AI Company Control Center</h1>
-        <p>Visual office layer will show agents working in real time.</p>
+        <p class="eyebrow">AI Company Control Center</p>
+        <h1>Command Center</h1>
       </div>
 
-      <div class="pixel-office">
-        <div class="office-grid">
-          <div class="office-room" data-room="pm">
-            <span class="room-label">PM</span>
-            <span class="room-status" id="pmStatus">idle</span>
-          </div>
-          <div class="office-room" data-room="engineer">
-            <span class="room-label">ENGINEER</span>
-            <span class="room-status" id="engineerStatus">idle</span>
-          </div>
-          <div class="office-room" data-room="qa">
-            <span class="room-label">QA</span>
-            <span class="room-status" id="qaStatus">idle</span>
-          </div>
-          <div class="office-room" data-room="devops">
-            <span class="room-label">DEVOPS</span>
-            <span class="room-status" id="devopsStatus">idle</span>
-          </div>
-          <div class="office-room" data-room="owner">
-            <span class="room-label">OWNER</span>
-            <span class="room-status" id="ownerStatus">idle</span>
-          </div>
-          <div class="office-room" data-room="meeting">
-            <span class="room-label">MEETING</span>
-            <span class="room-status" id="meetingStatus">standby</span>
-          </div>
+      <div class="topbar-status">
+        <span class="status-pill">local dashboard</span>
+        <span class="status-pill">127.0.0.1:8787</span>
+        <span class="status-pill">VPS online</span>
+      </div>
+    </header>
 
-          <div class="office-agent" id="pmAgent" data-agent="pm">🧠</div>
-          <div class="office-agent" id="engineerAgent" data-agent="engineer">🤖</div>
-          <div class="office-agent" id="qaAgent" data-agent="qa">🔍</div>
-          <div class="office-agent" id="devopsAgent" data-agent="devops">🛠️</div>
-          <div class="office-agent" id="ownerAgent" data-agent="owner">👑</div>
+    <section class="office-stage">
+      <div class="office-main-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Office Map</p>
+            <h2>Map Kantor & Aktivitas Agent</h2>
+          </div>
+          <span class="live-status connected">live</span>
+        </div>
+
+        <div class="pixel-office">
+          <div class="office-grid">
+            <div class="office-room" data-room="pm">
+              <span class="room-label">PM</span>
+              <span class="room-status" id="pmStatus">idle</span>
+            </div>
+
+            <div class="office-room" data-room="engineer">
+              <span class="room-label">ENGINEER</span>
+              <span class="room-status" id="engineerStatus">idle</span>
+            </div>
+
+            <div class="office-room" data-room="qa">
+              <span class="room-label">QA</span>
+              <span class="room-status" id="qaStatus">idle</span>
+            </div>
+
+            <div class="office-room" data-room="devops">
+              <span class="room-label">DEVOPS</span>
+              <span class="room-status" id="devopsStatus">idle</span>
+            </div>
+
+            <div class="office-room" data-room="owner">
+              <span class="room-label">OWNER</span>
+              <span class="room-status" id="ownerStatus">idle</span>
+            </div>
+
+            <div class="office-room" data-room="meeting">
+              <span class="room-label">MEETING</span>
+              <span class="room-status" id="meetingStatus">standby</span>
+            </div>
+
+            <div class="office-agent" id="pmAgent" data-agent="pm">🧠</div>
+            <div class="office-agent" id="engineerAgent" data-agent="engineer">🤖</div>
+            <div class="office-agent" id="qaAgent" data-agent="qa">🔍</div>
+            <div class="office-agent" id="devopsAgent" data-agent="devops">🛠️</div>
+            <div class="office-agent" id="ownerAgent" data-agent="owner">👑</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="health-card">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Health</p>
+            <h2>Kesehatan Server VPS</h2>
+          </div>
+        </div>
+
+        <div class="health-list">
+          <div class="health-row">
+            <span>Dashboard</span>
+            <strong>running</strong>
+          </div>
+          <div class="health-row">
+            <span>Postgres</span>
+            <strong>connected</strong>
+          </div>
+          <div class="health-row">
+            <span>Redis</span>
+            <strong>ready</strong>
+          </div>
+        </div>
+
+        <div id="summaryCards" class="server-metrics"></div>
+      </aside>
+    </section>
+
+    <section class="operator-hint">
+      <div>
+        <strong>Command bar aktif.</strong>
+        Ketik instruksi biasa untuk membuat Owner Command, ketik <code>/</code> untuk command palette, dan klik <code>+</code> untuk upload file.
+      </div>
+    </section>
+
+    <section class="bottom-cards">
+      <div class="panel task-card">
+        <div class="section-heading compact">
+          <h2>Last Tasks</h2>
+        </div>
+        <div id="tasks"></div>
+      </div>
+
+      <div class="panel event-card">
+        <div class="section-heading compact">
+          <h2>Latest Events <span id="liveStatus" class="live-status">connecting...</span></h2>
+        </div>
+        <div id="events"></div>
+      </div>
+
+      <div class="panel agent-status-card">
+        <div class="section-heading compact">
+          <h2>Agent Status</h2>
+        </div>
+        <div id="agentRuntimeList" class="agent-runtime-list">
+          <div class="muted">Loading agent runtime status...</div>
         </div>
       </div>
     </section>
 
-    <section class="cards" id="summaryCards"></section>
-
-    <section class="grid">
-      <div class="panel">
-        <h2>Latest Tasks</h2>
-        <div id="tasks"></div>
-      </div>
-      <div class="panel">
-        <h2>Latest Events <span id="liveStatus" class="live-status">connecting...</span></h2>
-        <div id="events"></div>
-      </div>
-    </section>
-  
-    <section class="card agent-runtime-card">
-      <div class="card-header">
-        <h2>Agent Runtime Status</h2>
-        <span class="live-status connected">runtime</span>
-      </div>
-      <div id="agentRuntimeList" class="agent-runtime-list">
-        <div class="muted">Loading agent runtime status...</div>
-      </div>
-    </section>
-
-
-    <section class="card owner-command-card">
-      <div class="card-header">
-        <h2>Owner Command Inbox</h2>
-        <span class="live-status connected">input</span>
-      </div>
-
-      <form id="ownerCommandForm" class="owner-command-form">
-        <textarea
-          id="ownerCommandInput"
-          placeholder="Tulis requirement client atau instruksi owner di sini..."
-          rows="6"
-        ></textarea>
-        <button type="submit">Submit Command</button>
-      </form>
-
-      <div id="ownerCommandStatus" class="muted"></div>
-      <div id="ownerCommandList" class="owner-command-list">
-        <div class="muted">Loading owner commands...</div>
-      </div>
-    </section>
-
-
-    <section class="card upload-intake-card">
-      <div class="card-header">
-        <h2>File Upload Intake</h2>
-        <span class="live-status connected">files</span>
-      </div>
-
-      <form id="uploadForm" class="upload-form">
-        <input
-          id="uploadProjectKey"
-          type="text"
-          value="client-company-profile-demo"
-          placeholder="project_key, contoh: client-company-profile-demo"
-        />
-        <input id="uploadFileInput" type="file" />
-        <button type="submit">Upload File</button>
-      </form>
-
-      <div id="uploadStatus" class="muted"></div>
-      <div id="uploadList" class="upload-list">
-        <div class="muted">Loading uploads...</div>
-      </div>
-    </section>
-
-
-    <section class="card convert-command-card">
-      <div class="card-header">
-        <h2>Convert Command to Project</h2>
-        <span class="live-status connected">convert</span>
-      </div>
-
-      <form id="convertCommandForm" class="convert-command-form">
-        <input
-          id="convertCommandId"
-          type="number"
-          min="1"
-          placeholder="Owner command id, contoh: 1"
-        />
-
-        <input
-          id="convertProjectKey"
-          type="text"
-          placeholder="project_key, contoh: client-company-profile-demo"
-        />
-
-        <input
-          id="convertProjectTitle"
-          type="text"
-          placeholder="Project title, contoh: Client Company Profile Demo"
-        />
-
-        <button type="submit">Convert to Project</button>
-      </form>
-
-      <div id="convertCommandStatus" class="muted"></div>
-      <pre id="convertCommandOutput" class="command-output"></pre>
-    </section>
-
-
-    <section class="card attach-uploads-card">
-      <div class="card-header">
-        <h2>Attach Uploads to PM Context</h2>
-        <span class="live-status connected">context</span>
-      </div>
-
-      <form id="attachUploadsForm" class="attach-uploads-form">
-        <input
-          id="attachProjectKey"
-          type="text"
-          value="client-company-profile-demo"
-          placeholder="project_key, contoh: client-company-profile-demo"
-        />
-
-        <input
-          id="attachTaskKey"
-          type="text"
-          value="CLIENT-1-001"
-          placeholder="task_key, contoh: CLIENT-1-001"
-        />
-
-        <button type="submit">Attach Uploads</button>
-      </form>
-
-      <div id="attachUploadsStatus" class="muted"></div>
-      <pre id="attachUploadsOutput" class="command-output"></pre>
-    </section>
-
-
-    <section class="card workflow-action-card">
-      <div class="card-header">
-        <h2>End-to-End Workflow Actions</h2>
-        <span class="live-status connected">workflow</span>
-      </div>
-
-      <div class="workflow-form">
-        <input id="workflowProjectKey" type="text" value="client-company-profile-demo" placeholder="project_key" />
-        <input id="workflowPmTaskKey" type="text" value="CLIENT-1-001" placeholder="PM task key" />
-        <input id="workflowEngineerTaskKey" type="text" value="CLIENT-1-ENG-001" placeholder="Engineer task key" />
-        <input id="workflowQaTaskKey" type="text" value="CLIENT-1-QA-001" placeholder="QA task key" />
-        <input id="workflowReviewTaskKey" type="text" value="CLIENT-1-REVIEW-001" placeholder="Review task key" />
-
-        <select id="workflowDecision">
-          <option value="ACCEPT">ACCEPT</option>
-          <option value="REVISE">REVISE</option>
-          <option value="REJECT">REJECT</option>
-        </select>
-
-        <input id="workflowNote" type="text" value="Approved from dashboard." placeholder="Owner decision note" />
-      </div>
-
-      <div class="workflow-buttons">
-        <button type="button" data-workflow-action="pm_analysis">Run PM Analysis</button>
-        <button type="button" data-workflow-action="generate_tasks">Generate Engineer/QA Tasks</button>
-        <button type="button" data-workflow-action="engineer_impl">Run Engineer Implementation</button>
-        <button type="button" data-workflow-action="qa_verify">Run QA Verification</button>
-        <button type="button" data-workflow-action="submit_review">Submit to Owner Review</button>
-        <button type="button" data-workflow-action="owner_decision">Run Owner Decision</button>
-        <button type="button" data-workflow-action="finalize">Finalize Project</button>
-      </div>
-
-      <div id="workflowActionStatus" class="muted"></div>
-      <pre id="workflowActionOutput" class="command-output"></pre>
-    </section>
-
-</main>
+    <div class="command-defaults" hidden>
+      <input id="workflowProjectKey" value="client-company-profile-demo" />
+      <input id="workflowPmTaskKey" value="CLIENT-1-001" />
+      <input id="workflowEngineerTaskKey" value="CLIENT-1-ENG-001" />
+      <input id="workflowQaTaskKey" value="CLIENT-1-QA-001" />
+      <input id="workflowReviewTaskKey" value="CLIENT-1-REVIEW-001" />
+      <input id="workflowDecision" value="ACCEPT" />
+      <input id="workflowNote" value="Approved from command center." />
+    </div>
+  </main>
 
   <script src="/app.js"></script>
 </body>

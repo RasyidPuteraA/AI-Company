@@ -732,3 +732,20 @@ Dashboard command bar now behaves closer to CLI/Codex:
 - advanced panels are no longer the primary interaction path
 
 This improves the dashboard from admin-panel style toward an AI command center.
+
+## INTERNAL-040 Handover
+
+Dashboard layout restructured based on Owner wireframe.
+
+Main dashboard layout now follows:
+
+    Sidebar
+    Header / Web Name
+    Map Kantor & Aktivitas Agent
+    Kesehatan Server VPS
+    Chatbar / Command Bar
+    Last Tasks
+    Last Events
+    Agent Status
+
+This becomes the new visual foundation for AI Company OS.

@@ -20,6 +20,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-040 - Restructure Dashboard Layout from Wireframe** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-039 - Add Slash Command Palette and Plus Upload** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-038 - Add Minimal Chat Command Bar UI** (Owner: engineer_agent; Status: IN_PROGRESS)
 - **INTERNAL-037 - Add Dashboard Workflow Action Buttons** (Owner: engineer_agent; Status: DONE)
@@ -62,6 +63,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Dashboard wireframe layout completed (Impact: Restructured dashboard UI according to owner sketch.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-040: Restructure Dashboard Layout from Wireframe)
+- 2026-06-11: internal_task_created | pm_agent | Restructure Dashboard Layout from Wireframe (Impact: PM Agent created internal task INTERNAL-040: Restructure dashboard layout based on owner wireframe: sidebar, top header, central office activity map, VPS health area, command bar, and bottom summary cards.)
 - 2026-06-11: engineering_completed | engineer_agent | Slash Command Palette and Plus Upload completed (Impact: Added slash command suggestions and plus-button direct file upload.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-039: Add Slash Command Palette and Plus Upload)
 - 2026-06-11: internal_task_created | pm_agent | Add Slash Command Palette and Plus Upload (Impact: PM Agent created internal task INTERNAL-039: Improve dashboard command bar UX so slash typing shows command suggestions and plus button opens file upload directly.)
@@ -71,9 +75,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: project_completed | owner | Project finalized as completed (Impact: Accepted project client-company-profile-demo finalized with final handover.)
 - 2026-06-11: internal_task_created | pm_agent | Add Dashboard Workflow Action Buttons (Impact: PM Agent created internal task INTERNAL-037: Add dashboard API actions and UI buttons for the end-to-end client workflow from PM analysis through final project completion.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-037: Add Dashboard Workflow Action Buttons)
-- 2026-06-11: internal_task_created | pm_agent | Add Dashboard Workflow Action Buttons (Impact: PM Agent created internal task INTERNAL-037: Add dashboard API actions and UI buttons for the end-to-end client workflow from PM analysis through final project completion.)
-- 2026-06-11: engineering_completed | engineer_agent | Final Project Completion Runner completed (Impact: Added final project completion runner for accepted client projects.)
-- 2026-06-11: project_completed | owner | Project finalized as completed (Impact: Accepted project client-company-profile-demo finalized with final handover.)
 
 ## QA Status
 
