@@ -616,3 +616,28 @@ Current automation flow:
     Engineer implementation output
     QA task
     QA report
+
+## INTERNAL-034 Handover
+
+Submit QA-Passed Project to Owner Review implemented.
+
+New runner:
+
+    runners/submit_project_to_owner_review.sh
+
+Usage:
+
+    ./runners/submit_project_to_owner_review.sh <project_key> <qa_task_key>
+
+This runner submits QA-passed client project output to Owner review queue.
+
+Current automation flow:
+
+    Owner command
+    Client project
+    PM intake task
+    Upload context
+    PM intake analysis
+    Engineer implementation
+    QA verification
+    Owner review queue

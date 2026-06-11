@@ -109,3 +109,34 @@ Next step:
 
 - If QA_PASSED, submit project output to Owner review.
 - If QA_FAILED, assign revision task to engineer_agent.
+
+## Submitted to Owner Review: CLIENT-1-REVIEW-001
+
+Project:
+
+    client-company-profile-demo
+
+QA task:
+
+    CLIENT-1-QA-001
+
+QA report:
+
+    /opt/ai-company/projects/clients/client-company-profile-demo/QA_REPORT-CLIENT-1-QA-001.md
+
+Implementation output:
+
+    /opt/ai-company/projects/clients/client-company-profile-demo/site
+
+Review task:
+
+    CLIENT-1-REVIEW-001
+
+Status:
+
+    WAITING_OWNER_ACCEPTANCE
+
+Next step:
+
+- Owner should review the implementation and QA report.
+- Owner can ACCEPT, request REVISE, or REJECT.
