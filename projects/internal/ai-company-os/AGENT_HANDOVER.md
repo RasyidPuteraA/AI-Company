@@ -73,11 +73,8 @@ Internal task QA PASS still routes to `DONE`.
 
 New owner review command:
 
-```bash
-./runners/owner_review_task.sh TASK-KEY ACCEPT "Owner accepted this delivery."
-./runners/owner_review_task.sh TASK-KEY REVISION "Owner requested changes."
-
-
+    ./runners/owner_review_task.sh TASK-KEY ACCEPT "Owner accepted this delivery."
+    ./runners/owner_review_task.sh TASK-KEY REVISION "Owner requested changes."
 
 ## INTERNAL-006 Handover
 
@@ -95,14 +92,12 @@ Owner Inbox runner implemented.
 
 New command:
 
-```bash
-./runners/owner_inbox.sh
+    ./runners/owner_inbox.sh
 
 It shows:
-
-waiting owner acceptance
-QA failed / needs revision / blocked
-recently accepted deliveries
-internal development status
-suggested owner commands
+- waiting owner acceptance
+- QA failed / needs revision / blocked
+- recently accepted deliveries
+- internal development status
+- suggested owner commands
 
