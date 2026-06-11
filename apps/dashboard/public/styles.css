@@ -522,3 +522,37 @@ h1 {
   font-weight: 900;
   cursor: pointer;
 }
+
+.workflow-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.workflow-form input,
+.workflow-form select {
+  width: 100%;
+}
+
+.workflow-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.workflow-buttons button {
+  cursor: pointer;
+}
+
+.workflow-action-card .command-output {
+  max-height: 360px;
+  overflow: auto;
+}
+
+@media (max-width: 800px) {
+  .workflow-form {
+    grid-template-columns: 1fr;
+  }
+}

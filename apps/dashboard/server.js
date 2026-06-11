@@ -389,6 +389,96 @@ const server = http.createServer(async (req, res) => {
     
     
     
+
+    if (pathname === "/api/workflow/action" && req.method === "POST") {
+      const payload = await readJson(req);
+      const action = String(payload.action || "").trim();
+
+      function safeWorkflowTaskKey(value, fieldName = "task_key") {
+        const text = String(value || "").trim();
+        if (!/^[A-Z0-9-]+$/.test(text)) {
+          throw new Error(`Invalid ${fieldName}. Use uppercase letters, numbers, and dashes only.`);
+        }
+        return text;
+      }
+
+      function runWorkflowScript(scriptName, args) {
+        const rootDir = path.join(__dirname, "..", "..");
+        const scriptPath = path.join(rootDir, "runners", scriptName);
+
+        if (!fs.existsSync(scriptPath)) {
+          throw new Error(`Runner not found: ${scriptName}`);
+        }
+
+        return execFileSync(
+          scriptPath,
+          args,
+          {
+            encoding: "utf8",
+            cwd: rootDir,
+            env: {
+              ...process.env,
+              AI_COMPANY_ALLOW_AFTER_HOURS: "1"
+            }
+          }
+        );
+      }
+
+      let output = "";
+
+      if (action === "pm_analysis") {
+        output = runWorkflowScript("pm_intake_processor.sh", [
+          safeProjectKey(payload.project_key),
+          safeWorkflowTaskKey(payload.task_key)
+        ]);
+      } else if (action === "generate_tasks") {
+        output = runWorkflowScript("generate_tasks_from_pm_analysis.sh", [
+          safeProjectKey(payload.project_key),
+          safeWorkflowTaskKey(payload.task_key)
+        ]);
+      } else if (action === "engineer_impl") {
+        output = runWorkflowScript("engineer_implementation_runner.sh", [
+          safeProjectKey(payload.project_key),
+          safeWorkflowTaskKey(payload.task_key)
+        ]);
+      } else if (action === "qa_verify") {
+        output = runWorkflowScript("qa_verification_runner.sh", [
+          safeProjectKey(payload.project_key),
+          safeWorkflowTaskKey(payload.task_key)
+        ]);
+      } else if (action === "submit_review") {
+        output = runWorkflowScript("submit_project_to_owner_review.sh", [
+          safeProjectKey(payload.project_key),
+          safeWorkflowTaskKey(payload.task_key, "qa_task_key")
+        ]);
+      } else if (action === "owner_decision") {
+        const decision = String(payload.decision || "").trim().toUpperCase();
+        if (!["ACCEPT", "REVISE", "REJECT"].includes(decision)) {
+          throw new Error("Decision must be ACCEPT, REVISE, or REJECT.");
+        }
+
+        output = runWorkflowScript("owner_review_decision.sh", [
+          safeWorkflowTaskKey(payload.review_task_key, "review_task_key"),
+          decision,
+          String(payload.note || "")
+        ]);
+      } else if (action === "finalize") {
+        output = runWorkflowScript("finalize_accepted_project.sh", [
+          safeProjectKey(payload.project_key),
+          safeWorkflowTaskKey(payload.review_task_key, "review_task_key")
+        ]);
+      } else {
+        throw new Error(`Unknown workflow action: ${action}`);
+      }
+
+      json(res, {
+        ok: true,
+        action,
+        output
+      });
+      return;
+    }
+
     if (pathname === "/api/uploads/attach-context" && req.method === "POST") {
       const body = await readJson(req);
       const result = attachUploadsToPmContext(body);

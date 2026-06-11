@@ -195,6 +195,43 @@
       <pre id="attachUploadsOutput" class="command-output"></pre>
     </section>
 
+
+    <section class="card workflow-action-card">
+      <div class="card-header">
+        <h2>End-to-End Workflow Actions</h2>
+        <span class="live-status connected">workflow</span>
+      </div>
+
+      <div class="workflow-form">
+        <input id="workflowProjectKey" type="text" value="client-company-profile-demo" placeholder="project_key" />
+        <input id="workflowPmTaskKey" type="text" value="CLIENT-1-001" placeholder="PM task key" />
+        <input id="workflowEngineerTaskKey" type="text" value="CLIENT-1-ENG-001" placeholder="Engineer task key" />
+        <input id="workflowQaTaskKey" type="text" value="CLIENT-1-QA-001" placeholder="QA task key" />
+        <input id="workflowReviewTaskKey" type="text" value="CLIENT-1-REVIEW-001" placeholder="Review task key" />
+
+        <select id="workflowDecision">
+          <option value="ACCEPT">ACCEPT</option>
+          <option value="REVISE">REVISE</option>
+          <option value="REJECT">REJECT</option>
+        </select>
+
+        <input id="workflowNote" type="text" value="Approved from dashboard." placeholder="Owner decision note" />
+      </div>
+
+      <div class="workflow-buttons">
+        <button type="button" data-workflow-action="pm_analysis">Run PM Analysis</button>
+        <button type="button" data-workflow-action="generate_tasks">Generate Engineer/QA Tasks</button>
+        <button type="button" data-workflow-action="engineer_impl">Run Engineer Implementation</button>
+        <button type="button" data-workflow-action="qa_verify">Run QA Verification</button>
+        <button type="button" data-workflow-action="submit_review">Submit to Owner Review</button>
+        <button type="button" data-workflow-action="owner_decision">Run Owner Decision</button>
+        <button type="button" data-workflow-action="finalize">Finalize Project</button>
+      </div>
+
+      <div id="workflowActionStatus" class="muted"></div>
+      <pre id="workflowActionOutput" class="command-output"></pre>
+    </section>
+
 </main>
 
   <script src="/app.js"></script>

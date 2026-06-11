@@ -657,3 +657,124 @@ function setupAttachUploadsForm() {
 }
 
 setupAttachUploadsForm();
+
+/* End-to-End Workflow Actions */
+function workflowInputValue(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : "";
+}
+
+function workflowPayloadForAction(action) {
+  const projectKey = workflowInputValue("workflowProjectKey");
+
+  if (action === "pm_analysis") {
+    return {
+      action,
+      project_key: projectKey,
+      task_key: workflowInputValue("workflowPmTaskKey")
+    };
+  }
+
+  if (action === "generate_tasks") {
+    return {
+      action,
+      project_key: projectKey,
+      task_key: workflowInputValue("workflowPmTaskKey")
+    };
+  }
+
+  if (action === "engineer_impl") {
+    return {
+      action,
+      project_key: projectKey,
+      task_key: workflowInputValue("workflowEngineerTaskKey")
+    };
+  }
+
+  if (action === "qa_verify") {
+    return {
+      action,
+      project_key: projectKey,
+      task_key: workflowInputValue("workflowQaTaskKey")
+    };
+  }
+
+  if (action === "submit_review") {
+    return {
+      action,
+      project_key: projectKey,
+      task_key: workflowInputValue("workflowQaTaskKey")
+    };
+  }
+
+  if (action === "owner_decision") {
+    return {
+      action,
+      review_task_key: workflowInputValue("workflowReviewTaskKey"),
+      decision: workflowInputValue("workflowDecision"),
+      note: workflowInputValue("workflowNote")
+    };
+  }
+
+  if (action === "finalize") {
+    return {
+      action,
+      project_key: projectKey,
+      review_task_key: workflowInputValue("workflowReviewTaskKey")
+    };
+  }
+
+  return { action };
+}
+
+async function runWorkflowAction(action) {
+  const status = document.getElementById("workflowActionStatus");
+  const output = document.getElementById("workflowActionOutput");
+
+  if (status) status.textContent = `Running ${action}...`;
+  if (output) output.textContent = "";
+
+  try {
+    const response = await fetch("/api/workflow/action", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(workflowPayloadForAction(action))
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.ok === false) {
+      throw new Error(data.error || `Workflow action failed: ${action}`);
+    }
+
+    if (status) status.textContent = `Completed: ${action}`;
+    if (output) output.textContent = data.output || JSON.stringify(data, null, 2);
+
+    try {
+      await main();
+      await loadAgentRuntimeStatus();
+      await loadPixelOfficeRuntimeStatus();
+      await loadOwnerCommands();
+      await loadUploads();
+    } catch (refreshError) {
+      console.error("Workflow refresh failed", refreshError);
+    }
+  } catch (error) {
+    if (status) status.textContent = `Failed: ${action}`;
+    if (output) output.textContent = error.stack || String(error);
+    console.error(error);
+  }
+}
+
+function setupWorkflowActionButtons() {
+  document.querySelectorAll("[data-workflow-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.getAttribute("data-workflow-action");
+      runWorkflowAction(action);
+    });
+  });
+}
+
+setupWorkflowActionButtons();

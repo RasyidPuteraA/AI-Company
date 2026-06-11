@@ -695,3 +695,27 @@ Current end-to-end flow:
 Demo target:
 
 - client-company-profile-demo finalized as COMPLETED
+
+## INTERNAL-037 Handover
+
+Dashboard Workflow Action Buttons implemented.
+
+New dashboard API:
+
+    POST /api/workflow/action
+
+Supported actions:
+
+- pm_analysis
+- generate_tasks
+- engineer_impl
+- qa_verify
+- submit_review
+- owner_decision
+- finalize
+
+New dashboard panel:
+
+    End-to-End Workflow Actions
+
+This moves the main client workflow from terminal-only runners toward dashboard-controlled execution.

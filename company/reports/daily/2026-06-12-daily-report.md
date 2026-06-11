@@ -20,6 +20,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-037 - Add Dashboard Workflow Action Buttons** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-036 - Add Final Project Completion Runner** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-035 - Add Owner Review Decision Runner** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-034 - Submit QA-Passed Project to Owner Review** (Owner: engineer_agent; Status: DONE)
@@ -59,6 +60,11 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Dashboard workflow action buttons completed (Impact: Added dashboard workflow action endpoint and UI action panel.)
+- 2026-06-11: project_completed | owner | Project finalized as completed (Impact: Accepted project client-company-profile-demo finalized with final handover.)
+- 2026-06-11: internal_task_created | pm_agent | Add Dashboard Workflow Action Buttons (Impact: PM Agent created internal task INTERNAL-037: Add dashboard API actions and UI buttons for the end-to-end client workflow from PM analysis through final project completion.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-037: Add Dashboard Workflow Action Buttons)
+- 2026-06-11: internal_task_created | pm_agent | Add Dashboard Workflow Action Buttons (Impact: PM Agent created internal task INTERNAL-037: Add dashboard API actions and UI buttons for the end-to-end client workflow from PM analysis through final project completion.)
 - 2026-06-11: engineering_completed | engineer_agent | Final Project Completion Runner completed (Impact: Added final project completion runner for accepted client projects.)
 - 2026-06-11: project_completed | owner | Project finalized as completed (Impact: Accepted project client-company-profile-demo finalized with final handover.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-036: Add Final Project Completion Runner)
@@ -66,21 +72,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: engineering_completed | engineer_agent | Owner Review Decision Runner completed (Impact: Added Owner review decision runner for ACCEPT, REVISE, and REJECT.)
 - 2026-06-11: engineering_completed | engineer_agent | Owner Review Decision Runner completed (Impact: Added Owner review decision runner for ACCEPT, REVISE, and REJECT.)
 - 2026-06-11: internal_task_created | pm_agent | Add Owner Review Decision Runner (Impact: PM Agent created internal task INTERNAL-035: Add a safe runner that lets Owner accept, request revision, or reject a client project review task and updates project/task status accordingly.)
-- 2026-06-11: owner_accepted_project | owner | Owner review decision recorded (Impact: Owner decision ACCEPT recorded for CLIENT-1-REVIEW-001. Approved for demo end-to-end workflow.)
-- 2026-06-11: engineering_completed | engineer_agent | Owner review submission runner completed (Impact: Added runner to submit QA-passed project output to Owner review.)
-- 2026-06-11: submitted_to_owner_review | owner | Project submitted to Owner review (Impact: QA-passed project client-company-profile-demo submitted to owner review as CLIENT-1-REVIEW-001.)
-- 2026-06-11: task_created | owner | Owner review for client-company-profile-demo (Impact: Task created: Owner review submission for QA-passed client project.
-
-Project: client-company-profile-demo
-QA task: CLIENT-1-QA-001
-QA report: /opt/ai-company/projects/clients/client-company-profile-demo/QA_REPORT-CLIENT-1-QA-001.md
-Implementation output: /opt/ai-company/projects/clients/client-company-profile-demo/site
-
-Owner action required:
-- Review implementation output
-- Review QA report
-- Choose ACCEPT, REVISE, or REJECT)
-- 2026-06-11: internal_task_created | pm_agent | Submit QA-Passed Project to Owner Review (Impact: PM Agent created internal task INTERNAL-034: Add a safe runner that submits a QA-passed client project output to Owner review queue with project summary, QA report, and implementation output path.)
 
 ## QA Status
 
