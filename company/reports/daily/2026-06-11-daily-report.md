@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-022 - Fix Dashboard Runtime Status API Route** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-021 - Show Agent Runtime Status on Dashboard** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-020 - Fix Agent Runtime Status Runner SQL** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-019 - Add Agent Runtime Status Tracking** (Owner: engineer_agent; Status: DONE)
@@ -39,6 +40,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Dashboard runtime status API route fixed (Impact: Fixed /api/agents/runtime route after previous dashboard panel implementation returned Not found.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-022: Fix Dashboard Runtime Status API Route)
+- 2026-06-11: internal_task_created | pm_agent | Fix Dashboard Runtime Status API Route (Impact: PM Agent created internal task INTERNAL-022: Fix dashboard server route for /api/agents/runtime because the previous implementation added the frontend panel but the API endpoint still returns Not found.)
 - 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status dashboard panel completed (Impact: Added API and dashboard panel for agent runtime status.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-021: Show Agent Runtime Status on Dashboard)
 - 2026-06-11: internal_task_created | pm_agent | Show Agent Runtime Status on Dashboard (Impact: PM Agent created internal task INTERNAL-021: Add agent runtime status API and dashboard panel so the web dashboard can display each agent current runtime status.)
@@ -48,9 +52,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-020: Fix Agent Runtime Status Runner SQL)
 - 2026-06-11: internal_task_created | pm_agent | Fix Agent Runtime Status Runner SQL (Impact: PM Agent created internal task INTERNAL-020: Fix SQL quoting in agent runtime status runners so status update and per-agent display work correctly.)
 - 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status Tracking completed (Impact: Added runtime status table and runners for agent status visibility.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-019: Add Agent Runtime Status Tracking)
-- 2026-06-11: internal_task_created | pm_agent | Add Agent Runtime Status Tracking (Impact: PM Agent created internal task INTERNAL-019: Add runtime status tracking for agents so the system can record and display whether each agent is idle, queued, claimed, working, safety_blocked, done, or failed.)
-- 2026-06-11: devops_completed | devops_agent | Worker Service Control Runner completed (Impact: Added owner-facing wrapper for safe agent worker service control.)
 
 ## QA Status
 

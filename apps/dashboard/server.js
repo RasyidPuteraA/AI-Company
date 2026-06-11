@@ -82,9 +82,47 @@ function writeSse(res, eventName, data) {
   res.write(`data: ${JSON.stringify(data)}\n\n`);
 }
 
+
+function getAgentRuntimeStatus() {
+  const sql = `
+SELECT
+  agent_key,
+  runtime_status,
+  COALESCE(current_task_key, '') AS current_task_key,
+  COALESCE(location, '') AS location,
+  COALESCE(status_note, '') AS status_note,
+  updated_at
+FROM agent_runtime_status
+ORDER BY agent_key ASC;
+`;
+
+  const output = runPsql(sql);
+
+  return output
+    .trim()
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => {
+      const parts = line.split("|");
+      return {
+        agent_key: parts[0] || "",
+        runtime_status: parts[1] || "",
+        current_task_key: parts[2] || "",
+        location: parts[3] || "",
+        status_note: parts[4] || "",
+        updated_at: parts[5] || ""
+      };
+    });
+}
+
 const server = http.createServer((req, res) => {
   try {
-    if (req.url === "/api/summary") {
+    
+  if (req.url === "/api/agents/runtime") {
+    return sendJson(res, getAgentRuntimeStatus());
+  }
+
+if (req.url === "/api/summary") {
       const text = runSql(`
         SELECT
           COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%') AS client_tasks,

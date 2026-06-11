@@ -348,3 +348,13 @@ New API:
 Dashboard now displays each agent runtime status, current task, and status note.
 
 This prepares the pixel office to use runtime status instead of only event history.
+
+## INTERNAL-022 Handover
+
+Dashboard runtime status API route fixed.
+
+The endpoint now works:
+
+    /api/agents/runtime
+
+This fixes the incomplete INTERNAL-021 dashboard runtime status integration.
