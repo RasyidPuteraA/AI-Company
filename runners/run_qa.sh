@@ -2,9 +2,11 @@
 set -euo pipefail
 
 PROJECT_DIR="${1:-}"
+PROJECT_KEY="${2:-}"
+TASK_KEY="${3:-}"
 
 if [ -z "$PROJECT_DIR" ]; then
-  echo "Usage: ./runners/run_qa.sh <project_dir>"
+  echo "Usage: ./runners/run_qa.sh <project_dir> [project_key] [task_key]"
   exit 1
 fi
 
@@ -23,7 +25,6 @@ fi
 
 mkdir -p "$LOG_DIR"
 
-# Send all output to terminal and log file.
 exec > >(tee "$LOG_FILE") 2>&1
 
 cd "$ABS_PROJECT_DIR"
@@ -98,3 +99,19 @@ REPORT
 
 echo
 echo "QA report written to $ABS_PROJECT_DIR/qa_report.md"
+
+cd "$ROOT_DIR"
+
+if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
+  ./runners/log_event.sh \
+    "$PROJECT_KEY" \
+    "$TASK_KEY" \
+    "qa_agent" \
+    "qa_completed" \
+    "$QA_RESULT" \
+    "qa_room" \
+    "Automated QA completed" \
+    "QA runner completed for $PROJECT_DIR with result: $QA_RESULT. Notes: $QA_NOTES"
+else
+  echo "Event logging skipped. PROJECT_KEY and TASK_KEY were not provided."
+fi
