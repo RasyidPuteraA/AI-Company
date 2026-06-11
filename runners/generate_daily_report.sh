@@ -113,6 +113,24 @@ FROM tasks
 WHERE status IN ('QA_FAILED', 'WAITING_OWNER_ACCEPTANCE', 'BLOCKED', 'NEEDS_REVISION');
 """)
 
+
+accepted_today = psql_json("""
+SELECT COALESCE(jsonb_agg(
+  jsonb_build_object(
+    'title', task_key || ' - ' || title,
+    'owner', 'Project Owner',
+    'by', 'Completed today',
+    'recommendation', 'Already accepted. No further owner action required. Note: ' || COALESCE(handover_note, 'No note')
+  )
+  ORDER BY id DESC
+), '[]'::jsonb)
+FROM tasks
+WHERE status = 'ACCEPTED'
+  AND updated_at::date = now()::date;
+""")
+
+open_failures = open_failures + accepted_today
+
 if not open_failures:
     open_failures = [
         {

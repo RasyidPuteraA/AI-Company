@@ -78,3 +78,13 @@ New owner review command:
 ./runners/owner_review_task.sh TASK-KEY REVISION "Owner requested changes."
 
 
+
+## INTERNAL-006 Handover
+
+Owner decision reporting improved.
+
+Daily report now shows clearer recent event titles and includes accepted tasks from today in the owner decision section.
+
+Verification:
+- bash syntax check passed for `runners/generate_daily_report.sh`
+- daily report regenerated from PostgreSQL data
