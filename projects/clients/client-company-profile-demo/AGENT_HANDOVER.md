@@ -40,3 +40,27 @@ Summary:
 - PM intake processor created requirement analysis.
 - Suggested engineer and QA task breakdown is available.
 - Owner may approve continuing into implementation task generation.
+
+## Generated Engineer and QA Tasks from CLIENT-1-001
+
+Project:
+
+    client-company-profile-demo
+
+Generated tasks:
+
+- CLIENT-1-ENG-001
+  - Agent: engineer_agent
+  - Phase: implementation
+- CLIENT-1-QA-001
+  - Agent: qa_agent
+  - Phase: qa
+
+Source:
+
+    CLIENT-1-001
+
+Next step:
+
+- Engineer agent can claim the implementation task.
+- QA agent should verify after implementation output is ready.

@@ -516,3 +516,27 @@ This runner creates a PM intake analysis document from:
 - project context
 
 This is the first step toward PM agent automatically turning owner/client requirements into implementation plans and task breakdowns.
+
+## INTERNAL-031 Handover
+
+Engineer and QA task generation from PM analysis implemented.
+
+New runner:
+
+    runners/generate_tasks_from_pm_analysis.sh
+
+Usage:
+
+    ./runners/generate_tasks_from_pm_analysis.sh <project_key> <source_pm_task_key>
+
+This runner creates initial Engineer and QA tasks from PM intake analysis.
+
+Current automation flow:
+
+    Owner command
+    Client project
+    PM intake task
+    Upload context
+    PM intake analysis
+    Engineer task
+    QA task
