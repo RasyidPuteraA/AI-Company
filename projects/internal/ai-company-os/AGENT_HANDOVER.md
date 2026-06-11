@@ -240,3 +240,21 @@ No autonomous 24/7 worker service was enabled.
 Empty task claim handling fixed.
 
 `claim_next_task.sh` now treats PostgreSQL `UPDATE 0` as no claimable task and no longer emits fake `task_claimed` events for empty queues.
+
+## INTERNAL-017 Handover
+
+Disabled-by-default agent worker service template implemented.
+
+Systemd template:
+
+    /etc/systemd/system/ai-company-agent-worker@.service
+
+Environment file:
+
+    /etc/ai-company/agent-worker.env
+
+The service is a bounded oneshot worker and is not enabled by default.
+
+Safety was verified by starting the service outside work hours. The worker was blocked by the safety guard.
+
+No autonomous 24/7 agent worker was enabled.
