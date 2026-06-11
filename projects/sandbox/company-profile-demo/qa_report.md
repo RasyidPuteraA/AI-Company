@@ -2,11 +2,11 @@
 
 Project: projects/sandbox/company-profile-demo
 QA Agent: automated QA runner
-Time: Thu Jun 11 05:01:39 PM WIB 2026
+Time: Thu Jun 11 06:10:33 PM WIB 2026
 
 Checks:
-- package/static files checked
-- build/test command executed when available
+- QA mode detected: node_project
+- package/static/docs/scripts checked based on project shape
 - AGENT_HANDOVER.md presence checked: PASS
 
 Result:
@@ -16,4 +16,4 @@ Notes:
 npm test passed.
 
 Runner log:
-/opt/ai-company/logs/runners/qa-20260611-170136.log
+/opt/ai-company/logs/runners/qa-20260611-181030.log
