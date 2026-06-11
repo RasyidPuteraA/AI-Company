@@ -1,0 +1,4 @@
+ALTER TABLE owner_commands
+  ADD COLUMN IF NOT EXISTS project_key TEXT,
+  ADD COLUMN IF NOT EXISTS task_key TEXT,
+  ADD COLUMN IF NOT EXISTS converted_at TIMESTAMP;

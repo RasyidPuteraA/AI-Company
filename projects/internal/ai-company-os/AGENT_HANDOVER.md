@@ -387,3 +387,31 @@ New API endpoints:
 Dashboard now has a chatbox-style input where the Owner can submit project requirements and instructions.
 
 This is the first step toward creating client projects from the local web interface.
+
+## INTERNAL-025 Handover
+
+Owner Command to Client Project conversion v0 implemented.
+
+New runner:
+
+    runners/convert_owner_command_to_project.sh
+
+Updated runner:
+
+    runners/create_task.sh
+
+Usage:
+
+    ./runners/convert_owner_command_to_project.sh <owner_command_id> <project_key> <project_title>
+
+This enables the flow:
+
+    Dashboard chatbox
+    owner_commands
+    client project
+    PM intake task
+    agent worker claim
+
+Client project workspaces are now created under:
+
+    projects/clients/<project_key>
