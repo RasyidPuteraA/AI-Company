@@ -783,3 +783,24 @@ Future improvement:
 - add walking animation frames
 - add canvas-based office renderer
 - add editable office layout
+
+## INTERNAL-043 Handover
+
+Pixel Office Simulation Stage v1 implemented.
+
+The old CSS-grid office map has been refactored into a simulation-style office stage.
+
+Main changes:
+
+- rooms are absolute positioned
+- hallway layer added
+- room furniture added
+- pixel agents positioned by data-room
+- runtime status can update agent room and bubble states
+
+Next improvement:
+
+- import real sprite assets
+- add walking animation frames
+- add task-to-room animation history
+- add canvas/PixiJS renderer if needed

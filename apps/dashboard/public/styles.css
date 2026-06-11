@@ -1787,3 +1787,509 @@ body.wireframe-dashboard #ownerAgent {
   left: 87% !important;
   top: 80% !important;
 }
+
+/* INTERNAL-043: Pixel Office Simulation Stage v1 */
+
+body.wireframe-dashboard .office-main-card {
+  min-height: 650px !important;
+}
+
+body.wireframe-dashboard .pixel-office.office-sim-v1 {
+  position: relative !important;
+  width: 100% !important;
+  height: 560px !important;
+  min-height: 560px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 4px solid #334155 !important;
+  border-radius: 22px !important;
+  background: #0f172a !important;
+  image-rendering: pixelated;
+}
+
+.office-sim-map {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+    linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+    repeating-conic-gradient(
+      from 45deg,
+      rgba(15, 23, 42, 1) 0% 25%,
+      rgba(30, 41, 59, 0.94) 0% 50%
+    );
+  background-size: 32px 32px, 32px 32px, 48px 48px;
+}
+
+.office-sim-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 48% 48%, rgba(56, 189, 248, 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.08), rgba(2, 6, 23, 0.38));
+  pointer-events: none;
+}
+
+.office-hallway {
+  position: absolute;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(71, 85, 105, 0.18) 1px, transparent 1px),
+    linear-gradient(rgba(71, 85, 105, 0.18) 1px, transparent 1px),
+    rgba(15, 23, 42, 0.82);
+  background-size: 20px 20px;
+  border: 2px solid rgba(71, 85, 105, 0.28);
+}
+
+.hallway-horizontal {
+  left: 5%;
+  right: 5%;
+  top: 47%;
+  height: 10%;
+}
+
+.hallway-vertical {
+  top: 7%;
+  bottom: 7%;
+  left: 47%;
+  width: 6%;
+}
+
+.office-window {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 2;
+  display: flex;
+  gap: 5px;
+  padding: 7px;
+  border: 3px solid rgba(96, 165, 250, 0.34);
+  background: rgba(2, 6, 23, 0.48);
+}
+
+.office-window span {
+  width: 18px;
+  height: 30px;
+  background:
+    linear-gradient(180deg, rgba(56, 189, 248, 0.65), rgba(15, 23, 42, 0.8));
+  box-shadow: inset 0 -8px 0 rgba(250, 204, 21, 0.22);
+}
+
+.office-clock {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  z-index: 3;
+  transform: translateX(-50%);
+  border: 2px solid rgba(148, 163, 184, 0.36);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(2, 6, 23, 0.72);
+  color: #dbeafe;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.office-sim-v1 .office-room {
+  position: absolute !important;
+  z-index: 2;
+  overflow: hidden;
+  border: 4px solid #475569 !important;
+  border-radius: 0 !important;
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    repeating-conic-gradient(
+      from 45deg,
+      rgba(15, 23, 42, 0.96) 0% 25%,
+      rgba(30, 41, 59, 0.96) 0% 50%
+    ) !important;
+  background-size: 16px 16px, 16px 16px, 32px 32px !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(2, 6, 23, 0.92),
+    8px 8px 0 rgba(2, 6, 23, 0.28);
+  transform: none !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.office-sim-v1 .office-room::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 30px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(71, 85, 105, 0.98) 0 14px,
+      rgba(51, 65, 85, 0.98) 14px 28px
+    );
+  border-bottom: 3px solid rgba(2, 6, 23, 0.82);
+}
+
+.office-sim-v1 .office-room::after {
+  content: none !important;
+}
+
+.pm-room {
+  left: 4%;
+  top: 8%;
+  width: 27%;
+  height: 34%;
+}
+
+.engineer-room {
+  left: 36.5%;
+  top: 8%;
+  width: 27%;
+  height: 34%;
+}
+
+.qa-room {
+  right: 4%;
+  top: 8%;
+  width: 27%;
+  height: 34%;
+}
+
+.devops-room {
+  left: 4%;
+  bottom: 8%;
+  width: 27%;
+  height: 34%;
+}
+
+.meeting-room {
+  left: 36.5%;
+  bottom: 8%;
+  width: 27%;
+  height: 34%;
+}
+
+.owner-room {
+  right: 4%;
+  bottom: 8%;
+  width: 27%;
+  height: 34%;
+}
+
+.office-sim-v1 .room-label {
+  position: absolute;
+  z-index: 4;
+  top: 8px;
+  left: 10px;
+  color: #eff6ff;
+  font-size: 12px !important;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-shadow: 2px 2px 0 #020617;
+}
+
+.office-sim-v1 .room-status {
+  position: absolute;
+  z-index: 4;
+  top: 28px;
+  left: 10px;
+  max-width: calc(100% - 20px);
+  color: #93c5fd;
+  font-size: 10px !important;
+  text-shadow: 2px 2px 0 #020617;
+}
+
+.room-desk,
+.owner-desk,
+.meeting-table,
+.server-rack,
+.safe-box,
+.whiteboard,
+.room-monitor,
+.room-chair {
+  position: absolute;
+  z-index: 3;
+  image-rendering: pixelated;
+}
+
+.room-desk,
+.owner-desk {
+  left: 18px;
+  bottom: 18px;
+  width: 88px;
+  height: 34px;
+  border: 3px solid rgba(2, 6, 23, 0.8);
+  background: linear-gradient(180deg, #92400e, #78350f);
+  box-shadow: 6px 6px 0 rgba(2, 6, 23, 0.32);
+}
+
+.owner-desk {
+  background: linear-gradient(180deg, #0f766e, #134e4a);
+}
+
+.room-monitor {
+  left: 42px;
+  bottom: 55px;
+  width: 26px;
+  height: 18px;
+  border: 3px solid #020617;
+  background: #38bdf8;
+  box-shadow: 0 8px 0 #334155;
+}
+
+.room-monitor.wide {
+  width: 42px;
+}
+
+.room-chair {
+  left: 52px;
+  bottom: 2px;
+  width: 26px;
+  height: 18px;
+  background: #1d4ed8;
+  border: 3px solid #020617;
+}
+
+.server-rack {
+  left: 20px;
+  bottom: 18px;
+  width: 52px;
+  height: 90px;
+  border: 3px solid #020617;
+  background:
+    linear-gradient(#22c55e 0 4px, transparent 4px 14px),
+    linear-gradient(#38bdf8 0 4px, transparent 4px 14px),
+    #111827;
+  background-size: 100% 18px;
+  box-shadow: 6px 6px 0 rgba(2, 6, 23, 0.32);
+}
+
+.meeting-table {
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 46px;
+  border: 3px solid #020617;
+  background: linear-gradient(180deg, #7c3aed, #4c1d95);
+  box-shadow: 6px 6px 0 rgba(2, 6, 23, 0.32);
+}
+
+.whiteboard {
+  top: 44px;
+  right: 16px;
+  width: 88px;
+  height: 48px;
+  border: 3px solid #020617;
+  background: #dbeafe;
+  color: #0f172a;
+  font-size: 9px;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+}
+
+.safe-box {
+  right: 20px;
+  bottom: 20px;
+  width: 42px;
+  height: 42px;
+  border: 3px solid #020617;
+  background: #334155;
+  box-shadow: inset 0 0 0 5px #475569;
+}
+
+.office-sim-v1 .pixel-agent {
+  position: absolute !important;
+  z-index: 7;
+  display: block !important;
+  width: 40px !important;
+  height: 54px !important;
+  font-size: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  transition:
+    left 0.65s cubic-bezier(.2,.8,.2,1),
+    top 0.65s cubic-bezier(.2,.8,.2,1);
+  filter: drop-shadow(5px 6px 0 rgba(2, 6, 23, 0.38));
+}
+
+.office-sim-v1 .pixel-agent .agent-shadow {
+  position: absolute;
+  left: 5px;
+  bottom: 4px;
+  width: 30px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(2, 6, 23, 0.5);
+}
+
+.office-sim-v1 .pixel-agent .agent-body {
+  position: absolute;
+  left: 10px;
+  top: 14px;
+  width: 20px;
+  height: 27px;
+  border-radius: 5px 5px 2px 2px;
+  background: #38bdf8;
+  box-shadow:
+    0 -9px 0 #f8c8a9,
+    -7px -6px 0 #111827,
+    7px -6px 0 #111827,
+    -5px 20px 0 #1e293b,
+    5px 20px 0 #1e293b,
+    0 0 0 3px rgba(2, 6, 23, 0.72);
+}
+
+.office-sim-v1 .pm-sprite .agent-body {
+  background: #a3e635;
+}
+
+.office-sim-v1 .engineer-sprite .agent-body {
+  background: #38bdf8;
+}
+
+.office-sim-v1 .qa-sprite .agent-body {
+  background: #c084fc;
+}
+
+.office-sim-v1 .devops-sprite .agent-body {
+  background: #f97316;
+}
+
+.office-sim-v1 .owner-sprite .agent-body {
+  background: #facc15;
+}
+
+.office-sim-v1 .agent-name {
+  position: absolute;
+  top: 47px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #eff6ff;
+  font-size: 8px;
+  font-weight: 900;
+  text-shadow: 1px 1px 0 #020617;
+  white-space: nowrap;
+}
+
+.office-sim-v1 .agent-bubble {
+  position: absolute;
+  display: none;
+  left: 50%;
+  bottom: 62px;
+  min-width: 52px;
+  max-width: 135px;
+  transform: translateX(-50%);
+  border: 2px solid rgba(226, 232, 240, 0.72);
+  border-radius: 8px;
+  padding: 5px 7px;
+  background: rgba(15, 23, 42, 0.96);
+  color: #e0f2fe;
+  font-size: 9px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 4px 4px 0 rgba(2, 6, 23, 0.42);
+}
+
+.office-sim-v1 .pixel-agent.state-working .agent-bubble,
+.office-sim-v1 .pixel-agent.state-blocked .agent-bubble,
+.office-sim-v1 .pixel-agent.state-failed .agent-bubble {
+  display: block;
+}
+
+.office-sim-v1 .pixel-agent.state-working {
+  animation: sim-agent-working 0.72s steps(2) infinite;
+}
+
+@keyframes sim-agent-working {
+  0% {
+    transform: translate(-50%, -50%) translateY(0) !important;
+  }
+  100% {
+    transform: translate(-50%, -50%) translateY(-4px) !important;
+  }
+}
+
+.office-sim-v1 .pixel-agent[data-room="pm"] {
+  left: 18%;
+  top: 29%;
+}
+
+.office-sim-v1 .pixel-agent[data-room="engineer"] {
+  left: 50%;
+  top: 29%;
+}
+
+.office-sim-v1 .pixel-agent[data-room="qa"] {
+  left: 82%;
+  top: 29%;
+}
+
+.office-sim-v1 .pixel-agent[data-room="devops"] {
+  left: 18%;
+  top: 75%;
+}
+
+.office-sim-v1 .pixel-agent[data-room="meeting"] {
+  left: 50%;
+  top: 75%;
+}
+
+.office-sim-v1 .pixel-agent[data-room="owner"] {
+  left: 82%;
+  top: 75%;
+}
+
+.office-sim-v1 .office-room.active {
+  border-color: #38bdf8 !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(2, 6, 23, 0.92),
+    0 0 0 2px rgba(56, 189, 248, 0.18),
+    0 0 28px rgba(56, 189, 248, 0.22);
+}
+
+.office-sim-v1 .office-room.owner-active {
+  border-color: #facc15 !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(2, 6, 23, 0.92),
+    0 0 0 2px rgba(250, 204, 21, 0.18),
+    0 0 28px rgba(250, 204, 21, 0.22);
+}
+
+@media (max-width: 900px) {
+  body.wireframe-dashboard .pixel-office.office-sim-v1 {
+    height: 900px !important;
+  }
+
+  .office-sim-v1 .pm-room,
+  .office-sim-v1 .engineer-room,
+  .office-sim-v1 .qa-room,
+  .office-sim-v1 .devops-room,
+  .office-sim-v1 .meeting-room,
+  .office-sim-v1 .owner-room {
+    left: 5% !important;
+    right: 5% !important;
+    width: 90% !important;
+    height: 13% !important;
+  }
+
+  .office-sim-v1 .pm-room { top: 3%; }
+  .office-sim-v1 .engineer-room { top: 18%; }
+  .office-sim-v1 .qa-room { top: 33%; }
+  .office-sim-v1 .devops-room { top: 48%; bottom: auto; }
+  .office-sim-v1 .meeting-room { top: 63%; bottom: auto; }
+  .office-sim-v1 .owner-room { top: 78%; bottom: auto; }
+
+  .office-sim-v1 .hallway-horizontal,
+  .office-sim-v1 .hallway-vertical {
+    display: none;
+  }
+
+  .office-sim-v1 .pixel-agent[data-room="pm"] { left: 50%; top: 9%; }
+  .office-sim-v1 .pixel-agent[data-room="engineer"] { left: 50%; top: 24%; }
+  .office-sim-v1 .pixel-agent[data-room="qa"] { left: 50%; top: 39%; }
+  .office-sim-v1 .pixel-agent[data-room="devops"] { left: 50%; top: 54%; }
+  .office-sim-v1 .pixel-agent[data-room="meeting"] { left: 50%; top: 69%; }
+  .office-sim-v1 .pixel-agent[data-room="owner"] { left: 50%; top: 84%; }
+}

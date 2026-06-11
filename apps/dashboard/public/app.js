@@ -1560,3 +1560,72 @@ try {
 } catch (error) {
   console.error("Pixel office enhancement failed", error);
 }
+
+/* INTERNAL-043: Pixel Office Simulation Stage v1 */
+const officeSimRoomText = {
+  pm: "Planning",
+  engineer: "Building",
+  qa: "Checking",
+  devops: "Deploy",
+  meeting: "Sync",
+  owner: "Review"
+};
+
+function setSimAgentRoom(agentId, room, status = "idle", task = "") {
+  const agent = document.getElementById(agentId);
+  if (!agent) return;
+
+  agent.dataset.room = room;
+  agent.dataset.status = status;
+
+  agent.classList.remove("state-idle", "state-working", "state-done", "state-blocked", "state-failed");
+
+  if (status === "done") {
+    agent.classList.add("state-done");
+  } else if (status === "failed") {
+    agent.classList.add("state-failed");
+  } else if (status === "safety_blocked" || status === "blocked") {
+    agent.classList.add("state-blocked");
+  } else if (["queued", "claimed", "working", "in_progress", "IN_PROGRESS"].includes(status)) {
+    agent.classList.add("state-working");
+  } else {
+    agent.classList.add("state-idle");
+  }
+
+  const bubble = agent.querySelector(".agent-bubble");
+  if (bubble) {
+    const label = task || officeSimRoomText[room] || status || "idle";
+    bubble.textContent = label.length > 20 ? `${label.slice(0, 20)}…` : label;
+  }
+}
+
+function syncSimulationStageFromRuntime(agents) {
+  if (!Array.isArray(agents)) return;
+
+  agents.forEach((agent) => {
+    const config = runtimeAgentMap[agent.agent_key];
+    if (!config) return;
+
+    const status = agent.runtime_status || "idle";
+    const task = agent.current_task_key || "";
+    setSimAgentRoom(config.sprite, config.room, status, task);
+  });
+}
+
+const originalLoadPixelOfficeRuntimeStatusForSim = loadPixelOfficeRuntimeStatus;
+loadPixelOfficeRuntimeStatus = async function() {
+  try {
+    const response = await fetch("/api/agents/runtime");
+    const agents = await response.json();
+
+    if (typeof updatePixelOfficeFromRuntime === "function") {
+      updatePixelOfficeFromRuntime(agents);
+    }
+
+    syncSimulationStageFromRuntime(agents);
+  } catch (error) {
+    console.error("Failed to update pixel office simulation status", error);
+  }
+};
+
+loadPixelOfficeRuntimeStatus();

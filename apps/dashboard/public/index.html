@@ -43,59 +43,96 @@
           <span class="live-status connected">live</span>
         </div>
 
-        <div class="pixel-office">
-          <div class="office-grid">
-            <div class="office-room" data-room="pm">
+        <div class="pixel-office office-sim-v1">
+          <div class="office-sim-map">
+            <div class="office-sim-bg"></div>
+
+            <div class="office-window city-window">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div class="office-clock">12:00</div>
+
+            <div class="office-hallway hallway-horizontal"></div>
+            <div class="office-hallway hallway-vertical"></div>
+
+            <div class="office-room sim-room pm-room" data-room="pm">
               <span class="room-label">PM</span>
               <span class="room-status" id="pmStatus">idle</span>
+              <span class="room-desk"></span>
+              <span class="room-monitor"></span>
+              <span class="room-chair"></span>
             </div>
 
-            <div class="office-room" data-room="engineer">
+            <div class="office-room sim-room engineer-room" data-room="engineer">
               <span class="room-label">ENGINEER</span>
               <span class="room-status" id="engineerStatus">idle</span>
+              <span class="room-desk"></span>
+              <span class="room-monitor wide"></span>
+              <span class="room-chair"></span>
             </div>
 
-            <div class="office-room" data-room="qa">
+            <div class="office-room sim-room qa-room" data-room="qa">
               <span class="room-label">QA</span>
               <span class="room-status" id="qaStatus">idle</span>
+              <span class="room-desk"></span>
+              <span class="room-monitor"></span>
+              <span class="room-chair"></span>
             </div>
 
-            <div class="office-room" data-room="devops">
+            <div class="office-room sim-room devops-room" data-room="devops">
               <span class="room-label">DEVOPS</span>
               <span class="room-status" id="devopsStatus">idle</span>
+              <span class="server-rack"></span>
+              <span class="room-desk"></span>
             </div>
 
-            <div class="office-room" data-room="owner">
-              <span class="room-label">OWNER</span>
-              <span class="room-status" id="ownerStatus">idle</span>
-            </div>
-
-            <div class="office-room" data-room="meeting">
+            <div class="office-room sim-room meeting-room" data-room="meeting">
               <span class="room-label">MEETING</span>
               <span class="room-status" id="meetingStatus">standby</span>
+              <span class="meeting-table"></span>
+              <span class="whiteboard">KANBAN</span>
+            </div>
+
+            <div class="office-room sim-room owner-room" data-room="owner">
+              <span class="room-label">OWNER</span>
+              <span class="room-status" id="ownerStatus">idle</span>
+              <span class="owner-desk"></span>
+              <span class="safe-box"></span>
             </div>
 
             <div class="office-agent pixel-agent pm-sprite" id="pmAgent" data-agent="pm" data-room="pm">
+              <span class="agent-shadow"></span>
               <span class="agent-body"></span>
               <span class="agent-name">PM</span>
               <span class="agent-bubble">idle</span>
             </div>
+
             <div class="office-agent pixel-agent engineer-sprite" id="engineerAgent" data-agent="engineer" data-room="engineer">
+              <span class="agent-shadow"></span>
               <span class="agent-body"></span>
               <span class="agent-name">ENG</span>
               <span class="agent-bubble">idle</span>
             </div>
+
             <div class="office-agent pixel-agent qa-sprite" id="qaAgent" data-agent="qa" data-room="qa">
+              <span class="agent-shadow"></span>
               <span class="agent-body"></span>
               <span class="agent-name">QA</span>
               <span class="agent-bubble">idle</span>
             </div>
+
             <div class="office-agent pixel-agent devops-sprite" id="devopsAgent" data-agent="devops" data-room="devops">
+              <span class="agent-shadow"></span>
               <span class="agent-body"></span>
               <span class="agent-name">OPS</span>
               <span class="agent-bubble">idle</span>
             </div>
+
             <div class="office-agent pixel-agent owner-sprite" id="ownerAgent" data-agent="owner" data-room="owner">
+              <span class="agent-shadow"></span>
               <span class="agent-body"></span>
               <span class="agent-name">OWNER</span>
               <span class="agent-bubble">idle</span>
