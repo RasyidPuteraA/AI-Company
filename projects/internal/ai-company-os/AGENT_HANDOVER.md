@@ -436,3 +436,26 @@ Uploaded files are stored under:
     projects/clients/<project_key>/uploads/
 
 This enables the Owner to attach requirement files, logos, PDFs, screenshots, and other client assets to a project.
+
+## INTERNAL-027 Handover
+
+Upload attachment to PM context implemented.
+
+New runner:
+
+    runners/attach_uploads_to_pm_context.sh
+
+Usage:
+
+    ./runners/attach_uploads_to_pm_context.sh <project_key> <task_key>
+
+This connects uploaded client files to PM intake task context.
+
+Current flow:
+
+    Dashboard chatbox
+    Owner command
+    Client project
+    PM intake task
+    File upload
+    Upload context attached to PM task
