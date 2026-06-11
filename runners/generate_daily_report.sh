@@ -68,7 +68,7 @@ recent_events = psql_json("""
 SELECT COALESCE(jsonb_agg(
   jsonb_build_object(
     'date', to_char(created_at::date, 'YYYY-MM-DD'),
-    'description', event_type || ' | ' || COALESCE(agent_key, '-') || ' | ' || COALESCE(topic, '-'),
+    'title', event_type || ' | ' || COALESCE(agent_key, '-') || ' | ' || COALESCE(topic, '-'),
     'impact', COALESCE(summary, state, 'No summary')
   )
   ORDER BY id DESC

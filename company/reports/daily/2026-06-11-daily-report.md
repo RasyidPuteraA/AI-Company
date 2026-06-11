@@ -22,18 +22,18 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
-- 2026-06-11: Untitled event (Impact: QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.)
-- 2026-06-11: Untitled event (Impact: Engineer runner completed for projects/internal/ai-company-os with result: DONE. Log: /opt/ai-company/logs/runners/engineer-20260611-174050.log)
-- 2026-06-11: Untitled event (Impact: Engineer runner started for projects/internal/ai-company-os using INTERNAL-004.md.)
-- 2026-06-11: Untitled event (Impact: PM Agent created internal task INTERNAL-004: Update the main daily report runner so it builds JSON input from PostgreSQL tasks and events, then passes that real data into scripts/generate_daily_report.py.)
-- 2026-06-11: Untitled event (Impact: QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.)
-- 2026-06-11: Untitled event (Impact: Engineer runner completed for projects/internal/ai-company-os with result: DONE. Log: /opt/ai-company/logs/runners/engineer-20260611-172759.log)
-- 2026-06-11: Untitled event (Impact: Engineer runner started for projects/internal/ai-company-os using INTERNAL-003.md.)
-- 2026-06-11: Untitled event (Impact: PM Agent created internal task INTERNAL-003: Integrate the improved Python daily report generator into runners/generate_daily_report.sh so the main daily report command produces cleaner sections for client tasks, internal tasks, recent events, QA status, and recommended owner decisions.)
-- 2026-06-11: Untitled event (Impact: QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.)
-- 2026-06-11: Untitled event (Impact: Engineer runner completed for projects/internal/ai-company-os with result: DONE. Log: /opt/ai-company/logs/runners/engineer-20260611-172249.log)
-- 2026-06-11: Untitled event (Impact: Engineer runner started for projects/internal/ai-company-os using INTERNAL-002.md.)
-- 2026-06-11: Untitled event (Impact: PM Agent created internal task INTERNAL-002: Improve the daily report generator so it separates client tasks, internal tasks, recent events, QA status, and recommended owner decisions in a cleaner Markdown format.)
+- 2026-06-11: qa_completed | qa_agent | Automated QA completed (Impact: QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.)
+- 2026-06-11: engineering_completed | engineer_agent | Engineer runner completed (Impact: Engineer runner completed for projects/internal/ai-company-os with result: DONE. Log: /opt/ai-company/logs/runners/engineer-20260611-174050.log)
+- 2026-06-11: engineering_started | engineer_agent | Engineer runner started (Impact: Engineer runner started for projects/internal/ai-company-os using INTERNAL-004.md.)
+- 2026-06-11: internal_task_created | pm_agent | Connect Daily Report Generator to PostgreSQL (Impact: PM Agent created internal task INTERNAL-004: Update the main daily report runner so it builds JSON input from PostgreSQL tasks and events, then passes that real data into scripts/generate_daily_report.py.)
+- 2026-06-11: qa_completed | qa_agent | Automated QA completed (Impact: QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.)
+- 2026-06-11: engineering_completed | engineer_agent | Engineer runner completed (Impact: Engineer runner completed for projects/internal/ai-company-os with result: DONE. Log: /opt/ai-company/logs/runners/engineer-20260611-172759.log)
+- 2026-06-11: engineering_started | engineer_agent | Engineer runner started (Impact: Engineer runner started for projects/internal/ai-company-os using INTERNAL-003.md.)
+- 2026-06-11: internal_task_created | pm_agent | Integrate Improved Daily Report Generator (Impact: PM Agent created internal task INTERNAL-003: Integrate the improved Python daily report generator into runners/generate_daily_report.sh so the main daily report command produces cleaner sections for client tasks, internal tasks, recent events, QA status, and recommended owner decisions.)
+- 2026-06-11: qa_completed | qa_agent | Automated QA completed (Impact: QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.)
+- 2026-06-11: engineering_completed | engineer_agent | Engineer runner completed (Impact: Engineer runner completed for projects/internal/ai-company-os with result: DONE. Log: /opt/ai-company/logs/runners/engineer-20260611-172249.log)
+- 2026-06-11: engineering_started | engineer_agent | Engineer runner started (Impact: Engineer runner started for projects/internal/ai-company-os using INTERNAL-002.md.)
+- 2026-06-11: internal_task_created | pm_agent | Improve Daily Report Formatting (Impact: PM Agent created internal task INTERNAL-002: Improve the daily report generator so it separates client tasks, internal tasks, recent events, QA status, and recommended owner decisions in a cleaner Markdown format.)
 
 ## QA Status
 
