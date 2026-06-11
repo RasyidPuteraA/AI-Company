@@ -103,6 +103,17 @@ echo "QA report written to $ABS_PROJECT_DIR/qa_report.md"
 cd "$ROOT_DIR"
 
 if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
+  if [ "$QA_RESULT" = "PASS" ]; then
+    FINAL_TASK_STATUS="DONE"
+  else
+    FINAL_TASK_STATUS="QA_FAILED"
+  fi
+
+  ./runners/update_task_status.sh \
+    "$TASK_KEY" \
+    "$FINAL_TASK_STATUS" \
+    "QA runner completed for $PROJECT_DIR with result: $QA_RESULT. Notes: $QA_NOTES"
+
   ./runners/log_event.sh \
     "$PROJECT_KEY" \
     "$TASK_KEY" \
@@ -113,5 +124,5 @@ if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
     "Automated QA completed" \
     "QA runner completed for $PROJECT_DIR with result: $QA_RESULT. Notes: $QA_NOTES"
 else
-  echo "Event logging skipped. PROJECT_KEY and TASK_KEY were not provided."
+  echo "Event/status update skipped. PROJECT_KEY and TASK_KEY were not provided."
 fi

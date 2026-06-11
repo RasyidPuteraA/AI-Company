@@ -41,6 +41,11 @@ echo
 cd "$ROOT_DIR"
 
 if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
+  ./runners/update_task_status.sh \
+    "$TASK_KEY" \
+    "IN_PROGRESS" \
+    "Engineer runner started for $PROJECT_DIR using $TASK_FILE."
+
   ./runners/log_event.sh \
     "$PROJECT_KEY" \
     "$TASK_KEY" \
@@ -51,7 +56,7 @@ if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
     "Engineer runner started" \
     "Engineer runner started for $PROJECT_DIR using $TASK_FILE."
 else
-  echo "Start event logging skipped. PROJECT_KEY and TASK_KEY were not provided."
+  echo "Start event/status update skipped. PROJECT_KEY and TASK_KEY were not provided."
 fi
 
 cd "$ABS_PROJECT_DIR"
@@ -90,6 +95,11 @@ echo "ENGINEER_RESULT=$ENGINEER_RESULT"
 cd "$ROOT_DIR"
 
 if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
+  ./runners/update_task_status.sh \
+    "$TASK_KEY" \
+    "$ENGINEER_RESULT" \
+    "Engineer runner completed for $PROJECT_DIR with result: $ENGINEER_RESULT. Log: $LOG_FILE"
+
   ./runners/log_event.sh \
     "$PROJECT_KEY" \
     "$TASK_KEY" \
@@ -100,7 +110,7 @@ if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
     "Engineer runner completed" \
     "Engineer runner completed for $PROJECT_DIR with result: $ENGINEER_RESULT. Log: $LOG_FILE"
 else
-  echo "Completion event logging skipped. PROJECT_KEY and TASK_KEY were not provided."
+  echo "Completion event/status update skipped. PROJECT_KEY and TASK_KEY were not provided."
 fi
 
 echo
