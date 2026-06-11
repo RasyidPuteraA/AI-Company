@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-018 - Add Worker Service Control Runner** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-017 - Add Disabled Agent Worker Service Template** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-016 - Fix Empty Task Claim Handling** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-015 - Add Budget and Fatigue Guard** (Owner: budget_manager; Status: DONE)
@@ -35,6 +36,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: devops_completed | devops_agent | Worker Service Control Runner completed (Impact: Added owner-facing wrapper for safe agent worker service control.)
+- 2026-06-11: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-018: Add Worker Service Control Runner)
+- 2026-06-11: internal_task_created | pm_agent | Add Worker Service Control Runner (Impact: PM Agent created internal task INTERNAL-018: Add a safe owner-facing runner to control disabled-by-default agent worker systemd services with status, start, stop, logs, and reset-failed commands.)
 - 2026-06-11: devops_completed | devops_agent | Disabled agent worker service template completed (Impact: Added disabled-by-default systemd template for safe bounded agent worker loops.)
 - 2026-06-11: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-017: Add Disabled Agent Worker Service Template)
 - 2026-06-11: internal_task_created | pm_agent | Add Disabled Agent Worker Service Template (Impact: PM Agent created internal task INTERNAL-017: Add disabled-by-default systemd service templates for safe agent worker loops without enabling autonomous 24/7 execution.)
@@ -44,9 +48,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: engineering_completed | engineer_agent | Agent Worker Safety Guard completed (Impact: Implemented safety guard for agent worker loop.)
 - 2026-06-11: internal_task_created | pm_agent | Add Agent Worker Safety Guard (Impact: PM Agent created internal task INTERNAL-015: Add safety guard to agent worker loop so dry-run is always allowed, but once/loop modes respect work hours, emergency stop, safe iteration bounds, and interval limits.)
 - 2026-06-11: internal_task_created | pm_agent | Add Budget and Fatigue Guard (Impact: PM Agent created internal task INTERNAL-015: Add budget and fatigue guard checks so agent workers must verify daily limits before claiming tasks, preserving owner reserve and preventing uncontrolled autonomous work.)
-- 2026-06-11: engineering_completed | engineer_agent | Safe Agent Worker Loop completed (Impact: Implemented safe dry-run, once, and bounded loop modes for future parallel workers.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-014: Add Safe Agent Worker Loop)
-- 2026-06-11: internal_task_created | pm_agent | Add Safe Agent Worker Loop (Impact: PM Agent created internal task INTERNAL-014: Add a safe agent worker loop runner with dry-run, once, and bounded loop modes as preparation for future simultaneous multi-agent workers.)
 
 ## QA Status
 
