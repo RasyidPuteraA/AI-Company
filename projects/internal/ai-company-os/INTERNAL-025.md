@@ -31,7 +31,7 @@ Behavior:
 
 Verified flow:
 
-- Dashboard chatbox
+- dashboard chatbox
 - owner_commands
 - convert owner command to project
 - create client project
