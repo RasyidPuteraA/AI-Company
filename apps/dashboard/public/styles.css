@@ -1727,3 +1727,63 @@ body.wireframe-dashboard .pixel-agent {
   body.wireframe-dashboard #devopsAgent { top: 58% !important; }
   body.wireframe-dashboard #ownerAgent { top: 90% !important; }
 }
+
+/* HOTFIX: Pixel Office Layout v3 - stretch rooms across full map */
+body.wireframe-dashboard .pixel-office {
+  padding: 18px !important;
+}
+
+body.wireframe-dashboard .office-grid {
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-areas:
+    "pm engineer qa"
+    "devops meeting owner" !important;
+  gap: 18px !important;
+  align-items: stretch !important;
+  justify-items: stretch !important;
+}
+
+body.wireframe-dashboard .office-room {
+  justify-self: stretch !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 190px !important;
+  box-sizing: border-box !important;
+}
+
+/* Make desks scale better inside larger rooms */
+body.wireframe-dashboard .office-room::after {
+  width: min(110px, 42%) !important;
+  height: 36px !important;
+}
+
+/* Put each agent inside its room visually */
+body.wireframe-dashboard #pmAgent {
+  left: 13% !important;
+  top: 40% !important;
+}
+
+body.wireframe-dashboard #engineerAgent {
+  left: 50% !important;
+  top: 40% !important;
+}
+
+body.wireframe-dashboard #qaAgent {
+  left: 87% !important;
+  top: 40% !important;
+}
+
+body.wireframe-dashboard #devopsAgent {
+  left: 13% !important;
+  top: 80% !important;
+}
+
+body.wireframe-dashboard #ownerAgent {
+  left: 87% !important;
+  top: 80% !important;
+}
