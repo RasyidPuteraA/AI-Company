@@ -668,3 +668,30 @@ Demo result:
 
 - CLIENT-1-REVIEW-001 accepted
 - client-company-profile-demo accepted
+
+## INTERNAL-036 Handover
+
+Final Project Completion Runner implemented.
+
+New runner:
+
+    runners/finalize_accepted_project.sh
+
+Usage:
+
+    ./runners/finalize_accepted_project.sh <project_key> <review_task_key>
+
+Current end-to-end flow:
+
+    Owner command
+    PM intake
+    PM analysis
+    Engineer implementation
+    QA verification
+    Owner review
+    Owner decision
+    Final project completion
+
+Demo target:
+
+- client-company-profile-demo finalized as COMPLETED

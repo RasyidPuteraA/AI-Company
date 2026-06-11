@@ -20,6 +20,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-036 - Add Final Project Completion Runner** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-035 - Add Owner Review Decision Runner** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-034 - Submit QA-Passed Project to Owner Review** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-033 - Add QA Verification Runner v0** (Owner: engineer_agent; Status: DONE)
@@ -58,6 +59,10 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Final Project Completion Runner completed (Impact: Added final project completion runner for accepted client projects.)
+- 2026-06-11: project_completed | owner | Project finalized as completed (Impact: Accepted project client-company-profile-demo finalized with final handover.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-036: Add Final Project Completion Runner)
+- 2026-06-11: internal_task_created | pm_agent | Add Final Project Completion Runner (Impact: PM Agent created internal task INTERNAL-036: Add a safe runner that finalizes an accepted client project, writes final handover summary, and marks project as completed.)
 - 2026-06-11: engineering_completed | engineer_agent | Owner Review Decision Runner completed (Impact: Added Owner review decision runner for ACCEPT, REVISE, and REJECT.)
 - 2026-06-11: engineering_completed | engineer_agent | Owner Review Decision Runner completed (Impact: Added Owner review decision runner for ACCEPT, REVISE, and REJECT.)
 - 2026-06-11: internal_task_created | pm_agent | Add Owner Review Decision Runner (Impact: PM Agent created internal task INTERNAL-035: Add a safe runner that lets Owner accept, request revision, or reject a client project review task and updates project/task status accordingly.)
@@ -76,10 +81,6 @@ Owner action required:
 - Review QA report
 - Choose ACCEPT, REVISE, or REJECT)
 - 2026-06-11: internal_task_created | pm_agent | Submit QA-Passed Project to Owner Review (Impact: PM Agent created internal task INTERNAL-034: Add a safe runner that submits a QA-passed client project output to Owner review queue with project summary, QA report, and implementation output path.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-034: Submit QA-Passed Project to Owner Review)
-- 2026-06-11: internal_task_created | pm_agent | Submit QA-Passed Project to Owner Review (Impact: PM Agent created internal task INTERNAL-034: Add a safe runner that submits a QA-passed client project output to Owner review queue with project summary, QA report, and implementation output path.)
-- 2026-06-11: engineering_completed | engineer_agent | QA Verification Runner v0 completed (Impact: Added QA verification runner for implementation output review.)
-- 2026-06-11: qa_verification_completed | qa_agent | QA verification completed (Impact: QA verification passed for initial implementation output.)
 
 ## QA Status
 
