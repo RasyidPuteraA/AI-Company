@@ -16,6 +16,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-026 - Add File Upload Intake v0** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-025 - Convert Owner Command to Client Project v0** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-024 - Add Owner Command Inbox v0** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-023 - Connect Pixel Office to Runtime Status** (Owner: engineer_agent; Status: DONE)
@@ -44,6 +45,12 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | File Upload Intake v0 completed (Impact: Added project file upload API, dashboard upload form, and project upload metadata.)
+- 2026-06-11: project_file_uploaded | pm_agent | Project file uploaded (Impact: Uploaded internal-026-upload-test.txt to client-company-profile-demo)
+- 2026-06-11: internal_task_created | pm_agent | Add File Upload Intake v0 (Impact: PM Agent created internal task INTERNAL-026: Add dashboard and backend file upload intake so Owner can upload client requirement files and attach them to a project workspace.)
+- 2026-06-11: internal_task_created | pm_agent | Add File Upload Intake v0 (Impact: PM Agent created internal task INTERNAL-026: Add dashboard and backend file upload intake so Owner can upload client requirement files and attach them to a project workspace.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-026: Add File Upload Intake v0)
+- 2026-06-11: internal_task_created | pm_agent | Add File Upload Intake v0 (Impact: PM Agent created internal task INTERNAL-026: Add dashboard and backend file upload intake so Owner can upload client requirement files and attach them to a project workspace.)
 - 2026-06-11: engineering_completed | engineer_agent | Owner command conversion runner completed (Impact: Added runner to convert owner commands into client projects and PM intake tasks with dynamic project workspace support.)
 - 2026-06-11: task_claimed | pm_agent | Task claimed by pm_agent (Impact: pm_agent claimed CLIENT-1-001: PM intake: Client Company Profile Demo)
 - 2026-06-11: owner_command_converted | pm_agent | Owner command converted to client project (Impact: Owner command 1 converted to project client-company-profile-demo with initial task CLIENT-1-001.)
@@ -60,12 +67,6 @@ Goal:
 PM agent should analyze this owner/client requirement and turn it into an implementation plan and task breakdown.)
 - 2026-06-11: internal_task_created | pm_agent | Convert Owner Command to Client Project v0 (Impact: PM Agent created internal task INTERNAL-025: Add a safe runner to convert an owner command from the dashboard inbox into a client project and initial implementation task.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-025: Convert Owner Command to Client Project v0)
-- 2026-06-11: internal_task_created | pm_agent | Convert Owner Command to Client Project v0 (Impact: PM Agent created internal task INTERNAL-025: Add a safe runner to convert an owner command from the dashboard inbox into a client project and initial implementation task.)
-- 2026-06-11: engineering_completed | engineer_agent | Owner Command Inbox v0 completed (Impact: Added dashboard chatbox and backend owner command inbox.)
-- 2026-06-11: owner_command_created | pm_agent | Owner command submitted (Impact: Test command dari Owner Command Inbox v0. Buat project client sample dengan requirement website company profile.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-024: Add Owner Command Inbox v0)
-- 2026-06-11: internal_task_created | pm_agent | Add Owner Command Inbox v0 (Impact: PM Agent created internal task INTERNAL-024: Add a local web dashboard chatbox and backend command inbox so the Owner can submit project requirements and instructions from the website.)
-- 2026-06-11: internal_task_created | pm_agent | Add Owner Command Inbox v0 (Impact: PM Agent created internal task INTERNAL-023: Add a local web dashboard chatbox and backend command inbox so the Owner can submit project requirements and instructions from the website.)
 
 ## QA Status
 

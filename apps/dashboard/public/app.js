@@ -378,3 +378,117 @@ function setupOwnerCommandForm() {
 setupOwnerCommandForm();
 loadOwnerCommands();
 setInterval(loadOwnerCommands, 5000);
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const base64 = result.includes(",") ? result.split(",")[1] : result;
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function loadProjectUploads() {
+  const container = document.getElementById("uploadList");
+  const projectInput = document.getElementById("uploadProjectKey");
+  if (!container || !projectInput) return;
+
+  const projectKey = projectInput.value.trim();
+  if (!projectKey) {
+    container.innerHTML = `<div class="muted">Enter project_key to load uploads.</div>`;
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/uploads?project_key=${encodeURIComponent(projectKey)}`);
+    const uploads = await response.json();
+
+    if (!Array.isArray(uploads) || uploads.length === 0) {
+      container.innerHTML = `<div class="muted">No uploads for this project yet.</div>`;
+      return;
+    }
+
+    container.innerHTML = uploads.map((upload) => `
+      <div class="upload-item">
+        <div class="upload-name">${upload.original_filename}</div>
+        <div class="upload-meta">
+          <span>#${upload.id}</span>
+          <span>${upload.mime_type || "file"}</span>
+          <span>${upload.size_bytes} bytes</span>
+          <span>${upload.created_at}</span>
+        </div>
+        <div class="muted">${upload.relative_path}</div>
+      </div>
+    `).join("");
+  } catch (error) {
+    container.innerHTML = `<div class="muted">Failed to load uploads.</div>`;
+    console.error(error);
+  }
+}
+
+function setupUploadForm() {
+  const form = document.getElementById("uploadForm");
+  const projectInput = document.getElementById("uploadProjectKey");
+  const fileInput = document.getElementById("uploadFileInput");
+  const status = document.getElementById("uploadStatus");
+
+  if (!form || !projectInput || !fileInput) return;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const projectKey = projectInput.value.trim();
+    const file = fileInput.files && fileInput.files[0];
+
+    if (!projectKey || !file) {
+      if (status) status.textContent = "Project key and file are required.";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      if (status) status.textContent = "File too large for v0. Max 5 MB.";
+      return;
+    }
+
+    if (status) status.textContent = "Uploading file...";
+
+    try {
+      const contentBase64 = await fileToBase64(file);
+
+      const response = await fetch("/api/uploads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          project_key: projectKey,
+          filename: file.name,
+          mime_type: file.type || "",
+          content_base64: contentBase64
+        })
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(errorBody.error || `Upload failed: ${response.status}`);
+      }
+
+      fileInput.value = "";
+      if (status) status.textContent = "File uploaded.";
+      await loadProjectUploads();
+    } catch (error) {
+      if (status) status.textContent = `Upload failed: ${error.message}`;
+      console.error(error);
+    }
+  });
+
+  projectInput.addEventListener("change", loadProjectUploads);
+}
+
+setupUploadForm();
+loadProjectUploads();
+setInterval(loadProjectUploads, 7000);

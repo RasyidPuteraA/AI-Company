@@ -108,6 +108,30 @@
       </div>
     </section>
 
+
+    <section class="card upload-intake-card">
+      <div class="card-header">
+        <h2>File Upload Intake</h2>
+        <span class="live-status connected">files</span>
+      </div>
+
+      <form id="uploadForm" class="upload-form">
+        <input
+          id="uploadProjectKey"
+          type="text"
+          value="client-company-profile-demo"
+          placeholder="project_key, contoh: client-company-profile-demo"
+        />
+        <input id="uploadFileInput" type="file" />
+        <button type="submit">Upload File</button>
+      </form>
+
+      <div id="uploadStatus" class="muted"></div>
+      <div id="uploadList" class="upload-list">
+        <div class="muted">Loading uploads...</div>
+      </div>
+    </section>
+
 </main>
 
   <script src="/app.js"></script>

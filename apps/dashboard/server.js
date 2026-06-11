@@ -177,6 +177,137 @@ function createOwnerCommand(commandText, source = "dashboard") {
   return parseRows(inserted, ["id", "source", "status", "command_text", "created_at"])[0];
 }
 
+
+function safeProjectKey(value) {
+  const text = String(value || "").trim();
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(text)) {
+    throw new Error("Invalid project_key. Use lowercase letters, numbers, and dashes only.");
+  }
+  return text;
+}
+
+function safeFilename(value) {
+  const raw = String(value || "upload.bin").trim();
+  const base = path.basename(raw).replace(/[^a-zA-Z0-9._-]/g, "_");
+  return base || "upload.bin";
+}
+
+function getProjectUploads(projectKey) {
+  const safeKey = safeProjectKey(projectKey);
+  const safeKeySql = sqlFromBase64(sqlText(safeKey));
+
+  const text = runSql(`
+    SELECT id, project_key, original_filename, stored_filename, relative_path, mime_type, size_bytes, created_at
+    FROM project_uploads
+    WHERE project_key = ${safeKeySql}
+    ORDER BY id DESC
+    LIMIT 50;
+  `);
+
+  return parseRows(text, [
+    "id",
+    "project_key",
+    "original_filename",
+    "stored_filename",
+    "relative_path",
+    "mime_type",
+    "size_bytes",
+    "created_at"
+  ]);
+}
+
+function saveProjectUpload(payload) {
+  const projectKey = safeProjectKey(payload.project_key);
+  const originalFilename = safeFilename(payload.filename);
+  const mimeType = String(payload.mime_type || "");
+  const contentBase64 = String(payload.content_base64 || "");
+
+  if (!contentBase64) {
+    throw new Error("content_base64 is required");
+  }
+
+  const projectId = runSql(`
+    SELECT id
+    FROM projects
+    WHERE project_key = ${sqlFromBase64(sqlText(projectKey))}
+    LIMIT 1;
+  `).trim();
+
+  if (!projectId) {
+    throw new Error(`Project not found: ${projectKey}`);
+  }
+
+  const uploadRoot = path.join(__dirname, "..", "..", "projects", "clients", projectKey, "uploads");
+  fs.mkdirSync(uploadRoot, { recursive: true });
+
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const storedFilename = `${timestamp}-${originalFilename}`;
+  const absolutePath = path.join(uploadRoot, storedFilename);
+
+  const buffer = Buffer.from(contentBase64, "base64");
+  fs.writeFileSync(absolutePath, buffer);
+
+  const relativePath = path.join("projects", "clients", projectKey, "uploads", storedFilename);
+
+  const inserted = runSql(`
+    INSERT INTO project_uploads (
+      project_id,
+      project_key,
+      original_filename,
+      stored_filename,
+      relative_path,
+      mime_type,
+      size_bytes,
+      source
+    )
+    VALUES (
+      ${Number(projectId)},
+      ${sqlFromBase64(sqlText(projectKey))},
+      ${sqlFromBase64(sqlText(originalFilename))},
+      ${sqlFromBase64(sqlText(storedFilename))},
+      ${sqlFromBase64(sqlText(relativePath))},
+      ${sqlFromBase64(sqlText(mimeType))},
+      ${buffer.length},
+      'dashboard'
+    )
+    RETURNING id, project_key, original_filename, stored_filename, relative_path, mime_type, size_bytes, created_at;
+  `);
+
+  runSql(`
+    INSERT INTO events (
+      project_id,
+      task_id,
+      agent_key,
+      event_type,
+      state,
+      location,
+      topic,
+      summary
+    )
+    VALUES (
+      ${Number(projectId)},
+      NULL,
+      'pm_agent',
+      'project_file_uploaded',
+      'NEW',
+      'owner_dashboard',
+      ${sqlFromBase64(sqlText("Project file uploaded"))},
+      ${sqlFromBase64(sqlText(`Uploaded ${originalFilename} to ${projectKey}`))}
+    );
+  `);
+
+  return parseRows(inserted, [
+    "id",
+    "project_key",
+    "original_filename",
+    "stored_filename",
+    "relative_path",
+    "mime_type",
+    "size_bytes",
+    "created_at"
+  ])[0];
+}
+
 function writeSse(res, eventName, data) {
   res.write(`event: ${eventName}\n`);
   res.write(`data: ${JSON.stringify(data)}\n\n`);
@@ -188,11 +319,35 @@ const server = http.createServer(async (req, res) => {
     const pathname = requestUrl.pathname;
 
     
-    if (pathname === "/api/owner/commands" && req.method === "GET") {
+    
+    if (pathname === "/api/uploads" && req.method === "GET") {
+      const projectKey = requestUrl.searchParams.get("project_key") || "";
+      return json(res, getProjectUploads(projectKey));
+    }
+
+    if (pathname === "/api/uploads" && req.method === "POST") {
+      const body = await readJson(req);
+      const upload = saveProjectUpload(body);
+      return json(res, upload, 201);
+    }
+
+if (pathname === "/api/owner/commands" && req.method === "GET") {
       return json(res, getOwnerCommands());
     }
 
-    if (pathname === "/api/owner/commands" && req.method === "POST") {
+    
+    if (pathname === "/api/uploads" && req.method === "GET") {
+      const projectKey = requestUrl.searchParams.get("project_key") || "";
+      return json(res, getProjectUploads(projectKey));
+    }
+
+    if (pathname === "/api/uploads" && req.method === "POST") {
+      const body = await readJson(req);
+      const upload = saveProjectUpload(body);
+      return json(res, upload, 201);
+    }
+
+if (pathname === "/api/owner/commands" && req.method === "POST") {
       const body = await readJson(req);
       const commandText = String(body.command_text || "").trim();
 

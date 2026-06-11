@@ -401,3 +401,57 @@ h1 {
   color: #e2e8f0;
   line-height: 1.5;
 }
+
+/* File Upload Intake */
+.upload-form {
+  display: grid;
+  gap: 10px;
+}
+
+.upload-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.82);
+  color: #e2e8f0;
+  font: inherit;
+}
+
+.upload-form button {
+  width: fit-content;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: #a3e635;
+  color: #102000;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.upload-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.upload-item {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.upload-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.upload-name {
+  color: #e2e8f0;
+  font-weight: 800;
+}

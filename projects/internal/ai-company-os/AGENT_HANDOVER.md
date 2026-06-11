@@ -415,3 +415,24 @@ This enables the flow:
 Client project workspaces are now created under:
 
     projects/clients/<project_key>
+
+## INTERNAL-026 Handover
+
+File Upload Intake v0 implemented.
+
+New table:
+
+    project_uploads
+
+New API endpoints:
+
+    GET /api/uploads?project_key=<project_key>
+    POST /api/uploads
+
+Dashboard now supports uploading files to a client project workspace.
+
+Uploaded files are stored under:
+
+    projects/clients/<project_key>/uploads/
+
+This enables the Owner to attach requirement files, logos, PDFs, screenshots, and other client assets to a project.
