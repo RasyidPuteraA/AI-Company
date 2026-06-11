@@ -1,18 +1,20 @@
 # Agent Handover
 
-Task: TASK-003 - Add Service Hours Note
+Task: TASK-004 - Add FAQ Section
 
 ## Implementation
 
-- Added the required service hours text to the Contact section:
-  `Service hours: Monday to Friday, 08:00 - 17:00.`
-- Styled the service hours note as a compact inline panel using the existing dark navy, electric green, and 8px radius visual style.
-- Kept the note inside the existing responsive Contact grid so it stacks cleanly with the section content on smaller screens.
+- Added a new responsive FAQ section between Customer Signals and Contact.
+- Added four EV workshop questions covering supported work, bay preparation, battery health reports, and fleet scheduling.
+- Added a primary navigation link to the FAQ section.
+- Styled the FAQ with native `details` / `summary` disclosure controls, dark navy panels, electric green accents, and 8px radii.
+- Updated README.md to include the FAQ in the page section list.
 
 ## Files Updated
 
 - `index.html`
 - `styles.css`
+- `README.md`
 - `AGENT_HANDOVER.md`
 
 ## Build/Test Result

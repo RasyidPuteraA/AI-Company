@@ -2,8 +2,8 @@
 
 Static responsive company profile website for a fictional EV workshop, VoltForge EV Works.
 
-The page includes hero, about, services, differentiators, customer testimonials, and contact
-sections.
+The page includes hero, about, services, differentiators, customer testimonials, FAQ, and
+contact sections.
 
 ## Files
 
