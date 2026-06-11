@@ -1,0 +1,10 @@
+{
+  "name": "company-profile-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static company profile demo website for a fictional EV workshop.",
+  "scripts": {
+    "build": "rm -rf dist && mkdir -p dist && cp index.html styles.css script.js dist/",
+    "test": "npm run build"
+  }
+}

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="VoltForge EV Works is a fictional modern electric vehicle workshop specializing in diagnostics, battery care, and fleet service."
+    />
+    <title>VoltForge EV Works</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Primary navigation">
+        <a class="brand" href="#hero" aria-label="VoltForge EV Works home">
+          <span class="brand-mark">VF</span>
+          <span>VoltForge</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span class="sr-only">Toggle menu</span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#why">Why Us</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="hero">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Modern EV Workshop</p>
+            <h1>Precision service for electric vehicles and high-voltage fleets.</h1>
+            <p>
+              VoltForge EV Works combines certified diagnostics, battery health insight, and
+              workshop-grade repair workflows for drivers and operators moving to electric.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#contact">Book Inspection</a>
+              <a class="button secondary" href="#services">View Services</a>
+            </div>
+          </div>
+          <div class="hero-panel" aria-label="Workshop service highlights">
+            <div class="status-bar">
+              <span class="status-dot"></span>
+              Bay 03 Live Diagnostics
+            </div>
+            <div class="vehicle-card">
+              <div class="vehicle-top">
+                <span>Battery pack</span>
+                <strong>96%</strong>
+              </div>
+              <div class="charge-track"><span></span></div>
+              <dl>
+                <div>
+                  <dt>Thermal variance</dt>
+                  <dd>1.8 C</dd>
+                </div>
+                <div>
+                  <dt>Module balance</dt>
+                  <dd>Optimal</dd>
+                </div>
+                <div>
+                  <dt>Service ETA</dt>
+                  <dd>42 min</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section about" id="about">
+        <div class="section-heading">
+          <p class="eyebrow">About</p>
+          <h2>Built for the next generation of maintenance.</h2>
+        </div>
+        <p>
+          We are a fictional specialist workshop focused on electric drivetrains, battery systems,
+          charging hardware, and software-led diagnostics. Our shop floor is designed for clean,
+          repeatable inspections and fast turnaround without treating EV work like a side service.
+        </p>
+      </section>
+
+      <section class="section" id="services">
+        <div class="section-heading">
+          <p class="eyebrow">Services</p>
+          <h2>Workshop capabilities</h2>
+        </div>
+        <div class="card-grid">
+          <article class="card">
+            <span class="card-icon">01</span>
+            <h3>EV Diagnostics</h3>
+            <p>High-voltage system scans, fault tracing, firmware checks, and detailed service reports.</p>
+          </article>
+          <article class="card">
+            <span class="card-icon">02</span>
+            <h3>Battery Health</h3>
+            <p>Pack condition checks, cell balance review, thermal behavior analysis, and range guidance.</p>
+          </article>
+          <article class="card">
+            <span class="card-icon">03</span>
+            <h3>Charging Systems</h3>
+            <p>Port inspection, onboard charger testing, cable checks, and home charger readiness advice.</p>
+          </article>
+          <article class="card">
+            <span class="card-icon">04</span>
+            <h3>Fleet Maintenance</h3>
+            <p>Preventive schedules, downtime planning, service history tracking, and priority bay access.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section why" id="why">
+        <div class="section-heading">
+          <p class="eyebrow">Why Choose Us</p>
+          <h2>Industrial process, electric focus.</h2>
+        </div>
+        <div class="why-list">
+          <div>
+            <strong>Certified high-voltage workflow</strong>
+            <span>Isolation, lockout, and inspection steps are documented from intake to release.</span>
+          </div>
+          <div>
+            <strong>Data-rich reporting</strong>
+            <span>Customers receive clear findings, priority levels, and service recommendations.</span>
+          </div>
+          <div>
+            <strong>Fast fleet turnaround</strong>
+            <span>Appointment planning keeps vans, rideshare vehicles, and delivery units moving.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section contact" id="contact">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2>Schedule an EV inspection.</h2>
+          <p>
+            Send a request and our service desk will prepare the right bay, tools, and diagnostic
+            checklist for your vehicle.
+          </p>
+        </div>
+        <form class="contact-form">
+          <label>
+            Name
+            <input type="text" name="name" placeholder="Your name" required />
+          </label>
+          <label>
+            Email
+            <input type="email" name="email" placeholder="you@example.com" required />
+          </label>
+          <label>
+            Vehicle / Request
+            <textarea name="message" rows="4" placeholder="Tell us what needs attention" required></textarea>
+          </label>
+          <button class="button primary" type="submit">Send Request</button>
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>VoltForge EV Works</span>
+      <span>Fictional company profile demo</span>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
