@@ -51,3 +51,41 @@ async function main() {
 main().catch(error => {
   document.body.innerHTML = `<pre>${error.stack}</pre>`;
 });
+
+
+function setLiveStatus(text, state) {
+  const el = document.getElementById("liveStatus");
+  if (!el) return;
+  el.textContent = text;
+  el.classList.remove("connected", "disconnected");
+  if (state) el.classList.add(state);
+}
+
+function startEventStream() {
+  if (!window.EventSource) {
+    setLiveStatus("no sse", "disconnected");
+    return;
+  }
+
+  const source = new EventSource("/api/events/live");
+
+  source.addEventListener("connected", () => {
+    setLiveStatus("live", "connected");
+  });
+
+  source.addEventListener("events", event => {
+    const events = JSON.parse(event.data);
+    document.getElementById("events").innerHTML = renderEvents(events);
+    setLiveStatus("live", "connected");
+  });
+
+  source.addEventListener("heartbeat", () => {
+    setLiveStatus("live", "connected");
+  });
+
+  source.addEventListener("error", () => {
+    setLiveStatus("reconnecting", "disconnected");
+  });
+}
+
+startEventStream();

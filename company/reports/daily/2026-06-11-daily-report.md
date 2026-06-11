@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-011 - Add Realtime Event Stream** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-010 - Run Web Dashboard as Managed Service** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-009 - Add Web Dashboard Foundation** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-008 - Add Terminal Company Dashboard** (Owner: engineer_agent; Status: DONE)
@@ -28,6 +29,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Realtime Event Stream completed (Impact: Implemented SSE realtime events for dashboard.)
+- 2026-06-11: dashboard_event_test | engineer_agent | Realtime dashboard test (Impact: Testing SSE event stream from PostgreSQL to web dashboard.)
+- 2026-06-11: internal_task_created | pm_agent | Add Realtime Event Stream (Impact: PM Agent created internal task INTERNAL-011: Add a read-only realtime event stream to the web dashboard using Server-Sent Events so latest agent events update without manual refresh.)
 - 2026-06-11: devops_completed | devops_agent | Dashboard systemd service completed (Impact: Configured local-only managed dashboard service.)
 - 2026-06-11: internal_task_created | pm_agent | Run Web Dashboard as Managed Service (Impact: PM Agent created internal task INTERNAL-010: Run the web dashboard as a local-only systemd service so it stays online after terminal sessions close and remains accessible through SSH tunnel.)
 - 2026-06-11: engineering_completed | engineer_agent | Web Dashboard Foundation completed (Impact: Implemented read-only web dashboard foundation.)
@@ -37,9 +41,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: engineering_completed | engineer_agent | Owner Inbox runner completed (Impact: Implemented read-only owner inbox command for owner decision visibility.)
 - 2026-06-11: internal_task_created | pm_agent | Add Owner Inbox Runner (Impact: PM Agent created internal task INTERNAL-007: Add a read-only owner inbox runner that lists tasks needing owner decisions, QA failures, revision requests, blockers, and recently accepted deliveries.)
 - 2026-06-11: engineering_completed | engineer_agent | Owner decision report improved (Impact: Improved daily report owner decision visibility and recent event titles.)
-- 2026-06-11: internal_task_created | pm_agent | Improve Owner Decision Reporting (Impact: PM Agent created internal task INTERNAL-006: Improve the daily report so recent events have readable titles and owner decisions include pending acceptance, accepted tasks, revision requests, QA failures, and blockers.)
-- 2026-06-11: engineering_completed | engineer_agent | Owner approval workflow completed (Impact: Implemented and verified owner approval workflow using TASK-004.)
-- 2026-06-11: engineering_completed | engineer_agent | Owner approval workflow completed (Impact: Implemented and verified owner approval workflow using TASK-004.)
 
 ## QA Status
 

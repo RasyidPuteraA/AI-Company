@@ -65,6 +65,23 @@ function parseRows(text, columns) {
   });
 }
 
+
+function getLatestEvents() {
+  const text = runSql(`
+    SELECT id, event_type, COALESCE(agent_key,''), COALESCE(state,''), COALESCE(topic,''), created_at
+    FROM events
+    ORDER BY id DESC
+    LIMIT 20;
+  `);
+
+  return parseRows(text, ["id", "event_type", "agent", "state", "topic", "created_at"]);
+}
+
+function writeSse(res, eventName, data) {
+  res.write(`event: ${eventName}\n`);
+  res.write(`data: ${JSON.stringify(data)}\n\n`);
+}
+
 const server = http.createServer((req, res) => {
   try {
     if (req.url === "/api/summary") {
@@ -102,14 +119,40 @@ const server = http.createServer((req, res) => {
     }
 
     if (req.url === "/api/events") {
-      const text = runSql(`
-        SELECT event_type, COALESCE(agent_key,''), COALESCE(state,''), COALESCE(topic,''), created_at
-        FROM events
-        ORDER BY id DESC
-        LIMIT 20;
-      `);
+      return json(res, getLatestEvents());
+    }
 
-      return json(res, parseRows(text, ["event_type", "agent", "state", "topic", "created_at"]));
+    if (req.url === "/api/events/live") {
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "Access-Control-Allow-Origin": "*"
+      });
+
+      writeSse(res, "connected", { ok: true, time: new Date().toISOString() });
+
+      let lastPayload = "";
+      const timer = setInterval(() => {
+        try {
+          const events = getLatestEvents();
+          const payload = JSON.stringify(events);
+          if (payload !== lastPayload) {
+            lastPayload = payload;
+            writeSse(res, "events", events);
+          } else {
+            writeSse(res, "heartbeat", { time: new Date().toISOString() });
+          }
+        } catch (error) {
+          writeSse(res, "error", { message: error.message });
+        }
+      }, 3000);
+
+      req.on("close", () => {
+        clearInterval(timer);
+      });
+
+      return;
     }
 
     const file = req.url === "/"

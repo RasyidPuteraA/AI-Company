@@ -160,3 +160,19 @@ Useful commands:
     sudo systemctl status ai-company-dashboard --no-pager
     sudo systemctl restart ai-company-dashboard
     sudo journalctl -u ai-company-dashboard -n 80 --no-pager
+
+## INTERNAL-011 Handover
+
+Realtime Event Stream implemented.
+
+Dashboard now has:
+
+    /api/events/live
+
+Frontend uses:
+
+    EventSource("/api/events/live")
+
+Latest Events updates without manual refresh.
+
+This is the foundation for future pixel office animation.
