@@ -17,6 +17,7 @@ TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_FILE="$LOG_DIR/qa-$TIMESTAMP.log"
 QA_RESULT="FAIL"
 QA_NOTES=""
+QA_MODE="unknown"
 
 if [ ! -d "$ABS_PROJECT_DIR" ]; then
   echo "Project directory not found: $ABS_PROJECT_DIR"
@@ -34,7 +35,15 @@ echo "Project: $ABS_PROJECT_DIR"
 echo "Time: $(date)"
 echo
 
+if [ -f AGENT_HANDOVER.md ]; then
+  HANDOVER_STATUS="PASS"
+else
+  HANDOVER_STATUS="FAIL"
+fi
+
 if [ -f package.json ]; then
+  QA_MODE="node_project"
+  echo "QA mode: node_project"
   echo "package.json found."
 
   if command -v npm >/dev/null 2>&1; then
@@ -47,12 +56,13 @@ if [ -f package.json ]; then
       QA_NOTES="npm test failed."
     fi
   else
-    echo "npm not found."
     QA_RESULT="FAIL"
     QA_NOTES="npm is not installed."
   fi
-else
-  echo "No package.json found. Checking static files..."
+
+elif [ -f index.html ] || [ -f styles.css ] || [ -f script.js ]; then
+  QA_MODE="static_site"
+  echo "QA mode: static_site"
 
   if [ -f index.html ] && [ -f styles.css ] && [ -f script.js ]; then
     QA_RESULT="PASS"
@@ -61,16 +71,61 @@ else
     QA_RESULT="FAIL"
     QA_NOTES="Missing one or more static files."
   fi
+
+elif find . -maxdepth 2 -type f -name "*.md" | grep -q .; then
+  QA_MODE="documentation"
+  echo "QA mode: documentation"
+
+  MD_COUNT="$(find . -maxdepth 2 -type f -name "*.md" | wc -l)"
+  echo "Markdown files found: $MD_COUNT"
+
+  if [ "$HANDOVER_STATUS" = "PASS" ] && [ "$MD_COUNT" -ge 1 ]; then
+    QA_RESULT="PASS"
+    QA_NOTES="Documentation task passed. Markdown files and AGENT_HANDOVER.md exist."
+  else
+    QA_RESULT="FAIL"
+    QA_NOTES="Documentation task failed. Missing AGENT_HANDOVER.md or markdown output."
+  fi
+
+elif find . -maxdepth 2 -type f -name "*.sh" | grep -q .; then
+  QA_MODE="shell_scripts"
+  echo "QA mode: shell_scripts"
+
+  FAIL_COUNT=0
+  while IFS= read -r script; do
+    echo "Checking syntax: $script"
+    if ! bash -n "$script"; then
+      FAIL_COUNT=$((FAIL_COUNT + 1))
+    fi
+  done < <(find . -maxdepth 2 -type f -name "*.sh")
+
+  if [ "$FAIL_COUNT" -eq 0 ] && [ "$HANDOVER_STATUS" = "PASS" ]; then
+    QA_RESULT="PASS"
+    QA_NOTES="Shell scripts passed bash syntax check and AGENT_HANDOVER.md exists."
+  else
+    QA_RESULT="FAIL"
+    QA_NOTES="One or more shell scripts failed syntax check or AGENT_HANDOVER.md is missing."
+  fi
+
+else
+  QA_MODE="generic"
+  echo "QA mode: generic"
+
+  if [ "$HANDOVER_STATUS" = "PASS" ]; then
+    QA_RESULT="PASS"
+    QA_NOTES="Generic QA passed because AGENT_HANDOVER.md exists."
+  else
+    QA_RESULT="FAIL"
+    QA_NOTES="Generic QA failed because AGENT_HANDOVER.md is missing."
+  fi
 fi
 
-if [ -f AGENT_HANDOVER.md ]; then
-  HANDOVER_STATUS="PASS"
-else
-  HANDOVER_STATUS="FAIL"
+if [ "$HANDOVER_STATUS" != "PASS" ]; then
   QA_RESULT="FAIL"
 fi
 
 echo
+echo "QA_MODE=$QA_MODE"
 echo "QA_RESULT=$QA_RESULT"
 echo "HANDOVER_STATUS=$HANDOVER_STATUS"
 echo "Log saved to: $LOG_FILE"
@@ -83,8 +138,8 @@ QA Agent: automated QA runner
 Time: $(date)
 
 Checks:
-- package/static files checked
-- build/test command executed when available
+- QA mode detected: $QA_MODE
+- package/static/docs/scripts checked based on project shape
 - AGENT_HANDOVER.md presence checked: $HANDOVER_STATUS
 
 Result:
@@ -112,7 +167,7 @@ if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
   ./runners/update_task_status.sh \
     "$TASK_KEY" \
     "$FINAL_TASK_STATUS" \
-    "QA runner completed for $PROJECT_DIR with result: $QA_RESULT. Notes: $QA_NOTES"
+    "QA runner completed for $PROJECT_DIR with result: $QA_RESULT. Mode: $QA_MODE. Notes: $QA_NOTES"
 
   ./runners/log_event.sh \
     "$PROJECT_KEY" \
@@ -122,7 +177,7 @@ if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
     "$QA_RESULT" \
     "qa_room" \
     "Automated QA completed" \
-    "QA runner completed for $PROJECT_DIR with result: $QA_RESULT. Notes: $QA_NOTES"
+    "QA runner completed for $PROJECT_DIR with result: $QA_RESULT. Mode: $QA_MODE. Notes: $QA_NOTES"
 else
   echo "Event/status update skipped. PROJECT_KEY and TASK_KEY were not provided."
 fi
