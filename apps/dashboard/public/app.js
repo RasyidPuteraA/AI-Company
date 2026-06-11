@@ -492,3 +492,62 @@ function setupUploadForm() {
 setupUploadForm();
 loadProjectUploads();
 setInterval(loadProjectUploads, 7000);
+
+function setupConvertCommandForm() {
+  const form = document.getElementById("convertCommandForm");
+  const commandIdInput = document.getElementById("convertCommandId");
+  const projectKeyInput = document.getElementById("convertProjectKey");
+  const projectTitleInput = document.getElementById("convertProjectTitle");
+  const status = document.getElementById("convertCommandStatus");
+  const output = document.getElementById("convertCommandOutput");
+
+  if (!form || !commandIdInput || !projectKeyInput || !projectTitleInput) return;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const commandId = commandIdInput.value.trim();
+    const projectKey = projectKeyInput.value.trim();
+    const projectTitle = projectTitleInput.value.trim();
+
+    if (!commandId || !projectKey || !projectTitle) {
+      if (status) status.textContent = "command id, project key, and project title are required.";
+      return;
+    }
+
+    if (status) status.textContent = "Converting owner command to project...";
+    if (output) output.textContent = "";
+
+    try {
+      const response = await fetch("/api/owner/commands/convert", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          command_id: commandId,
+          project_key: projectKey,
+          project_title: projectTitle
+        })
+      });
+
+      const body = await response.json();
+
+      if (!response.ok) {
+        throw new Error(body.error || `Convert failed: ${response.status}`);
+      }
+
+      if (status) status.textContent = "Command converted to project.";
+      if (output) output.textContent = body.output || JSON.stringify(body, null, 2);
+
+      await loadOwnerCommands();
+      await loadProjectUploads();
+    } catch (error) {
+      if (status) status.textContent = `Convert failed: ${error.message}`;
+      if (output) output.textContent = String(error.stack || error.message || error);
+      console.error(error);
+    }
+  });
+}
+
+setupConvertCommandForm();

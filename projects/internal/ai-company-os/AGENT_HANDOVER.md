@@ -459,3 +459,21 @@ Current flow:
     PM intake task
     File upload
     Upload context attached to PM task
+
+## INTERNAL-028 Handover
+
+Convert Command to Project is now available from the dashboard.
+
+New API endpoint:
+
+    POST /api/owner/commands/convert
+
+Dashboard panel:
+
+    Convert Command to Project
+
+The dashboard can now call:
+
+    runners/convert_owner_command_to_project.sh
+
+This reduces terminal dependency for creating client projects from Owner Command Inbox entries.

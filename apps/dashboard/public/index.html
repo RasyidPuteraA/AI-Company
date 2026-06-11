@@ -132,6 +132,40 @@
       </div>
     </section>
 
+
+    <section class="card convert-command-card">
+      <div class="card-header">
+        <h2>Convert Command to Project</h2>
+        <span class="live-status connected">convert</span>
+      </div>
+
+      <form id="convertCommandForm" class="convert-command-form">
+        <input
+          id="convertCommandId"
+          type="number"
+          min="1"
+          placeholder="Owner command id, contoh: 1"
+        />
+
+        <input
+          id="convertProjectKey"
+          type="text"
+          placeholder="project_key, contoh: client-company-profile-demo"
+        />
+
+        <input
+          id="convertProjectTitle"
+          type="text"
+          placeholder="Project title, contoh: Client Company Profile Demo"
+        />
+
+        <button type="submit">Convert to Project</button>
+      </form>
+
+      <div id="convertCommandStatus" class="muted"></div>
+      <pre id="convertCommandOutput" class="command-output"></pre>
+    </section>
+
 </main>
 
   <script src="/app.js"></script>

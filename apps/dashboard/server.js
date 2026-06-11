@@ -308,6 +308,43 @@ function saveProjectUpload(payload) {
   ])[0];
 }
 
+
+function convertOwnerCommandToProject(payload) {
+  const commandId = String(payload.command_id || "").trim();
+  const projectKey = safeProjectKey(payload.project_key);
+  const projectTitle = String(payload.project_title || "").trim();
+
+  if (!/^[0-9]+$/.test(commandId)) {
+    throw new Error("command_id must be numeric");
+  }
+
+  if (!projectTitle) {
+    throw new Error("project_title is required");
+  }
+
+  const rootDir = path.join(__dirname, "..", "..");
+  const runnerPath = path.join(rootDir, "runners", "convert_owner_command_to_project.sh");
+
+  const output = execFileSync(
+    runnerPath,
+    [commandId, projectKey, projectTitle],
+    {
+      cwd: rootDir,
+      encoding: "utf8",
+      timeout: 120000,
+      maxBuffer: 1024 * 1024
+    }
+  );
+
+  return {
+    ok: true,
+    command_id: commandId,
+    project_key: projectKey,
+    project_title: projectTitle,
+    output
+  };
+}
+
 function writeSse(res, eventName, data) {
   res.write(`event: ${eventName}\n`);
   res.write(`data: ${JSON.stringify(data)}\n\n`);
@@ -329,6 +366,13 @@ const server = http.createServer(async (req, res) => {
       const body = await readJson(req);
       const upload = saveProjectUpload(body);
       return json(res, upload, 201);
+    }
+
+
+    if (pathname === "/api/owner/commands/convert" && req.method === "POST") {
+      const body = await readJson(req);
+      const result = convertOwnerCommandToProject(body);
+      return json(res, result, 201);
     }
 
 if (pathname === "/api/owner/commands" && req.method === "GET") {
