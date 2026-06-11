@@ -4,6 +4,7 @@ const path = require("path");
 const { execFileSync } = require("child_process");
 
 const PORT = process.env.PORT || 8787;
+const HOST = process.env.HOST || "127.0.0.1";
 const PUBLIC_DIR = path.join(__dirname, "public");
 
 function runSql(sql) {
@@ -30,8 +31,8 @@ function runSql(sql) {
   return output.trim();
 }
 
-function json(res, data) {
-  res.writeHead(200, { "Content-Type": "application/json" });
+function json(res, data, statusCode = 200) {
+  res.writeHead(statusCode, { "Content-Type": "application/json" });
   res.end(JSON.stringify(data, null, 2));
 }
 
@@ -55,7 +56,8 @@ function serveStatic(res, filePath) {
 
 function parseRows(text, columns) {
   if (!text) return [];
-  return text.split("\n").filter(Boolean).map(line => {
+
+  return text.split("\n").filter(Boolean).map((line) => {
     const values = line.split("|");
     const row = {};
     columns.forEach((col, index) => {
@@ -64,7 +66,6 @@ function parseRows(text, columns) {
     return row;
   });
 }
-
 
 function getLatestEvents() {
   const text = runSql(`
@@ -77,52 +78,40 @@ function getLatestEvents() {
   return parseRows(text, ["id", "event_type", "agent", "state", "topic", "created_at"]);
 }
 
+function getAgentRuntimeStatus() {
+  const text = runSql(`
+    SELECT
+      agent_key,
+      runtime_status,
+      COALESCE(current_task_key, '') AS current_task_key,
+      COALESCE(location, '') AS location,
+      COALESCE(status_note, '') AS status_note,
+      updated_at
+    FROM agent_runtime_status
+    ORDER BY agent_key ASC;
+  `);
+
+  return parseRows(text, [
+    "agent_key",
+    "runtime_status",
+    "current_task_key",
+    "location",
+    "status_note",
+    "updated_at"
+  ]);
+}
+
 function writeSse(res, eventName, data) {
   res.write(`event: ${eventName}\n`);
   res.write(`data: ${JSON.stringify(data)}\n\n`);
 }
 
-
-function getAgentRuntimeStatus() {
-  const sql = `
-SELECT
-  agent_key,
-  runtime_status,
-  COALESCE(current_task_key, '') AS current_task_key,
-  COALESCE(location, '') AS location,
-  COALESCE(status_note, '') AS status_note,
-  updated_at
-FROM agent_runtime_status
-ORDER BY agent_key ASC;
-`;
-
-  const output = runPsql(sql);
-
-  return output
-    .trim()
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => {
-      const parts = line.split("|");
-      return {
-        agent_key: parts[0] || "",
-        runtime_status: parts[1] || "",
-        current_task_key: parts[2] || "",
-        location: parts[3] || "",
-        status_note: parts[4] || "",
-        updated_at: parts[5] || ""
-      };
-    });
-}
-
 const server = http.createServer((req, res) => {
   try {
-    
-  if (req.url === "/api/agents/runtime") {
-    return sendJson(res, getAgentRuntimeStatus());
-  }
+    const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    const pathname = requestUrl.pathname;
 
-if (req.url === "/api/summary") {
+    if (pathname === "/api/summary") {
       const text = runSql(`
         SELECT
           COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%') AS client_tasks,
@@ -134,7 +123,7 @@ if (req.url === "/api/summary") {
       `);
 
       const [client_tasks, internal_tasks, waiting_owner, accepted, needs_attention] =
-        text.split("|").map(v => Number(v || 0));
+        text.split("|").map((value) => Number(value || 0));
 
       return json(res, {
         client_tasks,
@@ -145,7 +134,7 @@ if (req.url === "/api/summary") {
       });
     }
 
-    if (req.url === "/api/tasks") {
+    if (pathname === "/api/tasks") {
       const text = runSql(`
         SELECT task_key, title, status, COALESCE(assigned_agent_key, '')
         FROM tasks
@@ -156,11 +145,15 @@ if (req.url === "/api/summary") {
       return json(res, parseRows(text, ["task_key", "title", "status", "agent"]));
     }
 
-    if (req.url === "/api/events") {
+    if (pathname === "/api/events") {
       return json(res, getLatestEvents());
     }
 
-    if (req.url === "/api/events/live") {
+    if (pathname === "/api/agents/runtime") {
+      return json(res, getAgentRuntimeStatus());
+    }
+
+    if (pathname === "/api/events/live") {
       res.writeHead(200, {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
@@ -175,6 +168,7 @@ if (req.url === "/api/summary") {
         try {
           const events = getLatestEvents();
           const payload = JSON.stringify(events);
+
           if (payload !== lastPayload) {
             lastPayload = payload;
             writeSse(res, "events", events);
@@ -193,18 +187,13 @@ if (req.url === "/api/summary") {
       return;
     }
 
-    const file = req.url === "/"
-      ? path.join(PUBLIC_DIR, "index.html")
-      : path.join(PUBLIC_DIR, req.url);
-
-    serveStatic(res, file);
+    const safePathname = pathname === "/" ? "/index.html" : pathname;
+    const filePath = path.join(PUBLIC_DIR, safePathname);
+    serveStatic(res, filePath);
   } catch (error) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: error.message }, null, 2));
+    json(res, { error: error.message }, 500);
   }
 });
-
-const HOST = process.env.HOST || "127.0.0.1";
 
 server.listen(PORT, HOST, () => {
   console.log(`AI Company Dashboard running on http://${HOST}:${PORT}`);
