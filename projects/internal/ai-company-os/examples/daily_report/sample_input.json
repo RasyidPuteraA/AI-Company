@@ -1,0 +1,42 @@
+{
+  "title": "AI Company OS Daily Report",
+  "date": "2026-06-11",
+  "summary": "Daily snapshot for internal operating visibility.",
+  "client_tasks": [
+    {
+      "title": "Review client onboarding checklist",
+      "owner": "Client Ops",
+      "status": "in progress",
+      "due": "2026-06-12"
+    }
+  ],
+  "internal_tasks": [
+    {
+      "title": "Improve daily report formatting",
+      "owner": "Engineer Agent",
+      "status": "implemented"
+    }
+  ],
+  "recent_events": [
+    {
+      "date": "2026-06-11",
+      "summary": "INTERNAL-002 report generator work started",
+      "impact": "Cleaner daily report structure available for local use"
+    }
+  ],
+  "qa_status": [
+    {
+      "name": "Markdown report generation",
+      "result": "PASS",
+      "notes": "Generated from sample JSON input"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "decision": "Adopt generated daily report format",
+      "owner": "Project Owner",
+      "recommendation": "Use the five-section Markdown format for future daily status notes",
+      "by": "Next reporting cycle"
+    }
+  ]
+}
