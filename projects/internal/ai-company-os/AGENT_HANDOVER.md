@@ -719,3 +719,16 @@ New dashboard panel:
     End-to-End Workflow Actions
 
 This moves the main client workflow from terminal-only runners toward dashboard-controlled execution.
+
+## INTERNAL-039 Handover
+
+Slash Command Palette and Plus Upload implemented.
+
+Dashboard command bar now behaves closer to CLI/Codex:
+
+- typing `/` opens command suggestions
+- clicking a suggestion fills the command
+- plus button opens file upload directly
+- advanced panels are no longer the primary interaction path
+
+This improves the dashboard from admin-panel style toward an AI command center.

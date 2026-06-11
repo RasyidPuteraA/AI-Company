@@ -556,3 +556,199 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+/* Minimal Chat Command Bar UI */
+body {
+  padding-bottom: 110px;
+}
+
+.ai-command-shell {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  z-index: 9999;
+  width: min(920px, calc(100vw - 28px));
+  transform: translateX(-50%);
+}
+
+.ai-command-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.94);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(18px);
+}
+
+.ai-plus-button,
+.ai-send-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ai-plus-button {
+  background: rgba(148, 163, 184, 0.16);
+  color: #e5f0ff;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.ai-send-button {
+  background: #38bdf8;
+  color: #03111f;
+}
+
+.ai-command-input {
+  flex: 1;
+  min-height: 24px;
+  max-height: 110px;
+  resize: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #e5f0ff;
+  font: inherit;
+  padding: 10px 4px;
+}
+
+.ai-command-input::placeholder {
+  color: rgba(226, 232, 240, 0.56);
+}
+
+.ai-plus-menu {
+  display: none;
+  margin: 0 0 8px 8px;
+  padding: 10px;
+  width: min(320px, calc(100vw - 48px));
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.96);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.38);
+}
+
+.ai-plus-menu.open {
+  display: grid;
+  gap: 8px;
+}
+
+.ai-plus-menu button {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(30, 41, 59, 0.92);
+  color: #e5f0ff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ai-command-status {
+  min-height: 18px;
+  margin: 6px 18px 0;
+  color: rgba(226, 232, 240, 0.72);
+  font-size: 12px;
+}
+
+.legacy-tool-hidden {
+  display: none !important;
+}
+
+.command-result pre {
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 720px) {
+  .ai-command-bar {
+    border-radius: 24px;
+  }
+
+  .ai-send-button {
+    padding-inline: 12px;
+  }
+}
+
+.ai-command-output-panel {
+  display: none;
+  margin: 8px 10px 0;
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 16px;
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.96);
+  color: #dbeafe;
+  font-size: 12px;
+  line-height: 1.5;
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.28);
+}
+
+.ai-command-output-panel.open {
+  display: block;
+}
+
+/* INTERNAL-039: Slash Command Palette + Plus Upload */
+.ai-slash-palette {
+  display: none;
+  margin: 0 0 8px 8px;
+  width: min(560px, calc(100vw - 48px));
+  max-height: 320px;
+  overflow: auto;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.98);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.42);
+  padding: 8px;
+}
+
+.ai-slash-palette.open {
+  display: grid;
+  gap: 4px;
+}
+
+.ai-slash-item {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: transparent;
+  color: #dbeafe;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ai-slash-item:hover,
+.ai-slash-item.selected {
+  background: rgba(56, 189, 248, 0.14);
+}
+
+.ai-slash-command {
+  color: #38bdf8;
+  font-weight: 900;
+}
+
+.ai-slash-hint {
+  color: rgba(226, 232, 240, 0.72);
+  font-size: 13px;
+}
+
+.ai-plus-button {
+  min-width: 44px;
+}
+
+@media (max-width: 720px) {
+  .ai-slash-item {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}

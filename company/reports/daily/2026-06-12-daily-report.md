@@ -20,6 +20,8 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-039 - Add Slash Command Palette and Plus Upload** (Owner: engineer_agent; Status: DONE)
+- **INTERNAL-038 - Add Minimal Chat Command Bar UI** (Owner: engineer_agent; Status: IN_PROGRESS)
 - **INTERNAL-037 - Add Dashboard Workflow Action Buttons** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-036 - Add Final Project Completion Runner** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-035 - Add Owner Review Decision Runner** (Owner: engineer_agent; Status: DONE)
@@ -60,6 +62,11 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Slash Command Palette and Plus Upload completed (Impact: Added slash command suggestions and plus-button direct file upload.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-039: Add Slash Command Palette and Plus Upload)
+- 2026-06-11: internal_task_created | pm_agent | Add Slash Command Palette and Plus Upload (Impact: PM Agent created internal task INTERNAL-039: Improve dashboard command bar UX so slash typing shows command suggestions and plus button opens file upload directly.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-038: Add Minimal Chat Command Bar UI)
+- 2026-06-11: internal_task_created | pm_agent | Add Minimal Chat Command Bar UI (Impact: PM Agent created internal task INTERNAL-038: Redesign dashboard interaction around a single ChatGPT-style command bar with plus menu and slash commands for owner commands, uploads, conversion, workflow actions, and owner decisions.)
 - 2026-06-11: engineering_completed | engineer_agent | Dashboard workflow action buttons completed (Impact: Added dashboard workflow action endpoint and UI action panel.)
 - 2026-06-11: project_completed | owner | Project finalized as completed (Impact: Accepted project client-company-profile-demo finalized with final handover.)
 - 2026-06-11: internal_task_created | pm_agent | Add Dashboard Workflow Action Buttons (Impact: PM Agent created internal task INTERNAL-037: Add dashboard API actions and UI buttons for the end-to-end client workflow from PM analysis through final project completion.)
@@ -67,11 +74,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: internal_task_created | pm_agent | Add Dashboard Workflow Action Buttons (Impact: PM Agent created internal task INTERNAL-037: Add dashboard API actions and UI buttons for the end-to-end client workflow from PM analysis through final project completion.)
 - 2026-06-11: engineering_completed | engineer_agent | Final Project Completion Runner completed (Impact: Added final project completion runner for accepted client projects.)
 - 2026-06-11: project_completed | owner | Project finalized as completed (Impact: Accepted project client-company-profile-demo finalized with final handover.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-036: Add Final Project Completion Runner)
-- 2026-06-11: internal_task_created | pm_agent | Add Final Project Completion Runner (Impact: PM Agent created internal task INTERNAL-036: Add a safe runner that finalizes an accepted client project, writes final handover summary, and marks project as completed.)
-- 2026-06-11: engineering_completed | engineer_agent | Owner Review Decision Runner completed (Impact: Added Owner review decision runner for ACCEPT, REVISE, and REJECT.)
-- 2026-06-11: engineering_completed | engineer_agent | Owner Review Decision Runner completed (Impact: Added Owner review decision runner for ACCEPT, REVISE, and REJECT.)
-- 2026-06-11: internal_task_created | pm_agent | Add Owner Review Decision Runner (Impact: PM Agent created internal task INTERNAL-035: Add a safe runner that lets Owner accept, request revision, or reject a client project review task and updates project/task status accordingly.)
 
 ## QA Status
 

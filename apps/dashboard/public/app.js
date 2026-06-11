@@ -778,3 +778,656 @@ function setupWorkflowActionButtons() {
 }
 
 setupWorkflowActionButtons();
+
+/* Minimal Chat Command Bar UI */
+function createMinimalCommandBar() {
+  if (document.getElementById("aiCompanyCommandBar")) return;
+
+  const wrapper = document.createElement("div");
+  wrapper.id = "aiCompanyCommandBar";
+  wrapper.className = "ai-command-shell";
+  wrapper.innerHTML = `
+    <div class="ai-plus-menu" id="aiPlusMenu">
+      <button type="button" data-plus-action="advanced">Toggle Advanced Tools</button>
+      <button type="button" data-plus-action="help">Show Slash Commands</button>
+      <button type="button" data-plus-action="refresh">Refresh Dashboard</button>
+    </div>
+
+    <div class="ai-command-bar">
+      <button type="button" id="aiPlusButton" class="ai-plus-button">+</button>
+      <textarea
+        id="aiCommandInput"
+        class="ai-command-input"
+        rows="1"
+        placeholder="Ask AI Company or type /help..."
+      ></textarea>
+      <button type="button" id="aiSendButton" class="ai-send-button">Send</button>
+    </div>
+
+    <div id="aiCommandStatus" class="ai-command-status"></div>
+    <pre id="aiCommandOutputPanel" class="ai-command-output-panel"></pre>
+  `;
+
+  document.body.appendChild(wrapper);
+}
+
+function getDefaultWorkflowValue(id, fallback = "") {
+  const el = document.getElementById(id);
+  return el && el.value ? el.value.trim() : fallback;
+}
+
+function showCommandStatus(message) {
+  const el = document.getElementById("aiCommandStatus");
+  if (!el) return;
+  el.textContent = message || "";
+}
+
+function appendCommandOutput(title, output) {
+  const status = document.getElementById("aiCommandStatus");
+  const panel = document.getElementById("aiCommandOutputPanel");
+
+  if (status) {
+    status.textContent = title || "";
+  }
+
+  if (!panel) return;
+
+  const text = String(output || "").trim();
+
+  if (!text) {
+    panel.textContent = "";
+    panel.classList.remove("open");
+    return;
+  }
+
+  panel.dataset.kind = "command-output";
+  panel.textContent = text;
+  panel.classList.add("open");
+}
+
+function hideLegacyPanelsByDefault() {
+  const selectors = [
+    ".owner-command-card",
+    ".upload-intake-card",
+    ".convert-command-card",
+    ".attach-uploads-card",
+    ".workflow-action-card"
+  ];
+
+  selectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((el) => {
+      el.classList.add("legacy-tool-panel");
+      el.classList.add("legacy-tool-hidden");
+    });
+  });
+}
+
+function toggleAdvancedTools() {
+  document.querySelectorAll(".legacy-tool-panel").forEach((el) => {
+    el.classList.toggle("legacy-tool-hidden");
+  });
+}
+
+function showSlashHelp() {
+  const panel = document.getElementById("aiCommandOutputPanel");
+
+  if (panel && panel.classList.contains("open") && panel.dataset.kind === "slash-help") {
+    panel.textContent = "";
+    panel.dataset.kind = "";
+    panel.classList.remove("open");
+    showCommandStatus("Slash commands hidden.");
+    return;
+  }
+
+  const help = [
+    "Slash commands",
+    "",
+    "/help",
+    "/new <requirement>",
+    "/pm <project_key> <pm_task_key>",
+    "/tasks <project_key> <pm_task_key>",
+    "/eng <project_key> <engineer_task_key>",
+    "/qa <project_key> <qa_task_key>",
+    "/review <project_key> <qa_task_key>",
+    "/accept <review_task_key> <note>",
+    "/revise <review_task_key> <note>",
+    "/reject <review_task_key> <note>",
+    "/finalize <project_key> <review_task_key>",
+    "/advanced",
+    "",
+    "Normal text without / will be submitted as a new Owner Command."
+  ].join("\n");
+
+  if (panel) {
+    panel.dataset.kind = "slash-help";
+    panel.textContent = help;
+    panel.classList.add("open");
+  }
+
+  showCommandStatus("Slash commands shown.");
+}
+
+async function postJson(url, payload) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || data.ok === false) {
+    throw new Error(data.error || `Request failed: ${url}`);
+  }
+
+  return data;
+}
+
+function parseCommandLine(text) {
+  const trimmed = text.trim();
+  if (!trimmed.startsWith("/")) {
+    return {
+      command: "new",
+      args: [trimmed],
+      raw: trimmed
+    };
+  }
+
+  const parts = trimmed.split(/\s+/);
+  const command = parts[0].slice(1).toLowerCase();
+  const args = parts.slice(1);
+
+  return { command, args, raw: trimmed };
+}
+
+async function runSlashOrOwnerCommand(text) {
+  const parsed = parseCommandLine(text);
+  const command = parsed.command;
+  const args = parsed.args;
+
+  if (!text.trim()) return;
+
+  showCommandStatus("Running...");
+
+  if (command === "help") {
+    showSlashHelp();
+    return;
+  }
+
+  if (command === "advanced") {
+    toggleAdvancedTools();
+    showCommandStatus("Advanced tools toggled.");
+    return;
+  }
+
+  if (command === "new") {
+    const commandText = args.join(" ").trim();
+    if (!commandText) throw new Error("Command text is required.");
+
+    const data = await postJson("/api/owner/commands", {
+      command_text: commandText
+    });
+
+    appendCommandOutput("Owner command submitted", JSON.stringify(data, null, 2));
+    showCommandStatus("Owner command submitted.");
+    await refreshDashboardAfterCommand();
+    return;
+  }
+
+  if (command === "pm") {
+    const projectKey = args[0] || getDefaultWorkflowValue("workflowProjectKey", "client-company-profile-demo");
+    const taskKey = args[1] || getDefaultWorkflowValue("workflowPmTaskKey", "CLIENT-1-001");
+
+    const data = await postJson("/api/workflow/action", {
+      action: "pm_analysis",
+      project_key: projectKey,
+      task_key: taskKey
+    });
+
+    appendCommandOutput("PM analysis completed", data.output);
+    showCommandStatus("PM analysis completed.");
+    await refreshDashboardAfterCommand();
+    return;
+  }
+
+  if (command === "tasks") {
+    const projectKey = args[0] || getDefaultWorkflowValue("workflowProjectKey", "client-company-profile-demo");
+    const taskKey = args[1] || getDefaultWorkflowValue("workflowPmTaskKey", "CLIENT-1-001");
+
+    const data = await postJson("/api/workflow/action", {
+      action: "generate_tasks",
+      project_key: projectKey,
+      task_key: taskKey
+    });
+
+    appendCommandOutput("Engineer/QA tasks generated", data.output);
+    showCommandStatus("Engineer/QA tasks generated.");
+    await refreshDashboardAfterCommand();
+    return;
+  }
+
+  if (command === "eng") {
+    const projectKey = args[0] || getDefaultWorkflowValue("workflowProjectKey", "client-company-profile-demo");
+    const taskKey = args[1] || getDefaultWorkflowValue("workflowEngineerTaskKey", "CLIENT-1-ENG-001");
+
+    const data = await postJson("/api/workflow/action", {
+      action: "engineer_impl",
+      project_key: projectKey,
+      task_key: taskKey
+    });
+
+    appendCommandOutput("Engineer implementation completed", data.output);
+    showCommandStatus("Engineer implementation completed.");
+    await refreshDashboardAfterCommand();
+    return;
+  }
+
+  if (command === "qa") {
+    const projectKey = args[0] || getDefaultWorkflowValue("workflowProjectKey", "client-company-profile-demo");
+    const taskKey = args[1] || getDefaultWorkflowValue("workflowQaTaskKey", "CLIENT-1-QA-001");
+
+    const data = await postJson("/api/workflow/action", {
+      action: "qa_verify",
+      project_key: projectKey,
+      task_key: taskKey
+    });
+
+    appendCommandOutput("QA verification completed", data.output);
+    showCommandStatus("QA verification completed.");
+    await refreshDashboardAfterCommand();
+    return;
+  }
+
+  if (command === "review") {
+    const projectKey = args[0] || getDefaultWorkflowValue("workflowProjectKey", "client-company-profile-demo");
+    const taskKey = args[1] || getDefaultWorkflowValue("workflowQaTaskKey", "CLIENT-1-QA-001");
+
+    const data = await postJson("/api/workflow/action", {
+      action: "submit_review",
+      project_key: projectKey,
+      task_key: taskKey
+    });
+
+    appendCommandOutput("Submitted to Owner review", data.output);
+    showCommandStatus("Submitted to Owner review.");
+    await refreshDashboardAfterCommand();
+    return;
+  }
+
+  if (["accept", "revise", "reject"].includes(command)) {
+    const reviewTaskKey = args[0] || getDefaultWorkflowValue("workflowReviewTaskKey", "CLIENT-1-REVIEW-001");
+    const note = args.slice(1).join(" ") || getDefaultWorkflowValue("workflowNote", "Owner decision from command bar.");
+    const decision = command.toUpperCase();
+
+    const data = await postJson("/api/workflow/action", {
+      action: "owner_decision",
+      review_task_key: reviewTaskKey,
+      decision,
+      note
+    });
+
+    appendCommandOutput(`Owner decision: ${decision}`, data.output);
+    showCommandStatus(`Owner decision ${decision} completed.`);
+    await refreshDashboardAfterCommand();
+    return;
+  }
+
+  if (command === "finalize") {
+    const projectKey = args[0] || getDefaultWorkflowValue("workflowProjectKey", "client-company-profile-demo");
+    const reviewTaskKey = args[1] || getDefaultWorkflowValue("workflowReviewTaskKey", "CLIENT-1-REVIEW-001");
+
+    const data = await postJson("/api/workflow/action", {
+      action: "finalize",
+      project_key: projectKey,
+      review_task_key: reviewTaskKey
+    });
+
+    appendCommandOutput("Project finalized", data.output);
+    showCommandStatus("Project finalized.");
+    await refreshDashboardAfterCommand();
+    return;
+  }
+
+  throw new Error(`Unknown slash command: /${command}. Type /help.`);
+}
+
+async function refreshDashboardAfterCommand() {
+  try {
+    await main();
+    if (typeof loadAgentRuntimeStatus === "function") await loadAgentRuntimeStatus();
+    if (typeof loadPixelOfficeRuntimeStatus === "function") await loadPixelOfficeRuntimeStatus();
+    if (typeof loadOwnerCommands === "function") await loadOwnerCommands();
+    if (typeof loadUploads === "function") await loadUploads();
+  } catch (error) {
+    console.error("Dashboard refresh failed", error);
+  }
+}
+
+function setupMinimalCommandBar() {
+  createMinimalCommandBar();
+  hideLegacyPanelsByDefault();
+
+  const plusButton = document.getElementById("aiPlusButton");
+  const plusMenu = document.getElementById("aiPlusMenu");
+  const sendButton = document.getElementById("aiSendButton");
+  const input = document.getElementById("aiCommandInput");
+
+  if (plusButton && plusMenu) {
+    plusButton.addEventListener("click", () => {
+      plusMenu.classList.toggle("open");
+    });
+  }
+
+  document.querySelectorAll("[data-plus-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const action = button.getAttribute("data-plus-action");
+
+      if (action === "advanced") {
+        toggleAdvancedTools();
+        showCommandStatus("Advanced tools toggled.");
+      }
+
+      if (action === "help") {
+        showSlashHelp();
+      }
+
+      if (action === "refresh") {
+        await refreshDashboardAfterCommand();
+        showCommandStatus("Dashboard refreshed.");
+      }
+
+      if (plusMenu) plusMenu.classList.remove("open");
+    });
+  });
+
+  async function submit() {
+    if (!input) return;
+    const value = input.value.trim();
+    if (!value) return;
+
+    input.value = "";
+
+    try {
+      await runSlashOrOwnerCommand(value);
+    } catch (error) {
+      showCommandStatus(error.message);
+      appendCommandOutput("Command failed", error.stack || String(error));
+      console.error(error);
+    }
+  }
+
+  if (sendButton) {
+    sendButton.addEventListener("click", submit);
+  }
+
+  if (input) {
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        submit();
+      }
+    });
+  }
+}
+
+setupMinimalCommandBar();
+
+/* INTERNAL-039: Slash Command Palette + Plus Upload */
+const aiSlashCommands = [
+  {
+    command: "/new",
+    hint: "Submit new owner requirement",
+    template: "/new "
+  },
+  {
+    command: "/pm",
+    hint: "Run PM analysis",
+    template: "/pm client-company-profile-demo CLIENT-1-001"
+  },
+  {
+    command: "/tasks",
+    hint: "Generate Engineer and QA tasks",
+    template: "/tasks client-company-profile-demo CLIENT-1-001"
+  },
+  {
+    command: "/eng",
+    hint: "Run engineer implementation",
+    template: "/eng client-company-profile-demo CLIENT-1-ENG-001"
+  },
+  {
+    command: "/qa",
+    hint: "Run QA verification",
+    template: "/qa client-company-profile-demo CLIENT-1-QA-001"
+  },
+  {
+    command: "/review",
+    hint: "Submit QA-passed project to owner review",
+    template: "/review client-company-profile-demo CLIENT-1-QA-001"
+  },
+  {
+    command: "/accept",
+    hint: "Accept owner review",
+    template: "/accept CLIENT-1-REVIEW-001 Approved."
+  },
+  {
+    command: "/revise",
+    hint: "Request revision",
+    template: "/revise CLIENT-1-REVIEW-001 "
+  },
+  {
+    command: "/reject",
+    hint: "Reject project",
+    template: "/reject CLIENT-1-REVIEW-001 "
+  },
+  {
+    command: "/finalize",
+    hint: "Finalize accepted project",
+    template: "/finalize client-company-profile-demo CLIENT-1-REVIEW-001"
+  },
+  {
+    command: "/advanced",
+    hint: "Toggle advanced tools",
+    template: "/advanced"
+  }
+];
+
+function ensureSlashPalette() {
+  let palette = document.getElementById("aiSlashPalette");
+  if (palette) return palette;
+
+  const shell = document.getElementById("aiCompanyCommandBar");
+  if (!shell) return null;
+
+  palette = document.createElement("div");
+  palette.id = "aiSlashPalette";
+  palette.className = "ai-slash-palette";
+  shell.insertBefore(palette, shell.firstChild);
+
+  return palette;
+}
+
+function renderSlashPalette(query = "") {
+  const palette = ensureSlashPalette();
+  if (!palette) return;
+
+  const normalized = query.toLowerCase().trim();
+
+  const matches = aiSlashCommands.filter((item) => {
+    if (!normalized || normalized === "/") return true;
+    return item.command.toLowerCase().includes(normalized);
+  });
+
+  if (matches.length === 0) {
+    palette.classList.remove("open");
+    palette.innerHTML = "";
+    return;
+  }
+
+  palette.innerHTML = matches.map((item, index) => `
+    <button type="button" class="ai-slash-item ${index === 0 ? "selected" : ""}" data-template="${item.template.replace(/"/g, "&quot;")}">
+      <span class="ai-slash-command">${item.command}</span>
+      <span class="ai-slash-hint">${item.hint}</span>
+    </button>
+  `).join("");
+
+  palette.classList.add("open");
+
+  palette.querySelectorAll(".ai-slash-item").forEach((button) => {
+    button.addEventListener("click", () => {
+      const input = document.getElementById("aiCommandInput");
+      if (!input) return;
+
+      input.value = button.getAttribute("data-template") || "";
+      input.focus();
+
+      const length = input.value.length;
+      input.setSelectionRange(length, length);
+
+      palette.classList.remove("open");
+    });
+  });
+}
+
+function hideSlashPalette() {
+  const palette = document.getElementById("aiSlashPalette");
+  if (!palette) return;
+  palette.classList.remove("open");
+}
+
+function setupSlashPaletteV2() {
+  const input = document.getElementById("aiCommandInput");
+  if (!input) return;
+
+  input.addEventListener("input", () => {
+    const value = input.value.trimStart();
+
+    if (value.startsWith("/")) {
+      const firstToken = value.split(/\s+/)[0];
+      renderSlashPalette(firstToken);
+    } else {
+      hideSlashPalette();
+    }
+  });
+
+  input.addEventListener("keydown", (event) => {
+    const palette = document.getElementById("aiSlashPalette");
+    if (!palette || !palette.classList.contains("open")) return;
+
+    if (event.key === "Escape") {
+      hideSlashPalette();
+      return;
+    }
+
+    if (event.key === "Tab") {
+      const selected = palette.querySelector(".ai-slash-item.selected") || palette.querySelector(".ai-slash-item");
+      if (!selected) return;
+
+      event.preventDefault();
+
+      input.value = selected.getAttribute("data-template") || "";
+      input.focus();
+
+      const length = input.value.length;
+      input.setSelectionRange(length, length);
+      hideSlashPalette();
+    }
+
+    if (event.key === "Enter" && !event.shiftKey) {
+      hideSlashPalette();
+    }
+  });
+}
+
+function ensureHiddenUploadInput() {
+  let input = document.getElementById("aiCommandUploadInput");
+  if (input) return input;
+
+  input = document.createElement("input");
+  input.id = "aiCommandUploadInput";
+  input.type = "file";
+  input.style.display = "none";
+  document.body.appendChild(input);
+
+  input.addEventListener("change", async () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    const projectKey =
+      getDefaultWorkflowValue("workflowProjectKey", "") ||
+      getDefaultWorkflowValue("uploadProjectKey", "") ||
+      "client-company-profile-demo";
+
+    showCommandStatus(`Uploading ${file.name}...`);
+
+    try {
+      const contentBase64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          const result = String(reader.result || "");
+          const base64 = result.includes(",") ? result.split(",")[1] : result;
+          resolve(base64);
+        };
+
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const data = await postJson("/api/uploads", {
+        project_key: projectKey,
+        filename: file.name,
+        mime_type: file.type || "application/octet-stream",
+        content_base64: contentBase64
+      });
+
+      appendCommandOutput("File uploaded", JSON.stringify(data, null, 2));
+      showCommandStatus(`Uploaded ${file.name} to ${projectKey}.`);
+
+      await refreshDashboardAfterCommand();
+    } catch (error) {
+      appendCommandOutput("Upload failed", error.stack || String(error));
+      showCommandStatus(`Upload failed: ${error.message}`);
+    } finally {
+      input.value = "";
+    }
+  });
+
+  return input;
+}
+
+function setupPlusUploadV2() {
+  const oldPlus = document.getElementById("aiPlusButton");
+  if (!oldPlus) return;
+
+  const plus = oldPlus.cloneNode(true);
+  oldPlus.replaceWith(plus);
+
+  plus.title = "Upload file";
+  plus.setAttribute("aria-label", "Upload file");
+
+  plus.addEventListener("click", () => {
+    const uploadInput = ensureHiddenUploadInput();
+    uploadInput.click();
+  });
+
+  const oldPlusMenu = document.getElementById("aiPlusMenu");
+  if (oldPlusMenu) {
+    oldPlusMenu.remove();
+  }
+}
+
+function upgradeCommandBarToV2() {
+  setupPlusUploadV2();
+  setupSlashPaletteV2();
+
+  const input = document.getElementById("aiCommandInput");
+  if (input) {
+    input.placeholder = "Ask AI Company or type / for commands...";
+  }
+
+  showCommandStatus("Type / for commands. Press + to upload files.");
+}
+
+upgradeCommandBarToV2();
