@@ -477,3 +477,21 @@ The dashboard can now call:
     runners/convert_owner_command_to_project.sh
 
 This reduces terminal dependency for creating client projects from Owner Command Inbox entries.
+
+## INTERNAL-029 Handover
+
+Attach Uploads to PM Context is now available from the dashboard.
+
+New API endpoint:
+
+    POST /api/uploads/attach-context
+
+Dashboard panel:
+
+    Attach Uploads to PM Context
+
+The dashboard can now call:
+
+    runners/attach_uploads_to_pm_context.sh
+
+The runner now replaces the existing task attachment section instead of duplicating it.

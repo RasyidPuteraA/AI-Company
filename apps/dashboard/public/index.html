@@ -166,6 +166,35 @@
       <pre id="convertCommandOutput" class="command-output"></pre>
     </section>
 
+
+    <section class="card attach-uploads-card">
+      <div class="card-header">
+        <h2>Attach Uploads to PM Context</h2>
+        <span class="live-status connected">context</span>
+      </div>
+
+      <form id="attachUploadsForm" class="attach-uploads-form">
+        <input
+          id="attachProjectKey"
+          type="text"
+          value="client-company-profile-demo"
+          placeholder="project_key, contoh: client-company-profile-demo"
+        />
+
+        <input
+          id="attachTaskKey"
+          type="text"
+          value="CLIENT-1-001"
+          placeholder="task_key, contoh: CLIENT-1-001"
+        />
+
+        <button type="submit">Attach Uploads</button>
+      </form>
+
+      <div id="attachUploadsStatus" class="muted"></div>
+      <pre id="attachUploadsOutput" class="command-output"></pre>
+    </section>
+
 </main>
 
   <script src="/app.js"></script>

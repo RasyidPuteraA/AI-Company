@@ -345,6 +345,37 @@ function convertOwnerCommandToProject(payload) {
   };
 }
 
+
+function attachUploadsToPmContext(payload) {
+  const projectKey = safeProjectKey(payload.project_key);
+  const taskKey = String(payload.task_key || "").trim();
+
+  if (!/^[A-Z0-9-]+$/.test(taskKey)) {
+    throw new Error("task_key must use uppercase letters, numbers, and dashes only");
+  }
+
+  const rootDir = path.join(__dirname, "..", "..");
+  const runnerPath = path.join(rootDir, "runners", "attach_uploads_to_pm_context.sh");
+
+  const output = execFileSync(
+    runnerPath,
+    [projectKey, taskKey],
+    {
+      cwd: rootDir,
+      encoding: "utf8",
+      timeout: 120000,
+      maxBuffer: 1024 * 1024
+    }
+  );
+
+  return {
+    ok: true,
+    project_key: projectKey,
+    task_key: taskKey,
+    output
+  };
+}
+
 function writeSse(res, eventName, data) {
   res.write(`event: ${eventName}\n`);
   res.write(`data: ${JSON.stringify(data)}\n\n`);
@@ -357,7 +388,14 @@ const server = http.createServer(async (req, res) => {
 
     
     
-    if (pathname === "/api/uploads" && req.method === "GET") {
+    
+    if (pathname === "/api/uploads/attach-context" && req.method === "POST") {
+      const body = await readJson(req);
+      const result = attachUploadsToPmContext(body);
+      return json(res, result, 201);
+    }
+
+if (pathname === "/api/uploads" && req.method === "GET") {
       const projectKey = requestUrl.searchParams.get("project_key") || "";
       return json(res, getProjectUploads(projectKey));
     }
@@ -380,7 +418,14 @@ if (pathname === "/api/owner/commands" && req.method === "GET") {
     }
 
     
-    if (pathname === "/api/uploads" && req.method === "GET") {
+    
+    if (pathname === "/api/uploads/attach-context" && req.method === "POST") {
+      const body = await readJson(req);
+      const result = attachUploadsToPmContext(body);
+      return json(res, result, 201);
+    }
+
+if (pathname === "/api/uploads" && req.method === "GET") {
       const projectKey = requestUrl.searchParams.get("project_key") || "";
       return json(res, getProjectUploads(projectKey));
     }

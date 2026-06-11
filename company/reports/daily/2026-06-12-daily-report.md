@@ -17,6 +17,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-029 - Add Attach Uploads Button in Dashboard** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-028 - Add Convert Command Button in Dashboard** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-027 - Attach Uploads to PM Intake Context** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-026 - Add File Upload Intake v0** (Owner: engineer_agent; Status: DONE)
@@ -48,6 +49,11 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Dashboard upload attach context completed (Impact: Added Attach Uploads to PM Context dashboard UI and API.)
+- 2026-06-11: uploads_attached_to_pm_context | pm_agent | Project uploads attached to PM context (Impact: Uploaded project files were attached to PM intake context for CLIENT-1-001.)
+- 2026-06-11: uploads_attached_to_pm_context | pm_agent | Project uploads attached to PM context (Impact: Uploaded project files were attached to PM intake context for CLIENT-1-001.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-029: Add Attach Uploads Button in Dashboard)
+- 2026-06-11: internal_task_created | pm_agent | Add Attach Uploads Button in Dashboard (Impact: PM Agent created internal task INTERNAL-029: Add dashboard UI and backend API to attach uploaded project files to PM intake task context without using terminal commands.)
 - 2026-06-11: engineering_completed | engineer_agent | Dashboard command conversion completed (Impact: Added Convert Command to Project dashboard UI and API.)
 - 2026-06-11: owner_command_converted | pm_agent | Owner command converted to client project (Impact: Owner command 2 converted to project client-automation-consulting-demo with initial task CLIENT-2-001.)
 - 2026-06-11: task_created | pm_agent | PM intake: Client Automation Consulting Demo (Impact: Task created: Owner command #2
@@ -65,11 +71,6 @@ PM agent should analyze this owner/client requirement and turn it into an implem
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-028: Add Convert Command Button in Dashboard)
 - 2026-06-11: internal_task_created | pm_agent | Add Convert Command Button in Dashboard (Impact: PM Agent created internal task INTERNAL-028: Add dashboard UI and backend API to convert Owner Command Inbox entries into client projects without using terminal commands.)
 - 2026-06-11: engineering_completed | engineer_agent | Upload context attachment completed (Impact: Added runner to attach project uploads to PM intake context.)
-- 2026-06-11: uploads_attached_to_pm_context | pm_agent | Project uploads attached to PM context (Impact: Uploaded project files were attached to PM intake context for CLIENT-1-001.)
-- 2026-06-11: internal_task_created | pm_agent | Attach Uploads to PM Intake Context (Impact: PM Agent created internal task INTERNAL-027: Add a safe runner to attach uploaded project files to PM intake task context so agents can see requirement files and client assets linked to a project.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-027: Attach Uploads to PM Intake Context)
-- 2026-06-11: internal_task_created | pm_agent | Attach Uploads to PM Intake Context (Impact: PM Agent created internal task INTERNAL-027: Add a safe runner to attach uploaded project files to PM intake task context so agents can see requirement files and client assets linked to a project.)
-- 2026-06-11: engineering_completed | engineer_agent | File Upload Intake v0 completed (Impact: Added project file upload API, dashboard upload form, and project upload metadata.)
 
 ## QA Status
 

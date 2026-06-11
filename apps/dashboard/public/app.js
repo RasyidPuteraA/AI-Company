@@ -551,3 +551,109 @@ function setupConvertCommandForm() {
 }
 
 setupConvertCommandForm();
+
+function setupAttachUploadsForm() {
+  const form = document.getElementById("attachUploadsForm");
+  const projectKeyInput = document.getElementById("attachProjectKey");
+  const taskKeyInput = document.getElementById("attachTaskKey");
+  const status = document.getElementById("attachUploadsStatus");
+  const output = document.getElementById("attachUploadsOutput");
+
+  if (!form || !projectKeyInput || !taskKeyInput) return;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const projectKey = projectKeyInput.value.trim();
+    const taskKey = taskKeyInput.value.trim();
+
+    if (!projectKey || !taskKey) {
+      if (status) status.textContent = "project key and task key are required.";
+      return;
+    }
+
+    if (status) status.textContent = "Attaching uploads to PM context...";
+    if (output) output.textContent = "";
+
+    try {
+      const response = await fetch("/api/uploads/attach-context", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          project_key: projectKey,
+          task_key: taskKey
+        })
+      });
+
+      const body = await response.json();
+
+      if (!response.ok) {
+        throw new Error(body.error || `Attach failed: ${response.status}`);
+      }
+
+      if (status) status.textContent = "Uploads attached to PM context.";
+      if (output) output.textContent = body.output || JSON.stringify(body, null, 2);
+    } catch (error) {
+      if (status) status.textContent = `Attach failed: ${error.message}`;
+      if (output) output.textContent = String(error.stack || error.message || error);
+      console.error(error);
+    }
+  });
+}
+
+setupAttachUploadsForm();
+
+function setupAttachUploadsForm() {
+  const form = document.getElementById("attachUploadsForm");
+  const projectKeyInput = document.getElementById("attachProjectKey");
+  const taskKeyInput = document.getElementById("attachTaskKey");
+  const status = document.getElementById("attachUploadsStatus");
+  const output = document.getElementById("attachUploadsOutput");
+
+  if (!form || !projectKeyInput || !taskKeyInput) return;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const projectKey = projectKeyInput.value.trim();
+    const taskKey = taskKeyInput.value.trim();
+
+    if (!projectKey || !taskKey) {
+      if (status) status.textContent = "project key and task key are required.";
+      return;
+    }
+
+    if (status) status.textContent = "Attaching uploads to PM context...";
+    if (output) output.textContent = "";
+
+    try {
+      const response = await fetch("/api/uploads/attach-context", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          project_key: projectKey,
+          task_key: taskKey
+        })
+      });
+
+      const body = await response.json();
+
+      if (!response.ok) {
+        throw new Error(body.error || `Attach failed: ${response.status}`);
+      }
+
+      if (status) status.textContent = "Uploads attached to PM context.";
+      if (output) output.textContent = body.output || JSON.stringify(body, null, 2);
+    } catch (error) {
+      if (status) status.textContent = `Attach failed: ${error.message}`;
+      if (output) output.textContent = String(error.stack || error.message || error);
+      console.error(error);
+    }
+  });
+}
+
+setupAttachUploadsForm();

@@ -100,7 +100,21 @@ ATTACHMENT_BLOCK="$(mktemp)"
   echo "- If a file cannot be read directly, mention it in the handover and ask Owner for clarification."
 } > "$ATTACHMENT_BLOCK"
 
-cat "$ATTACHMENT_BLOCK" >> "$TASK_FILE"
+python3 - "$TASK_FILE" "$ATTACHMENT_BLOCK" << 'PY2'
+from pathlib import Path
+import sys
+
+task_file = Path(sys.argv[1])
+block_file = Path(sys.argv[2])
+
+marker = "\n## Project Upload Attachments\n"
+text = task_file.read_text()
+block = block_file.read_text()
+
+if marker in text:
+    text = text.split(marker)[0].rstrip() + "\n"
+task_file.write_text(text + block)
+PY2
 
 {
   echo
