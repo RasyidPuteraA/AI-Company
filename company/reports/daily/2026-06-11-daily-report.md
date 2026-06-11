@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-024 - Add Owner Command Inbox v0** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-023 - Connect Pixel Office to Runtime Status** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-022 - Fix Dashboard Runtime Status API Route** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-021 - Show Agent Runtime Status on Dashboard** (Owner: engineer_agent; Status: DONE)
@@ -41,6 +42,11 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Owner Command Inbox v0 completed (Impact: Added dashboard chatbox and backend owner command inbox.)
+- 2026-06-11: owner_command_created | pm_agent | Owner command submitted (Impact: Test command dari Owner Command Inbox v0. Buat project client sample dengan requirement website company profile.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-024: Add Owner Command Inbox v0)
+- 2026-06-11: internal_task_created | pm_agent | Add Owner Command Inbox v0 (Impact: PM Agent created internal task INTERNAL-024: Add a local web dashboard chatbox and backend command inbox so the Owner can submit project requirements and instructions from the website.)
+- 2026-06-11: internal_task_created | pm_agent | Add Owner Command Inbox v0 (Impact: PM Agent created internal task INTERNAL-023: Add a local web dashboard chatbox and backend command inbox so the Owner can submit project requirements and instructions from the website.)
 - 2026-06-11: engineering_completed | engineer_agent | Pixel Office connected to runtime status (Impact: Connected pixel office visualization to /api/agents/runtime.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-023: Connect Pixel Office to Runtime Status)
 - 2026-06-11: internal_task_created | pm_agent | Connect Pixel Office to Runtime Status (Impact: PM Agent created internal task INTERNAL-023: Connect pixel office visualization to agent runtime status API so rooms and sprites reflect current agent states instead of only latest event history.)
@@ -48,11 +54,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-022: Fix Dashboard Runtime Status API Route)
 - 2026-06-11: internal_task_created | pm_agent | Fix Dashboard Runtime Status API Route (Impact: PM Agent created internal task INTERNAL-022: Fix dashboard server route for /api/agents/runtime because the previous implementation added the frontend panel but the API endpoint still returns Not found.)
 - 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status dashboard panel completed (Impact: Added API and dashboard panel for agent runtime status.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-021: Show Agent Runtime Status on Dashboard)
-- 2026-06-11: internal_task_created | pm_agent | Show Agent Runtime Status on Dashboard (Impact: PM Agent created internal task INTERNAL-021: Add agent runtime status API and dashboard panel so the web dashboard can display each agent current runtime status.)
-- 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status Runner SQL fixed (Impact: Fixed SQL quoting in runtime status update and display runners.)
-- 2026-06-11: internal_task_created | pm_agent | Fix Agent Runtime Status Runner SQL (Impact: PM Agent created internal task INTERNAL-020: Fix SQL quoting in agent runtime status runners so status update and per-agent display work correctly.)
-- 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status Runner SQL fixed (Impact: Fixed SQL quoting in runtime status update and display runners.)
 
 ## QA Status
 

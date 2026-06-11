@@ -101,17 +101,110 @@ function getAgentRuntimeStatus() {
   ]);
 }
 
+
+function sqlText(value) {
+  return Buffer.from(String(value || ""), "utf8").toString("base64");
+}
+
+function sqlFromBase64(base64Value) {
+  return `convert_from(decode('${base64Value}', 'base64'), 'UTF8')`;
+}
+
+function readRequestBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+      if (body.length > 1024 * 1024) {
+        reject(new Error("Request body too large"));
+      }
+    });
+    req.on("end", () => resolve(body));
+    req.on("error", reject);
+  });
+}
+
+async function readJson(req) {
+  const body = await readRequestBody(req);
+  if (!body.trim()) return {};
+  return JSON.parse(body);
+}
+
+function getOwnerCommands() {
+  const text = runSql(`
+    SELECT id, source, status, command_text, created_at
+    FROM owner_commands
+    ORDER BY id DESC
+    LIMIT 20;
+  `);
+
+  return parseRows(text, ["id", "source", "status", "command_text", "created_at"]);
+}
+
+function createOwnerCommand(commandText, source = "dashboard") {
+  const commandTextSql = sqlFromBase64(sqlText(commandText));
+  const sourceSql = sqlFromBase64(sqlText(source));
+
+  const inserted = runSql(`
+    INSERT INTO owner_commands (source, command_text, status)
+    VALUES (${sourceSql}, ${commandTextSql}, 'NEW')
+    RETURNING id, source, status, command_text, created_at;
+  `);
+
+  runSql(`
+    INSERT INTO events (
+      project_id,
+      task_id,
+      agent_key,
+      event_type,
+      state,
+      location,
+      topic,
+      summary
+    )
+    VALUES (
+      (SELECT id FROM projects WHERE project_key = 'internal-ai-company-os' LIMIT 1),
+      NULL,
+      'pm_agent',
+      'owner_command_created',
+      'NEW',
+      'owner_dashboard',
+      'Owner command submitted',
+      ${commandTextSql}
+    );
+  `);
+
+  return parseRows(inserted, ["id", "source", "status", "command_text", "created_at"])[0];
+}
+
 function writeSse(res, eventName, data) {
   res.write(`event: ${eventName}\n`);
   res.write(`data: ${JSON.stringify(data)}\n\n`);
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   try {
     const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
     const pathname = requestUrl.pathname;
 
-    if (pathname === "/api/summary") {
+    
+    if (pathname === "/api/owner/commands" && req.method === "GET") {
+      return json(res, getOwnerCommands());
+    }
+
+    if (pathname === "/api/owner/commands" && req.method === "POST") {
+      const body = await readJson(req);
+      const commandText = String(body.command_text || "").trim();
+
+      if (!commandText) {
+        return json(res, { error: "command_text is required" }, 400);
+      }
+
+      const command = createOwnerCommand(commandText, "dashboard");
+      return json(res, command, 201);
+    }
+
+if (pathname === "/api/summary") {
       const text = runSql(`
         SELECT
           COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%') AS client_tasks,

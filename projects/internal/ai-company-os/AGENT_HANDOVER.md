@@ -370,3 +370,20 @@ The dashboard polls:
 Pixel rooms and sprites now respond to current runtime status, including working, claimed, queued, safety_blocked, done, and idle states.
 
 This makes the pixel office more accurate than event-history-only visualization.
+
+## INTERNAL-024 Handover
+
+Owner Command Inbox v0 implemented.
+
+New table:
+
+    owner_commands
+
+New API endpoints:
+
+    GET /api/owner/commands
+    POST /api/owner/commands
+
+Dashboard now has a chatbox-style input where the Owner can submit project requirements and instructions.
+
+This is the first step toward creating client projects from the local web interface.

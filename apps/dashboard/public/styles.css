@@ -340,3 +340,64 @@ h1 {
   color: #cbd5e1;
   font-size: 12px;
 }
+
+/* Owner Command Inbox */
+.owner-command-form {
+  display: grid;
+  gap: 10px;
+}
+
+.owner-command-form textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.82);
+  color: #e2e8f0;
+  font: inherit;
+  outline: none;
+}
+
+.owner-command-form textarea:focus {
+  border-color: rgba(56, 189, 248, 0.75);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+}
+
+.owner-command-form button {
+  width: fit-content;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: #38bdf8;
+  color: #020617;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.owner-command-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.owner-command-item {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.owner-command-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.owner-command-text {
+  white-space: pre-wrap;
+  color: #e2e8f0;
+  line-height: 1.5;
+}

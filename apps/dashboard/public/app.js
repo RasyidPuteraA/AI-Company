@@ -305,3 +305,76 @@ async function loadPixelOfficeRuntimeStatus() {
 
 loadPixelOfficeRuntimeStatus();
 setInterval(loadPixelOfficeRuntimeStatus, 5000);
+
+async function loadOwnerCommands() {
+  const container = document.getElementById("ownerCommandList");
+  if (!container) return;
+
+  try {
+    const response = await fetch("/api/owner/commands");
+    const commands = await response.json();
+
+    if (!Array.isArray(commands) || commands.length === 0) {
+      container.innerHTML = `<div class="muted">No owner commands yet.</div>`;
+      return;
+    }
+
+    container.innerHTML = commands.map((command) => `
+      <div class="owner-command-item">
+        <div class="owner-command-meta">
+          <span>#${command.id}</span>
+          <span>${command.status}</span>
+          <span>${command.created_at}</span>
+        </div>
+        <div class="owner-command-text">${command.command_text}</div>
+      </div>
+    `).join("");
+  } catch (error) {
+    container.innerHTML = `<div class="muted">Failed to load owner commands.</div>`;
+    console.error(error);
+  }
+}
+
+function setupOwnerCommandForm() {
+  const form = document.getElementById("ownerCommandForm");
+  const input = document.getElementById("ownerCommandInput");
+  const status = document.getElementById("ownerCommandStatus");
+
+  if (!form || !input) return;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const commandText = input.value.trim();
+    if (!commandText) return;
+
+    if (status) status.textContent = "Submitting command...";
+
+    try {
+      const response = await fetch("/api/owner/commands", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          command_text: commandText
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Submit failed: ${response.status}`);
+      }
+
+      input.value = "";
+      if (status) status.textContent = "Command submitted.";
+      await loadOwnerCommands();
+    } catch (error) {
+      if (status) status.textContent = "Failed to submit command.";
+      console.error(error);
+    }
+  });
+}
+
+setupOwnerCommandForm();
+loadOwnerCommands();
+setInterval(loadOwnerCommands, 5000);

@@ -86,6 +86,28 @@
       </div>
     </section>
 
+
+    <section class="card owner-command-card">
+      <div class="card-header">
+        <h2>Owner Command Inbox</h2>
+        <span class="live-status connected">input</span>
+      </div>
+
+      <form id="ownerCommandForm" class="owner-command-form">
+        <textarea
+          id="ownerCommandInput"
+          placeholder="Tulis requirement client atau instruksi owner di sini..."
+          rows="6"
+        ></textarea>
+        <button type="submit">Submit Command</button>
+      </form>
+
+      <div id="ownerCommandStatus" class="muted"></div>
+      <div id="ownerCommandList" class="owner-command-list">
+        <div class="muted">Loading owner commands...</div>
+      </div>
+    </section>
+
 </main>
 
   <script src="/app.js"></script>
