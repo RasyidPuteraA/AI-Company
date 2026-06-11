@@ -234,3 +234,9 @@ Worker loop now has safety controls:
 - after-hours execution requires explicit manual override
 
 No autonomous 24/7 worker service was enabled.
+
+## INTERNAL-016 Handover
+
+Empty task claim handling fixed.
+
+`claim_next_task.sh` now treats PostgreSQL `UPDATE 0` as no claimable task and no longer emits fake `task_claimed` events for empty queues.

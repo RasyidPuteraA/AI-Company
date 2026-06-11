@@ -37,7 +37,9 @@ RETURNING task_key, title;
 "
 )"
 
-CLAIM_OUTPUT="$(echo "$CLAIM_OUTPUT" | head -n 1)"
+CLAIM_OUTPUT="$(
+  echo "$CLAIM_OUTPUT"     | grep '|'     | grep -v '^UPDATE '     | head -n 1     || true
+)"
 
 if [ -z "$CLAIM_OUTPUT" ]; then
   echo "No claimable task for agent: $AGENT_KEY"
@@ -46,6 +48,11 @@ fi
 
 TASK_KEY="$(echo "$CLAIM_OUTPUT" | cut -d '|' -f 1)"
 TASK_TITLE="$(echo "$CLAIM_OUTPUT" | cut -d '|' -f 2-)"
+
+if [ -z "$TASK_KEY" ] || [[ "$TASK_KEY" == UPDATE* ]]; then
+  echo "No claimable task for agent: $AGENT_KEY"
+  exit 0
+fi
 
 PROJECT_KEY="$(
   docker exec ai_company_postgres \

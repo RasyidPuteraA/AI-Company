@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-016 - Fix Empty Task Claim Handling** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-015 - Add Budget and Fatigue Guard** (Owner: budget_manager; Status: DONE)
 - **INTERNAL-014 - Add Safe Agent Worker Loop** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-013 - Add Parallel Agent Queue Foundation** (Owner: engineer_agent; Status: DONE)
@@ -33,6 +34,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Empty claim handling fixed (Impact: Fixed claim_next_task.sh handling for no claimable task.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-016: Fix Empty Task Claim Handling)
+- 2026-06-11: internal_task_created | pm_agent | Fix Empty Task Claim Handling (Impact: PM Agent created internal task INTERNAL-016: Fix claim_next_task.sh so PostgreSQL UPDATE 0 output is treated as no claimable task instead of a fake task.)
 - 2026-06-11: engineering_completed | engineer_agent | Agent Worker Safety Guard completed (Impact: Implemented safety guard for agent worker loop.)
 - 2026-06-11: internal_task_created | pm_agent | Add Agent Worker Safety Guard (Impact: PM Agent created internal task INTERNAL-015: Add safety guard to agent worker loop so dry-run is always allowed, but once/loop modes respect work hours, emergency stop, safe iteration bounds, and interval limits.)
 - 2026-06-11: internal_task_created | pm_agent | Add Budget and Fatigue Guard (Impact: PM Agent created internal task INTERNAL-015: Add budget and fatigue guard checks so agent workers must verify daily limits before claiming tasks, preserving owner reserve and preventing uncontrolled autonomous work.)
@@ -42,9 +46,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: engineering_completed | engineer_agent | Parallel Agent Queue Foundation completed (Impact: Implemented queue listing, safe task claiming, and one-shot agent worker.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-013: Add Parallel Agent Queue Foundation)
 - 2026-06-11: internal_task_created | pm_agent | Add Parallel Agent Queue Foundation (Impact: PM Agent created internal task INTERNAL-013: Add safe queue and claim runners so agents can list and claim assigned work independently as a foundation for future simultaneous multi-agent workers.)
-- 2026-06-11: engineering_completed | engineer_agent | Pixel Office Visualization v0 completed (Impact: Implemented first realtime pixel office visual layer.)
-- 2026-06-11: owner_accepted | pm_agent | Pixel office owner test (Impact: Testing owner room activity.)
-- 2026-06-11: qa_completed | qa_agent | Pixel office QA test (Impact: Testing QA sprite movement.)
 
 ## QA Status
 
