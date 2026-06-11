@@ -1,19 +1,19 @@
-# QA Report - TASK-001
+# QA Report
 
-Project: company-profile-demo
-Task: TASK-001
-QA Agent: manual initial QA
+Project: projects/sandbox/company-profile-demo
+QA Agent: automated QA runner
+Time: Thu Jun 11 04:03:02 PM WIB 2026
 
 Checks:
-- [x] Source files created
-- [x] package.json exists
-- [x] Build command exists
-- [x] Build passes
-- [x] AGENT_HANDOVER.md exists
-- [x] No files modified outside project folder
+- package/static files checked
+- build/test command executed when available
+- AGENT_HANDOVER.md presence checked: PASS
 
 Result:
 PASS
 
 Notes:
-npm run build and npm test passed. Static website files created. No production deployment performed.
+npm test passed.
+
+Runner log:
+/opt/ai-company/logs/runners/qa-20260611-160258.log
