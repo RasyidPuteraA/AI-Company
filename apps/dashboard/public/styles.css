@@ -1594,3 +1594,136 @@ body.wireframe-dashboard .office-room.owner-active {
   #devopsAgent { left: 75%; top: 52%; }
   #ownerAgent { left: 75%; top: 82%; }
 }
+
+/* HOTFIX: Pixel Office Layout v2 - force proper room sizing */
+body.wireframe-dashboard .office-main-card {
+  min-height: 620px !important;
+}
+
+body.wireframe-dashboard .pixel-office {
+  width: 100% !important;
+  height: 520px !important;
+  min-height: 520px !important;
+  padding: 16px !important;
+}
+
+body.wireframe-dashboard .office-grid {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(180px, 1fr)) !important;
+  grid-template-rows: repeat(2, minmax(190px, 1fr)) !important;
+  grid-template-areas:
+    "pm engineer qa"
+    "devops meeting owner" !important;
+  gap: 18px !important;
+  padding: 0 !important;
+}
+
+body.wireframe-dashboard .office-room {
+  position: relative !important;
+  inset: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 190px !important;
+  max-width: none !important;
+  max-height: none !important;
+  transform: none !important;
+  display: block !important;
+}
+
+body.wireframe-dashboard .office-room[data-room="pm"] {
+  grid-area: pm !important;
+}
+
+body.wireframe-dashboard .office-room[data-room="engineer"] {
+  grid-area: engineer !important;
+}
+
+body.wireframe-dashboard .office-room[data-room="qa"] {
+  grid-area: qa !important;
+}
+
+body.wireframe-dashboard .office-room[data-room="devops"] {
+  grid-area: devops !important;
+}
+
+body.wireframe-dashboard .office-room[data-room="meeting"] {
+  grid-area: meeting !important;
+}
+
+body.wireframe-dashboard .office-room[data-room="owner"] {
+  grid-area: owner !important;
+}
+
+/* Put agent sprites visually in each large room */
+body.wireframe-dashboard #pmAgent {
+  left: 16% !important;
+  top: 38% !important;
+}
+
+body.wireframe-dashboard #engineerAgent {
+  left: 50% !important;
+  top: 38% !important;
+}
+
+body.wireframe-dashboard #qaAgent {
+  left: 84% !important;
+  top: 38% !important;
+}
+
+body.wireframe-dashboard #devopsAgent {
+  left: 16% !important;
+  top: 78% !important;
+}
+
+body.wireframe-dashboard #ownerAgent {
+  left: 84% !important;
+  top: 78% !important;
+}
+
+/* Make sprites readable but not stretched */
+body.wireframe-dashboard .pixel-agent {
+  width: 38px !important;
+  height: 52px !important;
+}
+
+/* Mobile/tablet fallback */
+@media (max-width: 900px) {
+  body.wireframe-dashboard .pixel-office {
+    height: auto !important;
+  }
+
+  body.wireframe-dashboard .office-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: repeat(6, minmax(150px, auto)) !important;
+    grid-template-areas:
+      "pm"
+      "engineer"
+      "qa"
+      "devops"
+      "meeting"
+      "owner" !important;
+  }
+
+  body.wireframe-dashboard #pmAgent,
+  body.wireframe-dashboard #engineerAgent,
+  body.wireframe-dashboard #qaAgent,
+  body.wireframe-dashboard #devopsAgent,
+  body.wireframe-dashboard #ownerAgent {
+    left: 50% !important;
+  }
+
+  body.wireframe-dashboard #pmAgent { top: 10% !important; }
+  body.wireframe-dashboard #engineerAgent { top: 26% !important; }
+  body.wireframe-dashboard #qaAgent { top: 42% !important; }
+  body.wireframe-dashboard #devopsAgent { top: 58% !important; }
+  body.wireframe-dashboard #ownerAgent { top: 90% !important; }
+}
