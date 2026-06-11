@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-014 - Add Safe Agent Worker Loop** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-013 - Add Parallel Agent Queue Foundation** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-012 - Add Pixel Office Visualization v0** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-011 - Add Realtime Event Stream** (Owner: engineer_agent; Status: DONE)
@@ -31,6 +32,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Safe Agent Worker Loop completed (Impact: Implemented safe dry-run, once, and bounded loop modes for future parallel workers.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-014: Add Safe Agent Worker Loop)
+- 2026-06-11: internal_task_created | pm_agent | Add Safe Agent Worker Loop (Impact: PM Agent created internal task INTERNAL-014: Add a safe agent worker loop runner with dry-run, once, and bounded loop modes as preparation for future simultaneous multi-agent workers.)
 - 2026-06-11: engineering_completed | engineer_agent | Parallel Agent Queue Foundation completed (Impact: Implemented queue listing, safe task claiming, and one-shot agent worker.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-013: Add Parallel Agent Queue Foundation)
 - 2026-06-11: internal_task_created | pm_agent | Add Parallel Agent Queue Foundation (Impact: PM Agent created internal task INTERNAL-013: Add safe queue and claim runners so agents can list and claim assigned work independently as a foundation for future simultaneous multi-agent workers.)
@@ -40,9 +44,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: engineering_started | engineer_agent | Pixel office engineer test (Impact: Testing engineer sprite movement.)
 - 2026-06-11: internal_task_created | pm_agent | Add Pixel Office Visualization v0 (Impact: PM Agent created internal task INTERNAL-012: Add a first pixel office visualization to the web dashboard where rooms and agent sprites react to realtime events from the Server-Sent Events stream.)
 - 2026-06-11: internal_task_created | pm_agent | Add Pixel Office Visualization v0 (Impact: PM Agent created internal task INTERNAL-012: Add a first pixel office visualization to the web dashboard where rooms and agent sprites react to realtime events from the Server-Sent Events stream.)
-- 2026-06-11: engineering_completed | engineer_agent | Realtime Event Stream completed (Impact: Implemented SSE realtime events for dashboard.)
-- 2026-06-11: dashboard_event_test | engineer_agent | Realtime dashboard test (Impact: Testing SSE event stream from PostgreSQL to web dashboard.)
-- 2026-06-11: internal_task_created | pm_agent | Add Realtime Event Stream (Impact: PM Agent created internal task INTERNAL-011: Add a read-only realtime event stream to the web dashboard using Server-Sent Events so latest agent events update without manual refresh.)
 
 ## QA Status
 

@@ -208,3 +208,15 @@ New commands:
 This is the foundation for future simultaneous multi-agent workers.
 
 Current mode is safe one-shot execution, not autonomous 24/7 execution.
+
+INTERNAL-014 Handover
+
+Safe Agent Worker Loop implemented.
+
+New command:
+
+./runners/agent_worker_loop.sh engineer_agent --dry-run
+./runners/agent_worker_loop.sh engineer_agent --once
+./runners/agent_worker_loop.sh engineer_agent --loop --interval 3 --max-iterations 2
+
+Current design is safe and bounded. No autonomous 24/7 worker service was enabled.
