@@ -495,3 +495,24 @@ The dashboard can now call:
     runners/attach_uploads_to_pm_context.sh
 
 The runner now replaces the existing task attachment section instead of duplicating it.
+
+## INTERNAL-030 Handover
+
+PM Intake Processor v0 implemented.
+
+New runner:
+
+    runners/pm_intake_processor.sh
+
+Usage:
+
+    ./runners/pm_intake_processor.sh <project_key> <task_key>
+
+This runner creates a PM intake analysis document from:
+
+- PM intake task file
+- task metadata
+- uploaded file metadata
+- project context
+
+This is the first step toward PM agent automatically turning owner/client requirements into implementation plans and task breakdowns.
