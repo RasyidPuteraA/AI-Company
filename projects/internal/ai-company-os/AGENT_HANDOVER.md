@@ -194,3 +194,17 @@ Rooms:
 Realtime events update active rooms and agent sprite states.
 
 This is the first visual layer for the future AI Company pixel office.
+
+## INTERNAL-013 Handover
+
+Parallel Agent Queue Foundation implemented.
+
+New commands:
+
+    ./runners/agent_queue.sh engineer_agent
+    ./runners/claim_next_task.sh engineer_agent
+    ./runners/agent_worker_once.sh engineer_agent
+
+This is the foundation for future simultaneous multi-agent workers.
+
+Current mode is safe one-shot execution, not autonomous 24/7 execution.
