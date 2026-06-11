@@ -1484,3 +1484,79 @@ function setupVpsPerformanceToggle() {
 setupVpsPerformanceToggle();
 loadVpsPerformance();
 setInterval(loadVpsPerformance, 5000);
+
+/* INTERNAL-042: Pixel Office Visual v1 */
+function setPixelAgentBubble(agentElement, status, task) {
+  if (!agentElement) return;
+
+  const bubble = agentElement.querySelector(".agent-bubble");
+  if (!bubble) return;
+
+  if (task) {
+    bubble.textContent = task.length > 18 ? `${task.slice(0, 18)}…` : task;
+  } else {
+    bubble.textContent = status || "idle";
+  }
+}
+
+function setPixelAgentState(agentElement, status) {
+  if (!agentElement) return;
+
+  agentElement.classList.remove(
+    "state-idle",
+    "state-working",
+    "state-done",
+    "state-blocked",
+    "state-failed"
+  );
+
+  if (status === "done") {
+    agentElement.classList.add("state-done");
+  } else if (status === "safety_blocked" || status === "blocked") {
+    agentElement.classList.add("state-blocked");
+  } else if (status === "failed") {
+    agentElement.classList.add("state-failed");
+  } else if (["queued", "claimed", "working", "in_progress"].includes(status)) {
+    agentElement.classList.add("state-working");
+  } else {
+    agentElement.classList.add("state-idle");
+  }
+}
+
+function enhancePixelOfficeRuntime() {
+  const original = window.updatePixelOfficeFromRuntime || updatePixelOfficeFromRuntime;
+
+  if (!original || original.__pixelEnhanced) return;
+
+  const enhanced = function(agents) {
+    original(agents);
+
+    if (!Array.isArray(agents)) return;
+
+    agents.forEach((agent) => {
+      const config = runtimeAgentMap[agent.agent_key];
+      if (!config) return;
+
+      const spriteEl = document.getElementById(config.sprite);
+      const status = agent.runtime_status || "idle";
+      const task = agent.current_task_key || "";
+
+      setPixelAgentBubble(spriteEl, status, task);
+      setPixelAgentState(spriteEl, status);
+    });
+  };
+
+  enhanced.__pixelEnhanced = true;
+
+  if (typeof window.updatePixelOfficeFromRuntime !== "undefined") {
+    window.updatePixelOfficeFromRuntime = enhanced;
+  }
+
+  updatePixelOfficeFromRuntime = enhanced;
+}
+
+try {
+  enhancePixelOfficeRuntime();
+} catch (error) {
+  console.error("Pixel office enhancement failed", error);
+}

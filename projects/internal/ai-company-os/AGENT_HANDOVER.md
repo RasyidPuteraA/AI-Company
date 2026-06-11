@@ -763,3 +763,23 @@ Owner feedback addressed:
 - white scrollbars replaced with softer styled scrollbars
 
 This improves the dashboard from static layout toward operational UX.
+
+## INTERNAL-042 Handover
+
+Pixel Office Visual v1 implemented.
+
+The dashboard office map now follows Pixel Agents and MetroCity-inspired visual direction:
+
+- top-down office map
+- pixel tiled rooms
+- desk/furniture shapes
+- CSS pixel-agent sprites
+- status bubbles
+- active room glow
+
+Future improvement:
+
+- import actual MetroCity sprite sheets
+- add walking animation frames
+- add canvas-based office renderer
+- add editable office layout

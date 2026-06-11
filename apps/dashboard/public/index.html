@@ -75,11 +75,31 @@
               <span class="room-status" id="meetingStatus">standby</span>
             </div>
 
-            <div class="office-agent" id="pmAgent" data-agent="pm">🧠</div>
-            <div class="office-agent" id="engineerAgent" data-agent="engineer">🤖</div>
-            <div class="office-agent" id="qaAgent" data-agent="qa">🔍</div>
-            <div class="office-agent" id="devopsAgent" data-agent="devops">🛠️</div>
-            <div class="office-agent" id="ownerAgent" data-agent="owner">👑</div>
+            <div class="office-agent pixel-agent pm-sprite" id="pmAgent" data-agent="pm" data-room="pm">
+              <span class="agent-body"></span>
+              <span class="agent-name">PM</span>
+              <span class="agent-bubble">idle</span>
+            </div>
+            <div class="office-agent pixel-agent engineer-sprite" id="engineerAgent" data-agent="engineer" data-room="engineer">
+              <span class="agent-body"></span>
+              <span class="agent-name">ENG</span>
+              <span class="agent-bubble">idle</span>
+            </div>
+            <div class="office-agent pixel-agent qa-sprite" id="qaAgent" data-agent="qa" data-room="qa">
+              <span class="agent-body"></span>
+              <span class="agent-name">QA</span>
+              <span class="agent-bubble">idle</span>
+            </div>
+            <div class="office-agent pixel-agent devops-sprite" id="devopsAgent" data-agent="devops" data-room="devops">
+              <span class="agent-body"></span>
+              <span class="agent-name">OPS</span>
+              <span class="agent-bubble">idle</span>
+            </div>
+            <div class="office-agent pixel-agent owner-sprite" id="ownerAgent" data-agent="owner" data-room="owner">
+              <span class="agent-body"></span>
+              <span class="agent-name">OWNER</span>
+              <span class="agent-bubble">idle</span>
+            </div>
           </div>
         </div>
       </div>

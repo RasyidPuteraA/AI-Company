@@ -1234,3 +1234,363 @@ body.wireframe-dashboard .office-agent {
     grid-template-columns: 1fr;
   }
 }
+
+/* INTERNAL-042: Pixel Office Visual v1 */
+
+/* Pixel office stage */
+body.wireframe-dashboard .office-main-card {
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.86), rgba(7, 12, 24, 0.92));
+}
+
+body.wireframe-dashboard .pixel-office {
+  position: relative;
+  border: 4px solid #334155;
+  border-radius: 18px;
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    #111827;
+  background-size: 32px 32px;
+  box-shadow:
+    inset 0 0 0 4px rgba(15, 23, 42, 0.8),
+    inset 0 0 60px rgba(56, 189, 248, 0.08),
+    0 22px 80px rgba(0, 0, 0, 0.32);
+  image-rendering: pixelated;
+}
+
+body.wireframe-dashboard .pixel-office::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  pointer-events: none;
+  opacity: 0.18;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(148, 163, 184, 0.10) 0 8px,
+      transparent 8px 16px
+    );
+  border-radius: 12px;
+}
+
+/* Office grid as top-down map */
+body.wireframe-dashboard .office-grid {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-areas:
+    "pm pm engineer engineer qa qa"
+    "pm pm engineer engineer qa qa"
+    "devops devops meeting meeting owner owner"
+    "devops devops meeting meeting owner owner" !important;
+  gap: 14px !important;
+  padding: 20px !important;
+  background:
+    radial-gradient(circle at 48% 52%, rgba(56, 189, 248, 0.10), transparent 30%),
+    rgba(2, 6, 23, 0.22);
+}
+
+/* Room placement */
+.office-room[data-room="pm"] {
+  grid-area: pm;
+}
+
+.office-room[data-room="engineer"] {
+  grid-area: engineer;
+}
+
+.office-room[data-room="qa"] {
+  grid-area: qa;
+}
+
+.office-room[data-room="devops"] {
+  grid-area: devops;
+}
+
+.office-room[data-room="meeting"] {
+  grid-area: meeting;
+}
+
+.office-room[data-room="owner"] {
+  grid-area: owner;
+}
+
+/* Rooms */
+body.wireframe-dashboard .office-room {
+  position: relative !important;
+  overflow: hidden;
+  min-height: 0 !important;
+  border: 4px solid #475569 !important;
+  border-radius: 0 !important;
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.10) 1px, transparent 1px),
+    linear-gradient(rgba(148, 163, 184, 0.10) 1px, transparent 1px),
+    repeating-conic-gradient(
+      from 45deg,
+      rgba(30, 41, 59, 0.88) 0% 25%,
+      rgba(15, 23, 42, 0.88) 0% 50%
+    );
+  background-size: 16px 16px, 16px 16px, 32px 32px;
+  box-shadow:
+    inset 0 0 0 2px rgba(2, 6, 23, 0.9),
+    inset 0 0 24px rgba(0, 0, 0, 0.38);
+}
+
+/* Back wall strip */
+body.wireframe-dashboard .office-room::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 28px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(71, 85, 105, 0.9) 0 12px,
+      rgba(51, 65, 85, 0.9) 12px 24px
+    );
+  border-bottom: 3px solid rgba(15, 23, 42, 0.88);
+}
+
+/* Desk / furniture */
+body.wireframe-dashboard .office-room::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  width: 72px;
+  height: 34px;
+  border: 3px solid rgba(15, 23, 42, 0.82);
+  background:
+    linear-gradient(180deg, #92400e, #78350f);
+  box-shadow:
+    8px 8px 0 rgba(2, 6, 23, 0.32),
+    inset 0 4px 0 rgba(251, 191, 36, 0.25);
+}
+
+.office-room[data-room="meeting"]::after {
+  left: 50%;
+  width: 104px;
+  transform: translateX(-50%);
+  background:
+    linear-gradient(180deg, #7c3aed, #4c1d95);
+}
+
+.office-room[data-room="owner"]::after {
+  background:
+    linear-gradient(180deg, #0f766e, #134e4a);
+}
+
+/* Room labels */
+body.wireframe-dashboard .room-label {
+  position: absolute;
+  z-index: 3;
+  top: 7px;
+  left: 10px;
+  color: #e0f2fe;
+  font-size: 12px !important;
+  letter-spacing: 0.08em;
+  text-shadow: 2px 2px 0 rgba(2, 6, 23, 0.9);
+}
+
+body.wireframe-dashboard .room-status {
+  position: absolute;
+  z-index: 3;
+  top: 25px;
+  left: 10px;
+  max-width: calc(100% - 20px);
+  color: #93c5fd;
+  font-size: 10px !important;
+  text-shadow: 2px 2px 0 rgba(2, 6, 23, 0.9);
+}
+
+/* Pixel agents */
+body.wireframe-dashboard .pixel-agent {
+  position: absolute !important;
+  width: 34px !important;
+  height: 46px !important;
+  display: block !important;
+  font-size: 0 !important;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(4px 5px 0 rgba(2, 6, 23, 0.42));
+  image-rendering: pixelated;
+  transition:
+    left 0.35s ease,
+    top 0.35s ease,
+    transform 0.2s ease;
+}
+
+.pixel-agent .agent-body {
+  position: absolute;
+  left: 8px;
+  top: 11px;
+  width: 18px;
+  height: 25px;
+  border-radius: 4px 4px 2px 2px;
+  background: #38bdf8;
+  box-shadow:
+    0 -8px 0 #f8c8a9,
+    -6px -5px 0 #111827,
+    6px -5px 0 #111827,
+    -4px 18px 0 #1e293b,
+    4px 18px 0 #1e293b,
+    0 0 0 3px rgba(2, 6, 23, 0.7);
+}
+
+.pm-sprite .agent-body {
+  background: #a3e635;
+}
+
+.engineer-sprite .agent-body {
+  background: #38bdf8;
+}
+
+.qa-sprite .agent-body {
+  background: #c084fc;
+}
+
+.devops-sprite .agent-body {
+  background: #f97316;
+}
+
+.owner-sprite .agent-body {
+  background: #facc15;
+}
+
+.pixel-agent .agent-name {
+  position: absolute;
+  left: 50%;
+  top: 41px;
+  transform: translateX(-50%);
+  min-width: 34px;
+  text-align: center;
+  font-size: 8px;
+  font-weight: 900;
+  color: #e5f0ff;
+  text-shadow: 1px 1px 0 #020617;
+}
+
+.pixel-agent .agent-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: 50px;
+  transform: translateX(-50%);
+  display: none;
+  max-width: 112px;
+  min-width: 42px;
+  border: 2px solid rgba(226, 232, 240, 0.62);
+  border-radius: 8px;
+  padding: 4px 6px;
+  background: rgba(15, 23, 42, 0.94);
+  color: #e0f2fe;
+  font-size: 9px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 3px 4px 0 rgba(2, 6, 23, 0.44);
+}
+
+.pixel-agent.state-working .agent-bubble,
+.pixel-agent.state-blocked .agent-bubble,
+.pixel-agent.state-failed .agent-bubble {
+  display: block;
+}
+
+.pixel-agent.state-working {
+  animation: pixel-working 0.7s steps(2) infinite;
+}
+
+.pixel-agent.state-done .agent-body {
+  box-shadow:
+    0 -8px 0 #f8c8a9,
+    -6px -5px 0 #111827,
+    6px -5px 0 #111827,
+    -4px 18px 0 #1e293b,
+    4px 18px 0 #1e293b,
+    0 0 0 3px rgba(2, 6, 23, 0.7),
+    0 0 0 6px rgba(163, 230, 53, 0.26);
+}
+
+.pixel-agent.state-blocked .agent-body,
+.pixel-agent.state-failed .agent-body {
+  box-shadow:
+    0 -8px 0 #f8c8a9,
+    -6px -5px 0 #111827,
+    6px -5px 0 #111827,
+    -4px 18px 0 #1e293b,
+    4px 18px 0 #1e293b,
+    0 0 0 3px rgba(2, 6, 23, 0.7),
+    0 0 0 6px rgba(248, 113, 113, 0.26);
+}
+
+@keyframes pixel-working {
+  0% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) translateY(-3px);
+  }
+}
+
+/* Agent room coordinates */
+#pmAgent {
+  left: 18%;
+  top: 34%;
+}
+
+#engineerAgent {
+  left: 50%;
+  top: 34%;
+}
+
+#qaAgent {
+  left: 82%;
+  top: 34%;
+}
+
+#devopsAgent {
+  left: 18%;
+  top: 78%;
+}
+
+#ownerAgent {
+  left: 82%;
+  top: 78%;
+}
+
+/* Room active state */
+body.wireframe-dashboard .office-room.active {
+  border-color: #38bdf8 !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(2, 6, 23, 0.9),
+    inset 0 0 30px rgba(56, 189, 248, 0.18),
+    0 0 0 2px rgba(56, 189, 248, 0.16);
+}
+
+body.wireframe-dashboard .office-room.owner-active {
+  border-color: #facc15 !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(2, 6, 23, 0.9),
+    inset 0 0 30px rgba(250, 204, 21, 0.18),
+    0 0 0 2px rgba(250, 204, 21, 0.16);
+}
+
+/* Better responsive office */
+@media (max-width: 900px) {
+  body.wireframe-dashboard .office-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(3, minmax(160px, 1fr)) !important;
+    grid-template-areas:
+      "pm engineer"
+      "qa devops"
+      "meeting owner" !important;
+  }
+
+  #pmAgent { left: 25%; top: 22%; }
+  #engineerAgent { left: 75%; top: 22%; }
+  #qaAgent { left: 25%; top: 52%; }
+  #devopsAgent { left: 75%; top: 52%; }
+  #ownerAgent { left: 75%; top: 82%; }
+}
