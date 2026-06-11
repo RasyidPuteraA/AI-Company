@@ -140,3 +140,29 @@ Next step:
 
 - Owner should review the implementation and QA report.
 - Owner can ACCEPT, request REVISE, or REJECT.
+
+## Owner Decision for CLIENT-1-REVIEW-001
+
+Project:
+
+    client-company-profile-demo
+
+Decision:
+
+    ACCEPT
+
+Task status:
+
+    ACCEPTED
+
+Project status:
+
+    ACCEPTED
+
+Decision file:
+
+    /opt/ai-company/projects/clients/client-company-profile-demo/OWNER_DECISION-CLIENT-1-REVIEW-001.md
+
+Owner note:
+
+    Approved for demo end-to-end workflow.

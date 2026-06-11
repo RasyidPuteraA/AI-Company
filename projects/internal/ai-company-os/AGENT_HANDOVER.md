@@ -641,3 +641,30 @@ Current automation flow:
     Engineer implementation
     QA verification
     Owner review queue
+
+## INTERNAL-035 Handover
+
+Owner Review Decision Runner implemented.
+
+New runner:
+
+    runners/owner_review_decision.sh
+
+Usage:
+
+    ./runners/owner_review_decision.sh <review_task_key> <ACCEPT|REVISE|REJECT> [note]
+
+Current end-to-end flow:
+
+    Owner command
+    PM intake
+    PM analysis
+    Engineer implementation
+    QA verification
+    Owner review
+    Owner decision
+
+Demo result:
+
+- CLIENT-1-REVIEW-001 accepted
+- client-company-profile-demo accepted

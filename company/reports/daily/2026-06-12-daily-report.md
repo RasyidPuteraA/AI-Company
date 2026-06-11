@@ -8,7 +8,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Client Tasks
 
-- **CLIENT-1-REVIEW-001 - Owner review for client-company-profile-demo** (Owner: owner; Status: WAITING_OWNER_ACCEPTANCE; Due: 2026-06-11)
+- **CLIENT-1-REVIEW-001 - Owner review for client-company-profile-demo** (Owner: owner; Status: ACCEPTED; Due: 2026-06-11)
 - **CLIENT-1-QA-001 - QA client project implementation** (Owner: qa_agent; Status: QA_PASSED; Due: 2026-06-11)
 - **CLIENT-1-ENG-001 - Implement client project from PM analysis** (Owner: engineer_agent; Status: IMPLEMENTED; Due: 2026-06-11)
 - **CLIENT-2-001 - PM intake: Client Automation Consulting Demo** (Owner: pm_agent; Status: TODO; Due: 2026-06-11)
@@ -20,6 +20,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-035 - Add Owner Review Decision Runner** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-034 - Submit QA-Passed Project to Owner Review** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-033 - Add QA Verification Runner v0** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-032 - Add Engineer Implementation Runner v0** (Owner: engineer_agent; Status: DONE)
@@ -57,6 +58,10 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Owner Review Decision Runner completed (Impact: Added Owner review decision runner for ACCEPT, REVISE, and REJECT.)
+- 2026-06-11: engineering_completed | engineer_agent | Owner Review Decision Runner completed (Impact: Added Owner review decision runner for ACCEPT, REVISE, and REJECT.)
+- 2026-06-11: internal_task_created | pm_agent | Add Owner Review Decision Runner (Impact: PM Agent created internal task INTERNAL-035: Add a safe runner that lets Owner accept, request revision, or reject a client project review task and updates project/task status accordingly.)
+- 2026-06-11: owner_accepted_project | owner | Owner review decision recorded (Impact: Owner decision ACCEPT recorded for CLIENT-1-REVIEW-001. Approved for demo end-to-end workflow.)
 - 2026-06-11: engineering_completed | engineer_agent | Owner review submission runner completed (Impact: Added runner to submit QA-passed project output to Owner review.)
 - 2026-06-11: submitted_to_owner_review | owner | Project submitted to Owner review (Impact: QA-passed project client-company-profile-demo submitted to owner review as CLIENT-1-REVIEW-001.)
 - 2026-06-11: task_created | owner | Owner review for client-company-profile-demo (Impact: Task created: Owner review submission for QA-passed client project.
@@ -75,10 +80,6 @@ Owner action required:
 - 2026-06-11: internal_task_created | pm_agent | Submit QA-Passed Project to Owner Review (Impact: PM Agent created internal task INTERNAL-034: Add a safe runner that submits a QA-passed client project output to Owner review queue with project summary, QA report, and implementation output path.)
 - 2026-06-11: engineering_completed | engineer_agent | QA Verification Runner v0 completed (Impact: Added QA verification runner for implementation output review.)
 - 2026-06-11: qa_verification_completed | qa_agent | QA verification completed (Impact: QA verification passed for initial implementation output.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-033: Add QA Verification Runner v0)
-- 2026-06-11: internal_task_created | pm_agent | Add QA Verification Runner v0 (Impact: PM Agent created internal task INTERNAL-033: Add a safe QA verification runner that reads QA task, PM analysis, and engineer implementation output, then generates a QA report and updates QA task status.)
-- 2026-06-11: engineering_completed | engineer_agent | Engineer Implementation Runner v0 completed (Impact: Added engineer implementation runner for initial static output generation.)
-- 2026-06-11: task_claimed | qa_agent | Task claimed by qa_agent (Impact: qa_agent claimed CLIENT-1-QA-001: QA client project implementation)
 
 ## QA Status
 
