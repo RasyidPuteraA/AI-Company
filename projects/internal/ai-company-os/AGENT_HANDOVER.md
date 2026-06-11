@@ -590,3 +590,29 @@ Current automation flow:
     Engineer task
     Engineer implementation output
     QA task
+
+## INTERNAL-033 Handover
+
+QA Verification Runner v0 implemented.
+
+New runner:
+
+    runners/qa_verification_runner.sh
+
+Usage:
+
+    ./runners/qa_verification_runner.sh <project_key> <qa_task_key>
+
+This runner verifies initial engineer implementation output and produces a QA report.
+
+Current automation flow:
+
+    Owner command
+    Client project
+    PM intake task
+    Upload context
+    PM intake analysis
+    Engineer task
+    Engineer implementation output
+    QA task
+    QA report
