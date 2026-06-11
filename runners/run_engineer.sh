@@ -3,9 +3,11 @@ set -euo pipefail
 
 PROJECT_DIR="${1:-}"
 TASK_FILE="${2:-TASK.md}"
+PROJECT_KEY="${3:-}"
+TASK_KEY="${4:-}"
 
 if [ -z "$PROJECT_DIR" ]; then
-  echo "Usage: ./runners/run_engineer.sh <project_dir> [task_file]"
+  echo "Usage: ./runners/run_engineer.sh <project_dir> [task_file] [project_key] [task_key]"
   exit 1
 fi
 
@@ -27,10 +29,30 @@ fi
 
 mkdir -p "$LOG_DIR"
 
+exec > >(tee "$LOG_FILE") 2>&1
+
 echo "Engineer Agent Runner"
 echo "Project: $ABS_PROJECT_DIR"
 echo "Task: $TASK_FILE"
+echo "Time: $(date)"
 echo "Log: $LOG_FILE"
+echo
+
+cd "$ROOT_DIR"
+
+if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
+  ./runners/log_event.sh \
+    "$PROJECT_KEY" \
+    "$TASK_KEY" \
+    "engineer_agent" \
+    "engineering_started" \
+    "IN_PROGRESS" \
+    "engineering_desk" \
+    "Engineer runner started" \
+    "Engineer runner started for $PROJECT_DIR using $TASK_FILE."
+else
+  echo "Start event logging skipped. PROJECT_KEY and TASK_KEY were not provided."
+fi
 
 cd "$ABS_PROJECT_DIR"
 
@@ -54,6 +76,32 @@ Safety rules:
 Required output:
 - implementation files
 - AGENT_HANDOVER.md
-- build/test result written in AGENT_HANDOVER.md" | tee "$LOG_FILE"
+- build/test result written in AGENT_HANDOVER.md"
 
+ENGINEER_RESULT="DONE"
+
+if [ ! -f "$ABS_PROJECT_DIR/AGENT_HANDOVER.md" ]; then
+  ENGINEER_RESULT="FAIL"
+fi
+
+echo
+echo "ENGINEER_RESULT=$ENGINEER_RESULT"
+
+cd "$ROOT_DIR"
+
+if [ -n "$PROJECT_KEY" ] && [ -n "$TASK_KEY" ]; then
+  ./runners/log_event.sh \
+    "$PROJECT_KEY" \
+    "$TASK_KEY" \
+    "engineer_agent" \
+    "engineering_completed" \
+    "$ENGINEER_RESULT" \
+    "engineering_desk" \
+    "Engineer runner completed" \
+    "Engineer runner completed for $PROJECT_DIR with result: $ENGINEER_RESULT. Log: $LOG_FILE"
+else
+  echo "Completion event logging skipped. PROJECT_KEY and TASK_KEY were not provided."
+fi
+
+echo
 echo "Engineer run completed. Log saved to $LOG_FILE"
