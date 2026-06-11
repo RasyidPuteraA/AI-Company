@@ -8,23 +8,23 @@ Add a safe agent worker loop runner with dry-run, once, and bounded loop modes.
 
 Added:
 
-- `runners/agent_worker_loop.sh`
+- runners/agent_worker_loop.sh
 
 ## Modes
 
-- `--dry-run`: show the next claimable task without changing the database
-- `--once`: claim one task
-- `--loop`: repeat claim checks with interval and max iteration bounds
+- --dry-run: show the next claimable task without changing the database
+- --once: claim one task
+- --loop: repeat claim checks with interval and max iteration bounds
 
 ## Example Commands
 
-```bash
-./runners/agent_worker_loop.sh engineer_agent --dry-run
-./runners/agent_worker_loop.sh engineer_agent --once
-./runners/agent_worker_loop.sh engineer_agent --loop --interval 3 --max-iterations 2
+    ./runners/agent_worker_loop.sh engineer_agent --dry-run
+    ./runners/agent_worker_loop.sh engineer_agent --once
+    ./runners/agent_worker_loop.sh engineer_agent --loop --interval 3 --max-iterations 2
+
 ## Verification
 
-- `bash -n runners/agent_worker_loop.sh`
+- bash -n runners/agent_worker_loop.sh
 - dry-run mode tested
 - once mode tested
 - bounded loop mode tested
