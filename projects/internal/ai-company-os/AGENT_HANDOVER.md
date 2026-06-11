@@ -294,3 +294,21 @@ New command:
 This wrapper is the preferred Owner-facing way to control disabled-by-default worker services.
 
 No autonomous 24/7 worker was enabled.
+
+## INTERNAL-019 Handover
+
+Agent Runtime Status Tracking implemented.
+
+New table:
+
+    agent_runtime_status
+
+New commands:
+
+    ./runners/agent_runtime_status.sh
+    ./runners/agent_runtime_status.sh engineer_agent
+    ./runners/update_agent_runtime_status.sh engineer_agent working INTERNAL-019 engineering_desk "note"
+
+Task claiming now updates runtime status to claimed.
+
+This is the foundation for better dashboard and pixel office agent state display.

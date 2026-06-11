@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-019 - Add Agent Runtime Status Tracking** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-018 - Add Worker Service Control Runner** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-017 - Add Disabled Agent Worker Service Template** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-016 - Fix Empty Task Claim Handling** (Owner: engineer_agent; Status: DONE)
@@ -36,6 +37,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status Tracking completed (Impact: Added runtime status table and runners for agent status visibility.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-019: Add Agent Runtime Status Tracking)
+- 2026-06-11: internal_task_created | pm_agent | Add Agent Runtime Status Tracking (Impact: PM Agent created internal task INTERNAL-019: Add runtime status tracking for agents so the system can record and display whether each agent is idle, queued, claimed, working, safety_blocked, done, or failed.)
 - 2026-06-11: devops_completed | devops_agent | Worker Service Control Runner completed (Impact: Added owner-facing wrapper for safe agent worker service control.)
 - 2026-06-11: worker_service_stopped | devops_agent | Worker service stop requested (Impact: Owner stopped ai-company-agent-worker@engineer_agent.service through worker_service_control.sh)
 - 2026-06-11: devops_completed | devops_agent | Worker Service Control Runner completed (Impact: Added owner-facing wrapper for safe agent worker service control.)
@@ -45,9 +49,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-017: Add Disabled Agent Worker Service Template)
 - 2026-06-11: internal_task_created | pm_agent | Add Disabled Agent Worker Service Template (Impact: PM Agent created internal task INTERNAL-017: Add disabled-by-default systemd service templates for safe agent worker loops without enabling autonomous 24/7 execution.)
 - 2026-06-11: engineering_completed | engineer_agent | Empty claim handling fixed (Impact: Fixed claim_next_task.sh handling for no claimable task.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-016: Fix Empty Task Claim Handling)
-- 2026-06-11: internal_task_created | pm_agent | Fix Empty Task Claim Handling (Impact: PM Agent created internal task INTERNAL-016: Fix claim_next_task.sh so PostgreSQL UPDATE 0 output is treated as no claimable task instead of a fake task.)
-- 2026-06-11: engineering_completed | engineer_agent | Agent Worker Safety Guard completed (Impact: Implemented safety guard for agent worker loop.)
 
 ## QA Status
 

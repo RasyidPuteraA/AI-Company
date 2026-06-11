@@ -80,3 +80,12 @@ echo "- Agent: $AGENT_KEY"
 echo "- Project: $PROJECT_KEY"
 echo "- Task: $TASK_KEY"
 echo "- Title: $TASK_TITLE"
+
+if [ -x "./runners/update_agent_runtime_status.sh" ]; then
+  ./runners/update_agent_runtime_status.sh \
+    "$AGENT_KEY" \
+    "claimed" \
+    "$TASK_KEY" \
+    "agent_queue" \
+    "$AGENT_KEY claimed $TASK_KEY: $TASK_TITLE" >/dev/null || true
+fi
