@@ -358,3 +358,15 @@ The endpoint now works:
     /api/agents/runtime
 
 This fixes the incomplete INTERNAL-021 dashboard runtime status integration.
+
+## INTERNAL-023 Handover
+
+Pixel Office is now connected to Agent Runtime Status.
+
+The dashboard polls:
+
+    /api/agents/runtime
+
+Pixel rooms and sprites now respond to current runtime status, including working, claimed, queued, safety_blocked, done, and idle states.
+
+This makes the pixel office more accurate than event-history-only visualization.

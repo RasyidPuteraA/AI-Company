@@ -213,3 +213,95 @@ async function loadAgentRuntimeStatus() {
 
 loadAgentRuntimeStatus();
 setInterval(loadAgentRuntimeStatus, 5000);
+
+/* Pixel Office Runtime Status Integration */
+const runtimeAgentMap = {
+  pm_agent: {
+    room: "pm",
+    sprite: "pmAgent",
+    status: "pmStatus"
+  },
+  engineer_agent: {
+    room: "engineer",
+    sprite: "engineerAgent",
+    status: "engineerStatus"
+  },
+  qa_agent: {
+    room: "qa",
+    sprite: "qaAgent",
+    status: "qaStatus"
+  },
+  devops_agent: {
+    room: "devops",
+    sprite: "devopsAgent",
+    status: "devopsStatus"
+  },
+  budget_manager: {
+    room: "meeting",
+    sprite: "pmAgent",
+    status: "meetingStatus"
+  }
+};
+
+function runtimeStatusIsBusy(status) {
+  return ["queued", "claimed", "working", "safety_blocked"].includes(status);
+}
+
+function runtimeStatusRoomClass(status) {
+  if (status === "safety_blocked" || status === "failed") return "owner-active";
+  if (runtimeStatusIsBusy(status)) return "active";
+  return "";
+}
+
+function updatePixelOfficeFromRuntime(agents) {
+  if (!Array.isArray(agents)) return;
+
+  if (typeof resetOfficeRooms === "function") {
+    resetOfficeRooms();
+  }
+
+  agents.forEach((agent) => {
+    const config = runtimeAgentMap[agent.agent_key];
+    if (!config) return;
+
+    const status = agent.runtime_status || "idle";
+    const task = agent.current_task_key || "";
+    const note = agent.status_note || "";
+
+    const roomEl = document.querySelector(`.office-room[data-room="${config.room}"]`);
+    const spriteEl = document.getElementById(config.sprite);
+    const statusEl = document.getElementById(config.status);
+
+    if (statusEl) {
+      statusEl.textContent = task ? `${status}: ${task}` : status;
+      statusEl.title = note;
+    }
+
+    if (roomEl) {
+      const roomClass = runtimeStatusRoomClass(status);
+      if (roomClass) roomEl.classList.add(roomClass);
+    }
+
+    if (spriteEl) {
+      spriteEl.dataset.room = config.room;
+      if (runtimeStatusIsBusy(status)) {
+        spriteEl.classList.add("busy");
+      } else {
+        spriteEl.classList.remove("busy");
+      }
+    }
+  });
+}
+
+async function loadPixelOfficeRuntimeStatus() {
+  try {
+    const response = await fetch("/api/agents/runtime");
+    const agents = await response.json();
+    updatePixelOfficeFromRuntime(agents);
+  } catch (error) {
+    console.error("Failed to update pixel office runtime status", error);
+  }
+}
+
+loadPixelOfficeRuntimeStatus();
+setInterval(loadPixelOfficeRuntimeStatus, 5000);
