@@ -220,3 +220,17 @@ New command:
 ./runners/agent_worker_loop.sh engineer_agent --loop --interval 3 --max-iterations 2
 
 Current design is safe and bounded. No autonomous 24/7 worker service was enabled.
+
+## INTERNAL-015 Handover
+
+Agent Worker Safety Guard implemented.
+
+Worker loop now has safety controls:
+- dry-run is read-only and allowed anytime
+- once/loop modes are guarded by work hours
+- emergency stop is supported
+- max iterations are bounded
+- loop interval has a minimum limit
+- after-hours execution requires explicit manual override
+
+No autonomous 24/7 worker service was enabled.

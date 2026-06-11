@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-015 - Add Budget and Fatigue Guard** (Owner: budget_manager; Status: DONE)
 - **INTERNAL-014 - Add Safe Agent Worker Loop** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-013 - Add Parallel Agent Queue Foundation** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-012 - Add Pixel Office Visualization v0** (Owner: engineer_agent; Status: DONE)
@@ -32,6 +33,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Agent Worker Safety Guard completed (Impact: Implemented safety guard for agent worker loop.)
+- 2026-06-11: internal_task_created | pm_agent | Add Agent Worker Safety Guard (Impact: PM Agent created internal task INTERNAL-015: Add safety guard to agent worker loop so dry-run is always allowed, but once/loop modes respect work hours, emergency stop, safe iteration bounds, and interval limits.)
+- 2026-06-11: internal_task_created | pm_agent | Add Budget and Fatigue Guard (Impact: PM Agent created internal task INTERNAL-015: Add budget and fatigue guard checks so agent workers must verify daily limits before claiming tasks, preserving owner reserve and preventing uncontrolled autonomous work.)
 - 2026-06-11: engineering_completed | engineer_agent | Safe Agent Worker Loop completed (Impact: Implemented safe dry-run, once, and bounded loop modes for future parallel workers.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-014: Add Safe Agent Worker Loop)
 - 2026-06-11: internal_task_created | pm_agent | Add Safe Agent Worker Loop (Impact: PM Agent created internal task INTERNAL-014: Add a safe agent worker loop runner with dry-run, once, and bounded loop modes as preparation for future simultaneous multi-agent workers.)
@@ -41,9 +45,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: engineering_completed | engineer_agent | Pixel Office Visualization v0 completed (Impact: Implemented first realtime pixel office visual layer.)
 - 2026-06-11: owner_accepted | pm_agent | Pixel office owner test (Impact: Testing owner room activity.)
 - 2026-06-11: qa_completed | qa_agent | Pixel office QA test (Impact: Testing QA sprite movement.)
-- 2026-06-11: engineering_started | engineer_agent | Pixel office engineer test (Impact: Testing engineer sprite movement.)
-- 2026-06-11: internal_task_created | pm_agent | Add Pixel Office Visualization v0 (Impact: PM Agent created internal task INTERNAL-012: Add a first pixel office visualization to the web dashboard where rooms and agent sprites react to realtime events from the Server-Sent Events stream.)
-- 2026-06-11: internal_task_created | pm_agent | Add Pixel Office Visualization v0 (Impact: PM Agent created internal task INTERNAL-012: Add a first pixel office visualization to the web dashboard where rooms and agent sprites react to realtime events from the Server-Sent Events stream.)
 
 ## QA Status
 
