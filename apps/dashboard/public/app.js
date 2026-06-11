@@ -1431,3 +1431,56 @@ function upgradeCommandBarToV2() {
 }
 
 upgradeCommandBarToV2();
+
+/* INTERNAL-041: VPS Performance Widget */
+function setPerfBar(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const safe = Math.max(0, Math.min(100, Number(value || 0)));
+  el.style.width = `${safe}%`;
+}
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+async function loadVpsPerformance() {
+  try {
+    const metrics = await loadJson("/api/system/metrics");
+
+    setText("cpuPercent", `${metrics.cpu.used_percent}%`);
+    setText("cpuMeta", `load ${metrics.cpu.load_1m} · ${metrics.cpu.cores} cores`);
+    setPerfBar("cpuBar", metrics.cpu.used_percent);
+
+    setText("ramPercent", `${metrics.ram.used_percent}%`);
+    setText("ramMeta", `${metrics.ram.used_human} used / ${metrics.ram.total_human} total`);
+    setPerfBar("ramBar", metrics.ram.used_percent);
+
+    setText("diskPercent", `${metrics.disk.used_percent}%`);
+    setText("diskMeta", `${metrics.disk.used_human} used / ${metrics.disk.total_human} total`);
+    setPerfBar("diskBar", metrics.disk.used_percent);
+
+    setText("uptimeText", metrics.uptime.human);
+    setText("metricsTimestamp", `updated ${new Date(metrics.timestamp).toLocaleTimeString()}`);
+  } catch (error) {
+    setText("metricsTimestamp", "failed to load VPS metrics");
+    console.error("Failed to load VPS performance", error);
+  }
+}
+
+function setupVpsPerformanceToggle() {
+  const button = document.getElementById("vpsPerformanceToggle");
+  const card = document.getElementById("vpsPerformanceCard");
+
+  if (!button || !card) return;
+
+  button.addEventListener("click", () => {
+    card.classList.toggle("collapsed");
+    button.textContent = card.classList.contains("collapsed") ? "Show" : "Hide";
+  });
+}
+
+setupVpsPerformanceToggle();
+loadVpsPerformance();
+setInterval(loadVpsPerformance, 5000);

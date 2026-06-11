@@ -749,3 +749,17 @@ Main dashboard layout now follows:
     Agent Status
 
 This becomes the new visual foundation for AI Company OS.
+
+## INTERNAL-041 Handover
+
+Dashboard UX v1 implemented.
+
+Owner feedback addressed:
+
+- office map enlarged
+- Health/Kesehatan Server VPS replaced with VPS Performance
+- VPS metrics added: CPU, RAM, Storage, Uptime
+- VPS Performance hide/show button added
+- white scrollbars replaced with softer styled scrollbars
+
+This improves the dashboard from static layout toward operational UX.

@@ -84,30 +84,53 @@
         </div>
       </div>
 
-      <aside class="health-card">
-        <div class="section-heading compact">
+      <aside class="health-card vps-performance-card" id="vpsPerformanceCard">
+        <div class="section-heading compact vps-performance-heading">
           <div>
-            <p class="eyebrow">Health</p>
-            <h2>Kesehatan Server VPS</h2>
+            <p class="eyebrow">VPS</p>
+            <h2>VPS Performance</h2>
+          </div>
+          <button id="vpsPerformanceToggle" class="ghost-button" type="button">Hide</button>
+        </div>
+
+        <div id="vpsPerformanceBody" class="vps-performance-body">
+          <div class="perf-widget">
+            <div class="perf-label">
+              <span>CPU</span>
+              <strong id="cpuPercent">--%</strong>
+            </div>
+            <div class="perf-track"><div id="cpuBar" class="perf-fill"></div></div>
+            <small id="cpuMeta">load -- · -- cores</small>
+          </div>
+
+          <div class="perf-widget">
+            <div class="perf-label">
+              <span>RAM</span>
+              <strong id="ramPercent">--%</strong>
+            </div>
+            <div class="perf-track"><div id="ramBar" class="perf-fill"></div></div>
+            <small id="ramMeta">-- used / -- total</small>
+          </div>
+
+          <div class="perf-widget">
+            <div class="perf-label">
+              <span>Storage</span>
+              <strong id="diskPercent">--%</strong>
+            </div>
+            <div class="perf-track"><div id="diskBar" class="perf-fill"></div></div>
+            <small id="diskMeta">-- used / -- total</small>
+          </div>
+
+          <div class="perf-widget compact-perf">
+            <div class="perf-label">
+              <span>Uptime</span>
+              <strong id="uptimeText">--</strong>
+            </div>
+            <small id="metricsTimestamp">waiting metrics...</small>
           </div>
         </div>
 
-        <div class="health-list">
-          <div class="health-row">
-            <span>Dashboard</span>
-            <strong>running</strong>
-          </div>
-          <div class="health-row">
-            <span>Postgres</span>
-            <strong>connected</strong>
-          </div>
-          <div class="health-row">
-            <span>Redis</span>
-            <strong>ready</strong>
-          </div>
-        </div>
-
-        <div id="summaryCards" class="server-metrics"></div>
+        <div id="summaryCards" class="server-metrics compact-summary" hidden></div>
       </aside>
     </section>
 

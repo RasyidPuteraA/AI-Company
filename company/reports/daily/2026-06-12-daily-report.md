@@ -20,6 +20,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-041 - Improve Dashboard UX v1** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-040 - Restructure Dashboard Layout from Wireframe** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-039 - Add Slash Command Palette and Plus Upload** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-038 - Add Minimal Chat Command Bar UI** (Owner: engineer_agent; Status: IN_PROGRESS)
@@ -63,6 +64,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Dashboard UX v1 completed (Impact: Improved office map size, VPS performance widget, and scrollbar styling.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-041: Improve Dashboard UX v1)
+- 2026-06-11: internal_task_created | pm_agent | Improve Dashboard UX v1 (Impact: PM Agent created internal task INTERNAL-041: Improve dashboard UX by resizing office map, adding VPS performance metrics, adding hide/unhide for VPS performance, and styling scrollbars.)
 - 2026-06-11: engineering_completed | engineer_agent | Dashboard wireframe layout completed (Impact: Restructured dashboard UI according to owner sketch.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-040: Restructure Dashboard Layout from Wireframe)
 - 2026-06-11: internal_task_created | pm_agent | Restructure Dashboard Layout from Wireframe (Impact: PM Agent created internal task INTERNAL-040: Restructure dashboard layout based on owner wireframe: sidebar, top header, central office activity map, VPS health area, command bar, and bottom summary cards.)
@@ -72,9 +76,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-038: Add Minimal Chat Command Bar UI)
 - 2026-06-11: internal_task_created | pm_agent | Add Minimal Chat Command Bar UI (Impact: PM Agent created internal task INTERNAL-038: Redesign dashboard interaction around a single ChatGPT-style command bar with plus menu and slash commands for owner commands, uploads, conversion, workflow actions, and owner decisions.)
 - 2026-06-11: engineering_completed | engineer_agent | Dashboard workflow action buttons completed (Impact: Added dashboard workflow action endpoint and UI action panel.)
-- 2026-06-11: project_completed | owner | Project finalized as completed (Impact: Accepted project client-company-profile-demo finalized with final handover.)
-- 2026-06-11: internal_task_created | pm_agent | Add Dashboard Workflow Action Buttons (Impact: PM Agent created internal task INTERNAL-037: Add dashboard API actions and UI buttons for the end-to-end client workflow from PM analysis through final project completion.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-037: Add Dashboard Workflow Action Buttons)
 
 ## QA Status
 

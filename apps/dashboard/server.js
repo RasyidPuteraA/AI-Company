@@ -2,6 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
+const os = require("os");
 
 const PORT = process.env.PORT || 8787;
 const HOST = process.env.HOST || "127.0.0.1";
@@ -65,6 +66,108 @@ function parseRows(text, columns) {
     });
     return row;
   });
+}
+
+
+let lastCpuSnapshot = null;
+
+function readCpuSnapshot() {
+  const line = fs.readFileSync("/proc/stat", "utf8").split("\n")[0];
+  const values = line.trim().split(/\s+/).slice(1).map(Number);
+  const idle = (values[3] || 0) + (values[4] || 0);
+  const total = values.reduce((sum, value) => sum + value, 0);
+  return { idle, total };
+}
+
+function getCpuUsagePercent() {
+  const current = readCpuSnapshot();
+
+  if (!lastCpuSnapshot) {
+    lastCpuSnapshot = current;
+    const cpuCount = Math.max(os.cpus().length, 1);
+    return Math.min(100, Number(((os.loadavg()[0] / cpuCount) * 100).toFixed(1)));
+  }
+
+  const idleDelta = current.idle - lastCpuSnapshot.idle;
+  const totalDelta = current.total - lastCpuSnapshot.total;
+  lastCpuSnapshot = current;
+
+  if (totalDelta <= 0) return 0;
+
+  return Number(Math.max(0, Math.min(100, 100 - ((idleDelta / totalDelta) * 100))).toFixed(1));
+}
+
+function formatBytes(bytes) {
+  const value = Number(bytes || 0);
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let size = value;
+  let unitIndex = 0;
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size = size / 1024;
+    unitIndex += 1;
+  }
+
+  return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+}
+
+function formatUptime(seconds) {
+  const total = Math.floor(Number(seconds || 0));
+  const days = Math.floor(total / 86400);
+  const hours = Math.floor((total % 86400) / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+
+  if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
+}
+
+function getDiskUsage() {
+  const output = execFileSync("df", ["-P", "/"], { encoding: "utf8" });
+  const line = output.trim().split("\n")[1] || "";
+  const parts = line.trim().split(/\s+/);
+
+  const totalKb = Number(parts[1] || 0);
+  const usedKb = Number(parts[2] || 0);
+  const availableKb = Number(parts[3] || 0);
+  const percent = Number(String(parts[4] || "0").replace("%", ""));
+
+  return {
+    total_bytes: totalKb * 1024,
+    used_bytes: usedKb * 1024,
+    available_bytes: availableKb * 1024,
+    used_percent: percent,
+    total_human: formatBytes(totalKb * 1024),
+    used_human: formatBytes(usedKb * 1024),
+    available_human: formatBytes(availableKb * 1024)
+  };
+}
+
+function getSystemMetrics() {
+  const totalMem = os.totalmem();
+  const freeMem = os.freemem();
+  const usedMem = totalMem - freeMem;
+  const ramPercent = totalMem > 0 ? Number(((usedMem / totalMem) * 100).toFixed(1)) : 0;
+
+  return {
+    cpu: {
+      used_percent: getCpuUsagePercent(),
+      load_1m: Number(os.loadavg()[0].toFixed(2)),
+      cores: os.cpus().length
+    },
+    ram: {
+      used_percent: ramPercent,
+      total_human: formatBytes(totalMem),
+      used_human: formatBytes(usedMem),
+      free_human: formatBytes(freeMem)
+    },
+    disk: getDiskUsage(),
+    uptime: {
+      seconds: Math.floor(os.uptime()),
+      human: formatUptime(os.uptime())
+    },
+    timestamp: new Date().toISOString()
+  };
 }
 
 function getLatestEvents() {
@@ -389,6 +492,12 @@ const server = http.createServer(async (req, res) => {
     
     
     
+
+
+    if (pathname === "/api/system/metrics" && req.method === "GET") {
+      json(res, getSystemMetrics());
+      return;
+    }
 
     if (pathname === "/api/workflow/action" && req.method === "POST") {
       const payload = await readJson(req);
