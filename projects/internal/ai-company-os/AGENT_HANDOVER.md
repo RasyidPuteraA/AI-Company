@@ -88,3 +88,21 @@ Daily report now shows clearer recent event titles and includes accepted tasks f
 Verification:
 - bash syntax check passed for `runners/generate_daily_report.sh`
 - daily report regenerated from PostgreSQL data
+
+## INTERNAL-007 Handover
+
+Owner Inbox runner implemented.
+
+New command:
+
+```bash
+./runners/owner_inbox.sh
+
+It shows:
+
+waiting owner acceptance
+QA failed / needs revision / blocked
+recently accepted deliveries
+internal development status
+suggested owner commands
+

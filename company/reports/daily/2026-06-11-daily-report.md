@@ -15,7 +15,8 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
-- **INTERNAL-006 - Improve Owner Decision Reporting** (Owner: engineer_agent; Status: INTERNAL_BACKLOG)
+- **INTERNAL-007 - Add Owner Inbox Runner** (Owner: engineer_agent; Status: DONE)
+- **INTERNAL-006 - Improve Owner Decision Reporting** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-005 - Add Owner Approval Workflow** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-004 - Connect Daily Report Generator to PostgreSQL** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-003 - Integrate Improved Daily Report Generator** (Owner: engineer_agent; Status: DONE)
@@ -24,6 +25,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Owner Inbox runner completed (Impact: Implemented read-only owner inbox command for owner decision visibility.)
+- 2026-06-11: internal_task_created | pm_agent | Add Owner Inbox Runner (Impact: PM Agent created internal task INTERNAL-007: Add a read-only owner inbox runner that lists tasks needing owner decisions, QA failures, revision requests, blockers, and recently accepted deliveries.)
+- 2026-06-11: engineering_completed | engineer_agent | Owner decision report improved (Impact: Improved daily report owner decision visibility and recent event titles.)
 - 2026-06-11: internal_task_created | pm_agent | Improve Owner Decision Reporting (Impact: PM Agent created internal task INTERNAL-006: Improve the daily report so recent events have readable titles and owner decisions include pending acceptance, accepted tasks, revision requests, QA failures, and blockers.)
 - 2026-06-11: engineering_completed | engineer_agent | Owner approval workflow completed (Impact: Implemented and verified owner approval workflow using TASK-004.)
 - 2026-06-11: engineering_completed | engineer_agent | Owner approval workflow completed (Impact: Implemented and verified owner approval workflow using TASK-004.)
@@ -33,9 +37,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: qa_completed | qa_agent | Automated QA completed (Impact: QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.)
 - 2026-06-11: engineering_completed | engineer_agent | Engineer runner completed (Impact: Engineer runner completed for projects/internal/ai-company-os with result: DONE. Log: /opt/ai-company/logs/runners/engineer-20260611-174050.log)
 - 2026-06-11: engineering_started | engineer_agent | Engineer runner started (Impact: Engineer runner started for projects/internal/ai-company-os using INTERNAL-004.md.)
-- 2026-06-11: internal_task_created | pm_agent | Connect Daily Report Generator to PostgreSQL (Impact: PM Agent created internal task INTERNAL-004: Update the main daily report runner so it builds JSON input from PostgreSQL tasks and events, then passes that real data into scripts/generate_daily_report.py.)
-- 2026-06-11: qa_completed | qa_agent | Automated QA completed (Impact: QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.)
-- 2026-06-11: engineering_completed | engineer_agent | Engineer runner completed (Impact: Engineer runner completed for projects/internal/ai-company-os with result: DONE. Log: /opt/ai-company/logs/runners/engineer-20260611-172759.log)
 
 ## QA Status
 
