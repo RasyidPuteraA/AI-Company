@@ -8,8 +8,8 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Client Tasks
 
-- **CLIENT-1-QA-001 - QA client project implementation** (Owner: qa_agent; Status: TODO; Due: 2026-06-11)
-- **CLIENT-1-ENG-001 - Implement client project from PM analysis** (Owner: engineer_agent; Status: IN_PROGRESS; Due: 2026-06-11)
+- **CLIENT-1-QA-001 - QA client project implementation** (Owner: qa_agent; Status: IN_PROGRESS; Due: 2026-06-11)
+- **CLIENT-1-ENG-001 - Implement client project from PM analysis** (Owner: engineer_agent; Status: IMPLEMENTED; Due: 2026-06-11)
 - **CLIENT-2-001 - PM intake: Client Automation Consulting Demo** (Owner: pm_agent; Status: TODO; Due: 2026-06-11)
 - **CLIENT-1-001 - PM intake: Client Company Profile Demo** (Owner: pm_agent; Status: IN_PROGRESS; Due: 2026-06-11)
 - **TASK-004 - Add FAQ Section** (Owner: engineer_agent; Status: ACCEPTED; Due: 2026-06-11)
@@ -19,6 +19,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-032 - Add Engineer Implementation Runner v0** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-031 - Generate Engineer and QA Tasks from PM Analysis** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-030 - Add PM Intake Processor v0** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-029 - Add Attach Uploads Button in Dashboard** (Owner: engineer_agent; Status: DONE)
@@ -53,6 +54,12 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Engineer Implementation Runner v0 completed (Impact: Added engineer implementation runner for initial static output generation.)
+- 2026-06-11: task_claimed | qa_agent | Task claimed by qa_agent (Impact: qa_agent claimed CLIENT-1-QA-001: QA client project implementation)
+- 2026-06-11: engineer_implementation_completed | engineer_agent | Engineer implementation output created (Impact: Engineer implementation runner created initial site output for CLIENT-1-ENG-001.)
+- 2026-06-11: internal_task_created | pm_agent | Add Engineer Implementation Runner v0 (Impact: PM Agent created internal task INTERNAL-032: Add a safe engineer implementation runner that reads an Engineer task and PM intake analysis, then creates an initial implementation output in the client project workspace.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-032: Add Engineer Implementation Runner v0)
+- 2026-06-11: internal_task_created | pm_agent | Add Engineer Implementation Runner v0 (Impact: PM Agent created internal task INTERNAL-032: Add a safe engineer implementation runner that reads an Engineer task and PM intake analysis, then creates an initial implementation output in the client project workspace.)
 - 2026-06-11: engineering_completed | engineer_agent | Engineer and QA task generation completed (Impact: Added runner to generate Engineer and QA tasks from PM intake analysis.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed CLIENT-1-ENG-001: Implement client project from PM analysis)
 - 2026-06-11: pm_generated_engineer_qa_tasks | pm_agent | PM generated Engineer and QA tasks (Impact: Generated CLIENT-1-ENG-001 and CLIENT-1-QA-001 from PM analysis.)
@@ -82,12 +89,6 @@ Required:
 - Update AGENT_HANDOVER.md
 - Provide test/build result)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-031: Generate Engineer and QA Tasks from PM Analysis)
-- 2026-06-11: internal_task_created | pm_agent | Generate Engineer and QA Tasks from PM Analysis (Impact: PM Agent created internal task INTERNAL-031: Add a safe runner that reads PM intake analysis and creates initial Engineer and QA tasks for a client project.)
-- 2026-06-11: engineering_completed | engineer_agent | PM Intake Processor v0 completed (Impact: Added PM intake processor runner for requirement analysis and suggested implementation breakdown.)
-- 2026-06-11: pm_intake_analysis_generated | pm_agent | PM intake analysis generated (Impact: PM intake processor generated analysis and suggested task breakdown for CLIENT-1-001.)
-- 2026-06-11: internal_task_created | pm_agent | Add PM Intake Processor v0 (Impact: PM Agent created internal task INTERNAL-030: Add a safe PM intake processor runner that reads a client PM intake task and produces requirement analysis, implementation plan, and suggested task breakdown.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-030: Add PM Intake Processor v0)
-- 2026-06-11: internal_task_created | pm_agent | Add PM Intake Processor v0 (Impact: PM Agent created internal task INTERNAL-030: Add a safe PM intake processor runner that reads a client PM intake task and produces requirement analysis, implementation plan, and suggested task breakdown.)
 
 ## QA Status
 

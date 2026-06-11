@@ -540,3 +540,28 @@ Current automation flow:
     PM intake analysis
     Engineer task
     QA task
+
+## INTERNAL-032 Handover
+
+Engineer Implementation Runner v0 implemented.
+
+New runner:
+
+    runners/engineer_implementation_runner.sh
+
+Usage:
+
+    ./runners/engineer_implementation_runner.sh <project_key> <engineer_task_key>
+
+This runner creates initial implementation output from PM analysis.
+
+Current automation flow:
+
+    Owner command
+    Client project
+    PM intake task
+    Upload context
+    PM intake analysis
+    Engineer task
+    Engineer implementation output
+    QA task
