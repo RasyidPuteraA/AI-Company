@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-009 - Add Web Dashboard Foundation** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-008 - Add Terminal Company Dashboard** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-007 - Add Owner Inbox Runner** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-006 - Improve Owner Decision Reporting** (Owner: engineer_agent; Status: DONE)
@@ -26,6 +27,8 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Web Dashboard Foundation completed (Impact: Implemented read-only web dashboard foundation.)
+- 2026-06-11: internal_task_created | pm_agent | Add Web Dashboard Foundation (Impact: PM Agent created internal task INTERNAL-009: Add a read-only web dashboard foundation with CasaOS-style layout, pixel office placeholder, company status cards, owner inbox, task summary, events feed, and daily report link.)
 - 2026-06-11: engineering_completed | engineer_agent | Terminal Company Dashboard completed (Impact: Implemented read-only company status dashboard.)
 - 2026-06-11: internal_task_created | pm_agent | Add Terminal Company Dashboard (Impact: PM Agent created internal task INTERNAL-008: Add a read-only terminal dashboard that summarizes company health, client tasks, internal tasks, owner decisions, QA issues, accepted deliveries, and latest agent events.)
 - 2026-06-11: engineering_completed | engineer_agent | Owner Inbox runner completed (Impact: Implemented read-only owner inbox command for owner decision visibility.)
@@ -36,8 +39,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: engineering_completed | engineer_agent | Owner approval workflow completed (Impact: Implemented and verified owner approval workflow using TASK-004.)
 - 2026-06-11: owner_accepted | pm_agent | Owner review completed (Impact: Owner accepted FAQ section delivery.)
 - 2026-06-11: qa_completed | qa_agent | Automated QA completed (Impact: QA runner completed for projects/sandbox/company-profile-demo with result: PASS. Mode: node_project. Notes: npm test passed.)
-- 2026-06-11: internal_task_created | pm_agent | Add Owner Approval Workflow (Impact: PM Agent created internal task INTERNAL-005: Add owner approval workflow so client tasks that pass QA move to WAITING_OWNER_ACCEPTANCE instead of DONE, and add a runner for owner accept or revision decisions.)
-- 2026-06-11: qa_completed | qa_agent | Automated QA completed (Impact: QA runner completed for projects/internal/ai-company-os with result: PASS. Mode: documentation. Notes: Documentation task passed. Markdown files and AGENT_HANDOVER.md exist.)
 
 ## QA Status
 

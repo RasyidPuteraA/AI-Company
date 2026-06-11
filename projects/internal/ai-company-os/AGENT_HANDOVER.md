@@ -118,3 +118,23 @@ It shows:
 - latest accepted deliveries
 - latest agent events
 - suggested commands
+
+## INTERNAL-009 Handover
+
+Web Dashboard Foundation implemented.
+
+New app:
+
+    apps/dashboard
+
+Run command:
+
+    cd /opt/ai-company/apps/dashboard
+    npm start
+
+Dashboard includes:
+- CasaOS-style layout
+- pixel office placeholder
+- company status cards
+- latest tasks
+- latest events

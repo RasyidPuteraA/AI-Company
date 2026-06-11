@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Company OS</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">AI Company OS</div>
+    <nav>
+      <a>Dashboard</a>
+      <a>Owner Inbox</a>
+      <a>Tasks</a>
+      <a>Agents</a>
+      <a>Reports</a>
+      <a>Pixel Office</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Pixel Office Preview</p>
+        <h1>AI Company Control Center</h1>
+        <p>Visual office layer will show agents working in real time.</p>
+      </div>
+      <div class="pixel-office">
+        <div class="room">PM</div>
+        <div class="room">ENG</div>
+        <div class="room">QA</div>
+        <div class="room">DEVOPS</div>
+        <div class="agent">🤖</div>
+      </div>
+    </section>
+
+    <section class="cards" id="summaryCards"></section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Latest Tasks</h2>
+        <div id="tasks"></div>
+      </div>
+      <div class="panel">
+        <h2>Latest Events</h2>
+        <div id="events"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
