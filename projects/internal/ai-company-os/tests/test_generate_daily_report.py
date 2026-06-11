@@ -1,9 +1,11 @@
 import json
+import os
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 
+from scripts.build_daily_report_input import build_report_input
 from scripts.generate_daily_report import generate_report, main
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -78,6 +80,7 @@ class GenerateDailyReportTests(unittest.TestCase):
             check=True,
             capture_output=True,
             text=True,
+            env={**os.environ, "AI_COMPANY_OS_DAILY_REPORT_SAMPLE": "1"},
         )
 
         self.assertIn("## Client Tasks", result.stdout)
@@ -117,6 +120,74 @@ class GenerateDailyReportTests(unittest.TestCase):
             self.assertIn(
                 "Runner client task", output_path.read_text(encoding="utf-8")
             )
+
+    def test_builds_report_input_from_task_and_event_rows(self):
+        report_input = build_report_input(
+            [
+                {
+                    "title": "Client launch follow-up",
+                    "owner": "Client Ops",
+                    "status": "open",
+                    "due_date": "2026-06-12T09:00:00",
+                    "category": "client",
+                },
+                {
+                    "name": "Rotate report notes",
+                    "assignee": "Engineer Agent",
+                    "state": "done",
+                    "scope": "internal",
+                },
+            ],
+            [
+                {
+                    "created_at": "2026-06-11T08:15:00",
+                    "message": "Daily report generated",
+                    "impact": "Reporting data is visible",
+                }
+            ],
+        )
+
+        self.assertEqual(
+            report_input["client_tasks"][0]["title"], "Client launch follow-up"
+        )
+        self.assertEqual(report_input["client_tasks"][0]["due"], "2026-06-12")
+        self.assertEqual(report_input["internal_tasks"][0]["owner"], "Engineer Agent")
+        self.assertEqual(report_input["recent_events"][0]["date"], "2026-06-11")
+        self.assertEqual(report_input["qa_status"][0]["result"], "PASS")
+
+    def test_runner_builds_default_input_with_psql(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            fake_psql = temp_path / "psql"
+            fake_psql.write_text(
+                """#!/usr/bin/env bash
+set -euo pipefail
+args="$*"
+if [[ "${args}" == *"from public.tasks"* ]]; then
+  printf '%s\\n' '[{"title":"Client database task","category":"client","owner":"Ops"},{"title":"Internal database task","scope":"internal","status":"open"}]'
+elif [[ "${args}" == *"from public.events"* ]]; then
+  printf '%s\\n' '[{"created_at":"2026-06-11T10:00:00","summary":"Database event","impact":"Visible in report"}]'
+else
+  exit 2
+fi
+""",
+                encoding="utf-8",
+            )
+            fake_psql.chmod(0o755)
+
+            result = subprocess.run(
+                [str(PROJECT_ROOT / "runners" / "generate_daily_report.sh")],
+                cwd="/",
+                check=True,
+                capture_output=True,
+                text=True,
+                env={**os.environ, "PATH": f"{temp_path}:{os.environ['PATH']}"},
+            )
+
+            self.assertIn("Client database task", result.stdout)
+            self.assertIn("Internal database task", result.stdout)
+            self.assertIn("Database event", result.stdout)
+            self.assertIn("PostgreSQL daily report input", result.stdout)
 
 
 if __name__ == "__main__":
