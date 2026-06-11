@@ -19,3 +19,7 @@ dist/
 # OS/editor
 .DS_Store
 .vscode/
+
+# Python cache
+__pycache__/
+*.pyc
