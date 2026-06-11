@@ -184,3 +184,32 @@ renderEvents = function(events) {
   updatePixelOffice(events);
   return originalRenderEvents(events);
 };
+
+async function loadAgentRuntimeStatus() {
+  const container = document.getElementById("agentRuntimeList");
+  if (!container) return;
+
+  try {
+    const response = await fetch("/api/agents/runtime");
+    const agents = await response.json();
+
+    container.innerHTML = agents.map((agent) => {
+      const task = agent.current_task_key || "no active task";
+      const note = agent.status_note || "";
+      return `
+        <div class="agent-runtime-row">
+          <div class="agent-runtime-name">${agent.agent_key}</div>
+          <div class="agent-runtime-status">${agent.runtime_status}</div>
+          <div class="agent-runtime-task">${task}</div>
+          <div class="agent-runtime-note">${note}</div>
+        </div>
+      `;
+    }).join("");
+  } catch (error) {
+    container.innerHTML = `<div class="muted">Failed to load agent runtime status.</div>`;
+    console.error(error);
+  }
+}
+
+loadAgentRuntimeStatus();
+setInterval(loadAgentRuntimeStatus, 5000);

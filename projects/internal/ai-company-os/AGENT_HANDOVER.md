@@ -336,3 +336,15 @@ Commands verified:
     ./runners/update_agent_runtime_status.sh engineer_agent working INTERNAL-020 engineering_desk "Fixing runtime status runner SQL."
     ./runners/agent_runtime_status.sh engineer_agent
     ./runners/agent_runtime_status.sh
+
+## INTERNAL-021 Handover
+
+Agent Runtime Status is now visible on the web dashboard.
+
+New API:
+
+    /api/agents/runtime
+
+Dashboard now displays each agent runtime status, current task, and status note.
+
+This prepares the pixel office to use runtime status instead of only event history.

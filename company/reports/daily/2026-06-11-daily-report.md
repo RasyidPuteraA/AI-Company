@@ -15,6 +15,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-021 - Show Agent Runtime Status on Dashboard** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-020 - Fix Agent Runtime Status Runner SQL** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-019 - Add Agent Runtime Status Tracking** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-018 - Add Worker Service Control Runner** (Owner: devops_agent; Status: DONE)
@@ -38,6 +39,11 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status dashboard panel completed (Impact: Added API and dashboard panel for agent runtime status.)
+- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-021: Show Agent Runtime Status on Dashboard)
+- 2026-06-11: internal_task_created | pm_agent | Show Agent Runtime Status on Dashboard (Impact: PM Agent created internal task INTERNAL-021: Add agent runtime status API and dashboard panel so the web dashboard can display each agent current runtime status.)
+- 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status Runner SQL fixed (Impact: Fixed SQL quoting in runtime status update and display runners.)
+- 2026-06-11: internal_task_created | pm_agent | Fix Agent Runtime Status Runner SQL (Impact: PM Agent created internal task INTERNAL-020: Fix SQL quoting in agent runtime status runners so status update and per-agent display work correctly.)
 - 2026-06-11: engineering_completed | engineer_agent | Agent Runtime Status Runner SQL fixed (Impact: Fixed SQL quoting in runtime status update and display runners.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-020: Fix Agent Runtime Status Runner SQL)
 - 2026-06-11: internal_task_created | pm_agent | Fix Agent Runtime Status Runner SQL (Impact: PM Agent created internal task INTERNAL-020: Fix SQL quoting in agent runtime status runners so status update and per-agent display work correctly.)
@@ -45,11 +51,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-019: Add Agent Runtime Status Tracking)
 - 2026-06-11: internal_task_created | pm_agent | Add Agent Runtime Status Tracking (Impact: PM Agent created internal task INTERNAL-019: Add runtime status tracking for agents so the system can record and display whether each agent is idle, queued, claimed, working, safety_blocked, done, or failed.)
 - 2026-06-11: devops_completed | devops_agent | Worker Service Control Runner completed (Impact: Added owner-facing wrapper for safe agent worker service control.)
-- 2026-06-11: worker_service_stopped | devops_agent | Worker service stop requested (Impact: Owner stopped ai-company-agent-worker@engineer_agent.service through worker_service_control.sh)
-- 2026-06-11: devops_completed | devops_agent | Worker Service Control Runner completed (Impact: Added owner-facing wrapper for safe agent worker service control.)
-- 2026-06-11: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-018: Add Worker Service Control Runner)
-- 2026-06-11: internal_task_created | pm_agent | Add Worker Service Control Runner (Impact: PM Agent created internal task INTERNAL-018: Add a safe owner-facing runner to control disabled-by-default agent worker systemd services with status, start, stop, logs, and reset-failed commands.)
-- 2026-06-11: devops_completed | devops_agent | Disabled agent worker service template completed (Impact: Added disabled-by-default systemd template for safe bounded agent worker loops.)
 
 ## QA Status
 
