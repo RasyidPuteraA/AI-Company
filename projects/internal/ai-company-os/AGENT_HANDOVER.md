@@ -101,3 +101,20 @@ It shows:
 - internal development status
 - suggested owner commands
 
+
+## INTERNAL-008 Handover
+
+Terminal Company Dashboard implemented.
+
+New command:
+
+    ./runners/company_status.sh
+
+It shows:
+- task health summary
+- client task status
+- internal development status
+- owner attention queue
+- latest accepted deliveries
+- latest agent events
+- suggested commands
