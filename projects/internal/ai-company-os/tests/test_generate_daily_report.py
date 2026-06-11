@@ -1,9 +1,12 @@
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 
 from scripts.generate_daily_report import generate_report, main
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 class GenerateDailyReportTests(unittest.TestCase):
@@ -67,6 +70,53 @@ class GenerateDailyReportTests(unittest.TestCase):
             self.assertEqual(result, 0)
             self.assertIn("## QA Status", output_path.read_text(encoding="utf-8"))
             self.assertIn("CLI check", output_path.read_text(encoding="utf-8"))
+
+    def test_runner_uses_improved_generator_by_default(self):
+        result = subprocess.run(
+            [str(PROJECT_ROOT / "runners" / "generate_daily_report.sh")],
+            cwd="/",
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertIn("## Client Tasks", result.stdout)
+        self.assertIn("## Internal Tasks", result.stdout)
+        self.assertIn("## Recent Events", result.stdout)
+        self.assertIn("## QA Status", result.stdout)
+        self.assertIn("## Recommended Owner Decisions", result.stdout)
+
+    def test_runner_passes_arguments_to_generator(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            input_path = temp_path / "input.json"
+            output_path = temp_path / "report.md"
+            input_path.write_text(
+                json.dumps(
+                    {
+                        "date": "2026-06-11",
+                        "client_tasks": [{"title": "Runner client task"}],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            subprocess.run(
+                [
+                    str(PROJECT_ROOT / "runners" / "generate_daily_report.sh"),
+                    str(input_path),
+                    "--output",
+                    str(output_path),
+                ],
+                cwd="/",
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertIn(
+                "Runner client task", output_path.read_text(encoding="utf-8")
+            )
 
 
 if __name__ == "__main__":
