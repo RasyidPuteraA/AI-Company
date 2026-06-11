@@ -42,10 +42,10 @@ Starting the service still respects the safety guard in agent_worker_loop.sh, in
 
 - bash -n runners/worker_service_control.sh
 - status action tested
-- enabled action tested
 - logs action tested
 - reset-failed action tested
 - start action tested and safety block confirmed outside work hours
+- stop action tested
 
 ## Status
 

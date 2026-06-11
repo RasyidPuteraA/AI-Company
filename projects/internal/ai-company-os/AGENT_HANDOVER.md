@@ -276,3 +276,21 @@ New command:
 This wrapper is the preferred Owner-facing way to control disabled-by-default worker services.
 
 No autonomous 24/7 worker was enabled.
+
+## INTERNAL-018 Handover
+
+Worker Service Control Runner implemented.
+
+New command:
+
+    ./runners/worker_service_control.sh engineer_agent status
+    ./runners/worker_service_control.sh engineer_agent start
+    ./runners/worker_service_control.sh engineer_agent stop
+    ./runners/worker_service_control.sh engineer_agent logs
+    ./runners/worker_service_control.sh engineer_agent reset-failed
+    ./runners/worker_service_control.sh engineer_agent enabled
+    ./runners/worker_service_control.sh engineer_agent config
+
+This wrapper is the preferred Owner-facing way to control disabled-by-default worker services.
+
+No autonomous 24/7 worker was enabled.
