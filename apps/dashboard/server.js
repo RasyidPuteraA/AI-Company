@@ -123,6 +123,8 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`AI Company Dashboard running on http://0.0.0.0:${PORT}`);
+const HOST = process.env.HOST || "127.0.0.1";
+
+server.listen(PORT, HOST, () => {
+  console.log(`AI Company Dashboard running on http://${HOST}:${PORT}`);
 });

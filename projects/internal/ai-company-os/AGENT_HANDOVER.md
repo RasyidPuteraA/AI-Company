@@ -138,3 +138,25 @@ Dashboard includes:
 - company status cards
 - latest tasks
 - latest events
+
+## INTERNAL-010 Handover
+
+Web dashboard is now managed by systemd.
+
+Service:
+
+    ai-company-dashboard.service
+
+Local URL:
+
+    http://127.0.0.1:8787
+
+Access method:
+
+    ssh -p 9233 -L 8787:localhost:8787 ubuntu@103.186.30.230
+
+Useful commands:
+
+    sudo systemctl status ai-company-dashboard --no-pager
+    sudo systemctl restart ai-company-dashboard
+    sudo journalctl -u ai-company-dashboard -n 80 --no-pager
