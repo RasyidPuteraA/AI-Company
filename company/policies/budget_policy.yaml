@@ -1,0 +1,54 @@
+budget_policy:
+  total_resource_percent: 100
+
+  pools:
+    operational_pool_percent: 60
+    emergency_pool_percent: 15
+    owner_master_reserve_percent: 15
+    weekly_safety_buffer_percent: 10
+
+  owner_master_reserve:
+    auto_use_allowed: false
+    requires_owner_approval: true
+    purpose:
+      - owner_override
+      - emergency_instruction
+      - system_audit
+      - important_analysis
+      - production_decision
+
+  emergency_pool:
+    auto_use_allowed: true
+    requires_pm_and_budget_manager_approval: true
+    purpose:
+      - urgent_bug_fix
+      - staging_blocker
+      - deadline_sensitive_task
+      - production_incident
+
+fatigue_policy:
+  based_on:
+    - work_time
+    - estimated_token_usage
+    - task_complexity
+
+  levels:
+    fresh: "0-40"
+    normal: "40-70"
+    tired: "70-85"
+    critical: "85-95"
+    stop: "95-100"
+
+  rules:
+    fresh: "Agent may perform heavy tasks."
+    normal: "Agent may perform normal work."
+    tired: "Agent should focus only on priority tasks."
+    critical: "Agent may only summarize, handover, or perform minor fix."
+    stop: "Agent must stop and create handover note."
+
+agent_default_budget:
+  pm_agent: 8
+  budget_manager: 5
+  engineer_agent: 35
+  qa_agent: 15
+  devops_agent: 7

@@ -1,0 +1,21 @@
+# Secrets
+.env
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Runtime data
+data/
+logs/
+backups/
+
+# Node / build
+node_modules/
+dist/
+.next/
+.env.local
+
+# OS/editor
+.DS_Store
+.vscode/

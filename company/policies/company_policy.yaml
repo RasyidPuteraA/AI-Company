@@ -1,0 +1,40 @@
+company:
+  name: "AI Company OS"
+  owner: "Rasyid"
+  timezone: "Asia/Jakarta"
+  main_workspace: "/opt/ai-company"
+
+work_hours:
+  work_days:
+    - monday
+    - tuesday
+    - wednesday
+    - thursday
+    - friday
+  start: "08:00"
+  break_start: "12:00"
+  break_end: "13:00"
+  end: "17:00"
+  overtime_max_minutes: 120
+  hard_stop: "19:00"
+
+operational_rules:
+  communication_style: "documents_and_events_first"
+  allow_free_agent_chat: false
+  require_handover_when_unfinished: true
+  require_daily_report: true
+  require_three_day_report: true
+  require_weekly_report: true
+
+production_policy:
+  staging_deploy_allowed: true
+  production_deploy_allowed_without_owner_approval: false
+  require_owner_approval_for_production: true
+
+security_policy:
+  agents_may_edit_only_assigned_workspace: true
+  agents_may_access_root_filesystem: false
+  agents_may_access_global_secrets: false
+  agents_may_delete_repositories: false
+  agents_may_modify_firewall: false
+  agents_may_modify_ssh: false
