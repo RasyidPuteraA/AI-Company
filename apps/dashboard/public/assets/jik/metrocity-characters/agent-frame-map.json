@@ -1,0 +1,27 @@
+{
+  "source": "agent-suit.png",
+  "frame_width": 32,
+  "frame_height": 32,
+  "agents": {
+    "pm": [
+      0,
+      0
+    ],
+    "engineer": [
+      1,
+      0
+    ],
+    "qa": [
+      2,
+      0
+    ],
+    "devops": [
+      3,
+      0
+    ],
+    "owner": [
+      4,
+      0
+    ]
+  }
+}
