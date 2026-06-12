@@ -61,11 +61,7 @@ fi
 echo
 echo "## Optional POST validation smoke test"
 OWNER_OUT="$TMP_DIR/owner.out"
-OWNER_STATUS="$(curl -m 3 -sS -o "$OWNER_OUT" -w "%{http_code}" \
-  -X POST \
-  -H 'Content-Type: application/json' \
-  -d '{}' \
-  "$BASE_URL/api/owner/review/accept-finalize" 2>/dev/null || true)"
+OWNER_STATUS="$(curl -m 3 -sS -o "$OWNER_OUT" -w "%{http_code}" -X POST -H 'Content-Type: application/json' -d '{}' "$BASE_URL/api/owner/review/accept-finalize" 2>/dev/null || true)"
 echo "- /api/owner/review/accept-finalize empty-body HTTP $OWNER_STATUS"
 
 if [ "$OWNER_STATUS" = "400" ] && grep -q "Missing review_task_key" "$OWNER_OUT"; then
