@@ -943,3 +943,25 @@ Current autonomous mode uses bounded loops with systemd restart.
 Verification:
 
     pm_agent automatically claimed CLIENT-2-001.
+
+## INTERNAL-053 Handover
+
+Autonomous execution dispatcher installed.
+
+New runners:
+
+    runners/autonomous_agent_dispatcher.sh
+    runners/agent_autonomous_loop.sh
+
+Systemd agent services now run the autonomous loop.
+
+Verified flow:
+
+    CLIENT-2-001 -> DONE
+    CLIENT-2-ENG-001 -> IMPLEMENTED
+    CLIENT-2-QA-001 -> QA_PASSED
+    CLIENT-2-REVIEW-001 -> WAITING_OWNER_ACCEPTANCE
+
+Important:
+
+Owner review remains manual by design.
