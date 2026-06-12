@@ -23,6 +23,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-065 - Add Stale Internal Task Recovery Guard** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-064 - Add Idle Internal Improvement Planner** (Owner: pm_agent; Status: DONE)
 - **INTERNAL-063 - Add 3-Day and Weekly Meeting Reports** (Owner: pm_agent; Status: DONE)
 - **INTERNAL-062 - Add Codex CLI Autonomous Access Policy** (Owner: pm_agent; Status: DONE)
@@ -90,6 +91,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-12: devops_completed | devops_agent | Stale internal task recovery guard completed (Impact: Added report-only stale internal task guard.)
+- 2026-06-12: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-065: Add Stale Internal Task Recovery Guard)
+- 2026-06-12: internal_task_created | pm_agent | Add Stale Internal Task Recovery Guard (Impact: PM Agent created internal task INTERNAL-065: Add a safe guard that detects stale internal IN_PROGRESS tasks and reports them for owner or agent follow-up.)
 - 2026-06-12: planning_completed | pm_agent | Idle internal improvement planner completed (Impact: Added safe idle planner for internal improvement tasks.)
 - 2026-06-12: task_claimed | pm_agent | Task claimed by pm_agent (Impact: pm_agent claimed INTERNAL-064: Add Idle Internal Improvement Planner)
 - 2026-06-12: internal_task_created | pm_agent | Add Idle Internal Improvement Planner (Impact: PM Agent created internal task INTERNAL-064: Add a safe planner that creates internal improvement tasks when there is no active client work and no pending Owner approval.)
@@ -99,9 +103,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-12: internal_task_created | pm_agent | Add 3-Day and Weekly Meeting Reports (Impact: PM Agent created internal task INTERNAL-063: Add report generators for 3-day review meetings and weekly end-of-week review meetings.)
 - 2026-06-12: planning_completed | pm_agent | Codex CLI autonomous access policy completed (Impact: Added Codex CLI policy and smoke check.)
 - 2026-06-12: internal_task_created | pm_agent | Add Codex CLI Autonomous Access Policy (Impact: PM Agent created internal task INTERNAL-062: Set Codex CLI with ChatGPT subscription login as the approved model access path for autonomous agents without storing API keys in repo.)
-- 2026-06-12: internal_task_created | pm_agent | Add Codex CLI Autonomous Access Policy (Impact: PM Agent created internal task INTERNAL-062: Set Codex CLI with ChatGPT subscription login as the approved model access path for autonomous agents without storing API keys in repo.)
-- 2026-06-12: task_claimed | pm_agent | Task claimed by pm_agent (Impact: pm_agent claimed INTERNAL-062: Add 3-Day and Weekly Meeting Reports)
-- 2026-06-12: internal_task_created | pm_agent | Add 3-Day and Weekly Meeting Reports (Impact: PM Agent created internal task INTERNAL-062: Add report generators for 3-day review meetings and weekly end-of-week review meetings.)
 
 ## QA Status
 

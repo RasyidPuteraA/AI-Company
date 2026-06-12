@@ -1108,3 +1108,21 @@ Behavior:
 - skips when Owner attention is required
 - skips when active client work exists
 - creates one predefined safe internal improvement task when idle
+
+## INTERNAL-065 Handover
+
+Added stale internal task recovery guard.
+
+Command:
+
+    ./runners/stale_internal_task_recovery_guard.sh 8
+
+Output:
+
+    company/reports/ops/YYYY-MM-DD-stale-internal-tasks.md
+
+Safety:
+
+- report-only
+- no automatic task mutation
+- recommends manual review/resume/split/close/reassign
