@@ -3420,3 +3420,30 @@ cat >> apps/dashboard/public/styles.css << 'EOF'
     top: 1px;
   }
 }
+
+/* INTERNAL-047 HOTFIX: use JIK Suit sprite sheet for agent bodies */
+.jik-sprite-frame {
+  background-image: url("/assets/jik/metrocity-characters/agent-suit.png") !important;
+  background-size: 1536px 256px !important; /* original 768x128 scaled 2x */
+}
+
+/* Try cleaner idle/front-facing frames from Suit sheet */
+.pm-sprite .jik-sprite-frame {
+  background-position: 0px 0px !important;
+}
+
+.engineer-sprite .jik-sprite-frame {
+  background-position: -64px 0px !important;
+}
+
+.qa-sprite .jik-sprite-frame {
+  background-position: -128px 0px !important;
+}
+
+.devops-sprite .jik-sprite-frame {
+  background-position: -192px 0px !important;
+}
+
+.owner-sprite .jik-sprite-frame {
+  background-position: -256px 0px !important;
+}

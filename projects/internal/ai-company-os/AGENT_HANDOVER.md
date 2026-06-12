@@ -845,3 +845,27 @@ Next improvement:
 - assign outfit/hair variants
 - add idle/walk animation
 - improve tilemap office layout
+
+## INTERNAL-047 Handover
+
+JIK Character Sprites rendered in Pixel Office.
+
+Current sprite source:
+
+    apps/dashboard/public/assets/jik/metrocity-characters/agent-suit.png
+
+Shadow source:
+
+    apps/dashboard/public/assets/jik/metrocity-characters/shadow.png
+
+Contact sheets:
+
+    apps/dashboard/public/assets/jik/contact-sheets/
+
+Agents now use JIK sprite rendering instead of CSS block bodies.
+
+Next improvement:
+
+- choose final idle/walk frame coordinates
+- add walking animation
+- improve tilemap office viewport
