@@ -869,3 +869,33 @@ Next improvement:
 - choose final idle/walk frame coordinates
 - add walking animation
 - improve tilemap office viewport
+
+## INTERNAL-047 Handover
+
+JIK Character Sprites rendered in Pixel Office.
+
+Accepted visual baseline:
+
+- office-main-card min-height: 860px
+- tilemapOffice height: 800px
+- tilemap-stage width: min(100%, 1480px)
+
+Committed final assets:
+
+- pm.png
+- engineer.png
+- qa.png
+- devops.png
+- owner.png
+- office-map-v1.png
+
+Raw asset folders are ignored and kept local:
+
+- apps/dashboard/public/assets/jik/_incoming/
+- apps/dashboard/public/assets/jik/_processed/
+
+Next improvement:
+
+- choose better sprite frames
+- add idle/walk animation
+- clean old accumulated Pixel Office CSS overrides

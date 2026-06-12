@@ -143,6 +143,19 @@ function getDiskUsage() {
   };
 }
 
+
+function getAiUsageSummary() {
+  return {
+    mode: "local_workflow",
+    api_tokens_today: 0,
+    api_tokens_limit: null,
+    api_cost_today_usd: 0,
+    codex_usage: "not_used_by_vps",
+    chatgpt_plan_quota: "external_not_available",
+    note: "AI Company OS dashboard is currently running local workflow runners. No OpenAI API token usage is tracked from this VPS yet."
+  };
+}
+
 function getSystemMetrics() {
   const totalMem = os.totalmem();
   const freeMem = os.freemem();
@@ -493,6 +506,12 @@ const server = http.createServer(async (req, res) => {
     
     
 
+
+
+    if (pathname === "/api/ai/usage" && req.method === "GET") {
+      json(res, getAiUsageSummary());
+      return;
+    }
 
     if (pathname === "/api/system/metrics" && req.method === "GET") {
       json(res, getSystemMetrics());

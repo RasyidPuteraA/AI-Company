@@ -3447,3 +3447,303 @@ cat >> apps/dashboard/public/styles.css << 'EOF'
 .owner-sprite .jik-sprite-frame {
   background-position: -256px 0px !important;
 }
+
+/* INTERNAL-047 HOTFIX: try front-facing row from JIK suit sheet */
+.pm-sprite .jik-sprite-frame {
+  background-position: 0px -64px !important;
+}
+
+.engineer-sprite .jik-sprite-frame {
+  background-position: -64px -64px !important;
+}
+
+.qa-sprite .jik-sprite-frame {
+  background-position: -128px -64px !important;
+}
+
+.devops-sprite .jik-sprite-frame {
+  background-position: -192px -64px !important;
+}
+
+.owner-sprite .jik-sprite-frame {
+  background-position: -256px -64px !important;
+}
+
+/* INTERNAL-047 HOTFIX: try alternate front-facing row */
+.pm-sprite .jik-sprite-frame {
+  background-position: 0px -128px !important;
+}
+
+.engineer-sprite .jik-sprite-frame {
+  background-position: -64px -128px !important;
+}
+
+.qa-sprite .jik-sprite-frame {
+  background-position: -128px -128px !important;
+}
+
+.devops-sprite .jik-sprite-frame {
+  background-position: -192px -128px !important;
+}
+
+.owner-sprite .jik-sprite-frame {
+  background-position: -256px -128px !important;
+}
+
+/* INTERNAL-047 HOTFIX: make tilemap fill office frame */
+body.wireframe-dashboard .pixel-office.tilemap-office-v1,
+#tilemapOffice {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+#tilemapOffice .tilemap-stage {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  aspect-ratio: auto !important;
+}
+
+#tilemapOffice .tilemap-grid {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* INTERNAL-047 HOTFIX: make tilemap fill office frame */
+body.wireframe-dashboard .pixel-office.tilemap-office-v1,
+#tilemapOffice {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+#tilemapOffice .tilemap-stage {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  aspect-ratio: auto !important;
+}
+
+#tilemapOffice .tilemap-grid {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* HOTFIX: rasterized office map background, no split/left-only tile grid */
+body.wireframe-dashboard .pixel-office.tilemap-office-v1,
+#tilemapOffice {
+  height: 620px !important;
+  min-height: 620px !important;
+  padding: 16px !important;
+  display: block !important;
+  background: #0f172a !important;
+}
+
+#tilemapOffice .tilemap-stage {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  aspect-ratio: auto !important;
+  overflow: hidden !important;
+  border: 3px solid rgba(71, 85, 105, 0.88) !important;
+  border-radius: 14px !important;
+  background-image: url("/assets/custom-office/maps/office-map-v1.png") !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  image-rendering: pixelated !important;
+}
+
+#tilemapOffice .tilemap-grid {
+  display: none !important;
+}
+
+/* Hide old generated wall/floor dominance */
+#tilemapOffice .map-tile {
+  display: none !important;
+}
+
+/* Agent sprites as cropped PNG files, not spritesheet offsets */
+#tilemapOffice .tile-agent,
+#officeCleanMap .clean-agent,
+.office-sim-v1 .pixel-agent {
+  width: 64px !important;
+  height: 76px !important;
+}
+
+.jik-sprite-frame {
+  position: absolute !important;
+  left: 50% !important;
+  top: 4px !important;
+  width: 32px !important;
+  height: 32px !important;
+  transform: translateX(-50%) scale(2) !important;
+  transform-origin: top center !important;
+  background-repeat: no-repeat !important;
+  background-size: 32px 32px !important;
+  background-position: center !important;
+  image-rendering: pixelated !important;
+  filter: drop-shadow(2px 3px 0 rgba(2, 6, 23, 0.45)) !important;
+}
+
+.pm-sprite .jik-sprite-frame {
+  background-image: url("/assets/jik/metrocity-characters/pm.png") !important;
+}
+
+.engineer-sprite .jik-sprite-frame {
+  background-image: url("/assets/jik/metrocity-characters/engineer.png") !important;
+}
+
+.qa-sprite .jik-sprite-frame {
+  background-image: url("/assets/jik/metrocity-characters/qa.png") !important;
+}
+
+.devops-sprite .jik-sprite-frame {
+  background-image: url("/assets/jik/metrocity-characters/devops.png") !important;
+}
+
+.owner-sprite .jik-sprite-frame {
+  background-image: url("/assets/jik/metrocity-characters/owner.png") !important;
+}
+
+/* keep labels readable */
+#tilemapOffice .tile-agent .agent-name {
+  top: 66px !important;
+  font-size: 9px !important;
+}
+
+#tilemapOffice .tile-agent .agent-bubble {
+  bottom: 78px !important;
+}
+
+/* reposition agents on rasterized map */
+#tilemapOffice .tile-agent[data-room="pm"] {
+  left: 17% !important;
+  top: 35% !important;
+}
+
+#tilemapOffice .tile-agent[data-room="engineer"] {
+  left: 50% !important;
+  top: 35% !important;
+}
+
+#tilemapOffice .tile-agent[data-room="qa"] {
+  left: 83% !important;
+  top: 35% !important;
+}
+
+#tilemapOffice .tile-agent[data-room="devops"] {
+  left: 17% !important;
+  top: 78% !important;
+}
+
+#tilemapOffice .tile-agent[data-room="meeting"] {
+  left: 50% !important;
+  top: 78% !important;
+}
+
+#tilemapOffice .tile-agent[data-room="owner"] {
+  left: 83% !important;
+  top: 78% !important;
+}
+
+/* HOTFIX: preserve tilemap aspect ratio, do not stretch pixel art */
+body.wireframe-dashboard .pixel-office.tilemap-office-v1,
+#tilemapOffice {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 620px !important;
+  min-height: 620px !important;
+  padding: 18px !important;
+  background:
+    radial-gradient(circle at center, rgba(56, 189, 248, 0.06), transparent 34%),
+    #0f172a !important;
+}
+
+#tilemapOffice .tilemap-stage {
+  width: min(100%, calc((620px - 36px) * 24 / 13)) !important;
+  height: min(calc(100% - 0px), calc((100vw - 320px) * 13 / 24)) !important;
+  max-height: 584px !important;
+  aspect-ratio: 24 / 13 !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+
+/* fallback for browsers that calculate height too small */
+@supports (aspect-ratio: 24 / 13) {
+  #tilemapOffice .tilemap-stage {
+    height: auto !important;
+  }
+}
+
+/* undo accidental stretching from earlier patches */
+#tilemapOffice .tile-agent {
+  transform: translate(-50%, -50%) !important;
+}
+
+#tilemapOffice .tile-agent .agent-name,
+#tilemapOffice .room-zone span,
+#tilemapOffice .room-zone small {
+  transform: none !important;
+  letter-spacing: normal !important;
+}
+
+/* HOTFIX: enlarge proportional office map without stretching */
+body.wireframe-dashboard .office-main-card {
+  min-height: 780px !important;
+}
+
+body.wireframe-dashboard .pixel-office.tilemap-office-v1,
+#tilemapOffice {
+  height: 720px !important;
+  min-height: 720px !important;
+  padding: 14px !important;
+}
+
+#tilemapOffice .tilemap-stage {
+  width: min(100%, 1320px) !important;
+  height: auto !important;
+  max-height: none !important;
+  aspect-ratio: 24 / 13 !important;
+}
+
+/* make labels less distracting after scaling */
+#tilemapOffice .room-zone span {
+  font-size: 11px !important;
+}
+
+#tilemapOffice .room-zone small {
+  font-size: 9px !important;
+}
+
+/* slightly bigger agents */
+#tilemapOffice .tile-agent {
+  width: 72px !important;
+  height: 84px !important;
+}
+
+#tilemapOffice .tile-agent .agent-name {
+  top: 72px !important;
+  font-size: 10px !important;
+}
+
+#tilemapOffice .tile-agent .agent-bubble {
+  bottom: 88px !important;
+}
+
+/* HOTFIX: extra large office map */
+body.wireframe-dashboard .office-main-card {
+  min-height: 860px !important;
+}
+
+body.wireframe-dashboard .pixel-office.tilemap-office-v1,
+#tilemapOffice {
+  height: 800px !important;
+  min-height: 800px !important;
+}
+
+#tilemapOffice .tilemap-stage {
+  width: min(100%, 1480px) !important;
+}

@@ -23,3 +23,9 @@ dist/
 # Python cache
 __pycache__/
 *.pyc
+
+# Raw / extracted third-party assets kept locally on VPS
+apps/dashboard/public/assets/jik/_incoming/
+apps/dashboard/public/assets/jik/_processed/
+apps/dashboard/public/assets/limezu/_incoming/
+apps/dashboard/public/assets/limezu/_processed/

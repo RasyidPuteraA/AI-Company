@@ -41,8 +41,15 @@ async function main() {
     card("Internal Tasks", summary.internal_tasks),
     card("Waiting Owner", summary.waiting_owner),
     card("Accepted", summary.accepted),
-    card("Needs Attention", summary.needs_attention)
+    card("Needs Attention", summary.needs_attention),
+    `<div class="card ai-usage-summary-card" id="aiUsageSummaryCard">
+      <span>AI API Tokens</span>
+      <strong>0</strong>
+      <small>ChatGPT/Codex quota external</small>
+    </div>`
   ].join("");
+
+  loadAiUsageSummary().catch(console.error);
 
   document.getElementById("tasks").innerHTML = renderTasks(tasks);
   document.getElementById("events").innerHTML = renderEvents(events);
@@ -1628,4 +1635,134 @@ loadPixelOfficeRuntimeStatus = async function() {
   }
 };
 
+loadPixelOfficeRuntimeStatus();
+
+
+/* INTERNAL-044: AI Usage Summary */
+async function loadAiUsageSummary() {
+  const card = document.getElementById("aiUsageSummaryCard");
+  if (!card) return;
+
+  const usage = await loadJson("/api/ai/usage");
+
+  const limitText = usage.api_tokens_limit === null ? "no API limit tracked" : `${usage.api_tokens_limit}`;
+  card.innerHTML = `
+    <span>AI API Tokens</span>
+    <strong>${usage.api_tokens_today}</strong>
+    <small>${limitText} · Codex: ${usage.codex_usage}</small>
+  `;
+}
+
+/* INTERNAL-045: Tilemap Office Renderer v1 */
+const tilemapRows = [
+  "########################",
+  "#......#......#........#",
+  "#..PM..#..EN..#..QA....#",
+  "#......#......#........#",
+  "#......#......#........#",
+  "########..##..##########",
+  "#......................#",
+  "########..##..##########",
+  "#......#......#........#",
+  "#..DV..#..MT..#..OW....#",
+  "#......#......#........#",
+  "#......#......#........#",
+  "########################"
+];
+
+const tileClassMap = {
+  "#": "wall",
+  ".": "floor"
+};
+
+function buildTilemapOffice() {
+  const grid = document.getElementById("tilemapGrid");
+  if (!grid || grid.dataset.built === "true") return;
+
+  grid.style.setProperty("--tile-cols", tilemapRows[0].length);
+  grid.style.setProperty("--tile-rows", tilemapRows.length);
+
+  grid.innerHTML = tilemapRows.flatMap((row) => {
+    return row.split("").map((char) => {
+      const cls = tileClassMap[char] || "floor";
+      return `<span class="map-tile tile-${cls}"></span>`;
+    });
+  }).join("");
+
+  grid.dataset.built = "true";
+}
+
+const tileAgentPositions = {
+  pm: { left: "18%", top: "30%" },
+  engineer: { left: "50%", top: "30%" },
+  qa: { left: "82%", top: "30%" },
+  devops: { left: "18%", top: "78%" },
+  meeting: { left: "50%", top: "78%" },
+  owner: { left: "82%", top: "78%" }
+};
+
+function placeTileAgent(agentId, room, status = "idle", task = "") {
+  const agent = document.getElementById(agentId);
+  if (!agent) return;
+
+  const pos = tileAgentPositions[room] || tileAgentPositions.meeting;
+  agent.style.left = pos.left;
+  agent.style.top = pos.top;
+  agent.dataset.room = room;
+  agent.dataset.status = status;
+
+  agent.classList.remove("state-idle", "state-working", "state-done", "state-blocked", "state-failed");
+
+  if (status === "done") {
+    agent.classList.add("state-done");
+  } else if (status === "failed") {
+    agent.classList.add("state-failed");
+  } else if (status === "safety_blocked" || status === "blocked") {
+    agent.classList.add("state-blocked");
+  } else if (["queued", "claimed", "working", "in_progress", "IN_PROGRESS"].includes(status)) {
+    agent.classList.add("state-working");
+  } else {
+    agent.classList.add("state-idle");
+  }
+
+  const bubble = agent.querySelector(".agent-bubble");
+  if (bubble) {
+    const label = task || status || "idle";
+    bubble.textContent = label.length > 20 ? `${label.slice(0, 20)}…` : label;
+  }
+}
+
+function syncTilemapOfficeFromRuntime(agents) {
+  if (!Array.isArray(agents)) return;
+
+  agents.forEach((agent) => {
+    const config = runtimeAgentMap[agent.agent_key];
+    if (!config) return;
+
+    placeTileAgent(
+      config.sprite,
+      config.room,
+      agent.runtime_status || "idle",
+      agent.current_task_key || ""
+    );
+  });
+}
+
+const originalTilemapRuntimeLoader = loadPixelOfficeRuntimeStatus;
+loadPixelOfficeRuntimeStatus = async function() {
+  try {
+    const response = await fetch("/api/agents/runtime");
+    const agents = await response.json();
+
+    if (typeof updatePixelOfficeFromRuntime === "function") {
+      updatePixelOfficeFromRuntime(agents);
+    }
+
+    syncTilemapOfficeFromRuntime(agents);
+  } catch (error) {
+    console.error("Failed to update tilemap office runtime", error);
+  }
+};
+
+buildTilemapOffice();
 loadPixelOfficeRuntimeStatus();

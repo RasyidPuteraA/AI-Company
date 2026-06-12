@@ -8,39 +8,37 @@ Replace current block-style agent markers with real human sprite rendering from 
 
 Updated:
 
-- apps/dashboard/public/index.html
+- apps/dashboard/public/app.js
 - apps/dashboard/public/styles.css
+- apps/dashboard/server.js
 
-Added normalized assets:
+Added final dashboard assets:
 
-- apps/dashboard/public/assets/jik/metrocity-characters/character-model.png
-- apps/dashboard/public/assets/jik/metrocity-characters/shadow.png
-- apps/dashboard/public/assets/jik/metrocity-characters/agent-suit.png
+- apps/dashboard/public/assets/jik/metrocity-characters/pm.png
+- apps/dashboard/public/assets/jik/metrocity-characters/engineer.png
+- apps/dashboard/public/assets/jik/metrocity-characters/qa.png
+- apps/dashboard/public/assets/jik/metrocity-characters/devops.png
+- apps/dashboard/public/assets/jik/metrocity-characters/owner.png
+- apps/dashboard/public/assets/custom-office/maps/office-map-v1.png
 
-Generated contact sheets:
+## Asset Policy
 
-- apps/dashboard/public/assets/jik/contact-sheets/character-model-contact-sheet.png
-- apps/dashboard/public/assets/jik/contact-sheets/suit-contact-sheet.png
-- apps/dashboard/public/assets/jik/contact-sheets/suit1-contact-sheet.png
-- apps/dashboard/public/assets/jik/contact-sheets/hair-contact-sheet.png
+Raw downloaded/extracted third-party asset folders are not committed:
 
-## Behavior
+- apps/dashboard/public/assets/jik/_incoming/
+- apps/dashboard/public/assets/jik/_processed/
 
-- Pixel Office agents now render using JIK character sprite sheets.
-- CSS block agent body is hidden.
-- Each agent uses a static idle frame.
-- Shadow rendering uses JIK Shadow.png.
-- Suit sprite sheet is used for agent body rendering.
-- Contact sheets help select better frames.
+Only normalized dashboard-ready assets are committed.
 
-## Verification
+## Visual Baseline
 
-- JIK assets copied to public assets folder
-- contact sheets generated
-- node --check apps/dashboard/public/app.js
-- dashboard service restarted
-- browser hard refresh tested
-- visual sprite rendering verified
+Accepted baseline:
+
+- office-main-card min-height: 860px
+- tilemapOffice height: 800px
+- tilemap-stage width: min(100%, 1480px)
+- custom office map rendered as stable PNG
+- JIK sprites rendered as cropped per-agent PNG files
 
 ## Status
 
