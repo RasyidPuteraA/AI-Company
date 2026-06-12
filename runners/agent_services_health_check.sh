@@ -27,20 +27,39 @@ if [ "${AI_COMPANY_AGENT_EMERGENCY_STOP:-0}" = "1" ]; then
 fi
 echo "Emergency stop is not active in current shell."
 
+check_service_health() {
+  local service="$1"
+  local active_state sub_state result exec_status
+
+  active_state="$(systemctl show "$service" -p ActiveState --value 2>/dev/null || true)"
+  sub_state="$(systemctl show "$service" -p SubState --value 2>/dev/null || true)"
+  result="$(systemctl show "$service" -p Result --value 2>/dev/null || true)"
+  exec_status="$(systemctl show "$service" -p ExecMainStatus --value 2>/dev/null || true)"
+
+  if [ "$active_state" = "active" ]; then
+    echo "- $service: active"
+    return 0
+  fi
+
+  if [ "$active_state" = "activating" ] && [ "$sub_state" = "auto-restart" ]; then
+    if [ "$exec_status" = "0" ] || [ "$result" = "success" ]; then
+      echo "- $service: healthy auto-restart after successful bounded loop"
+      return 0
+    fi
+  fi
+
+  echo "- $service: NOT healthy active_state=$active_state sub_state=$sub_state result=$result exec_status=$exec_status"
+  systemctl status "$service" --no-pager -l || true
+  return 1
+}
+
 echo
 echo "## Service status"
 FAILED=0
 
 for agent in "${AGENTS[@]}"; do
   service="ai-company-agent@${agent}.service"
-
-  if systemctl is-active --quiet "$service"; then
-    echo "- $service: active"
-  else
-    echo "- $service: NOT active"
-    systemctl status "$service" --no-pager -l || true
-    FAILED=1
-  fi
+  check_service_health "$service" || FAILED=1
 done
 
 echo

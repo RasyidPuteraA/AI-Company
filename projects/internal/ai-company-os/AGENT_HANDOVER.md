@@ -1034,3 +1034,11 @@ Added agent services health guard:
     runners/agent_services_health_check.sh
 
 Use it after changes to autonomous agent services or dispatch runners.
+
+## INTERNAL-058 Handover
+
+Added unified system health guard:
+
+    runners/system_health_check.sh
+
+Use it as the top-level smoke test after dashboard, agent service, queue, or workflow runner changes.
