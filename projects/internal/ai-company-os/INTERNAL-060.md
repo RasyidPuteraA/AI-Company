@@ -12,8 +12,6 @@ Added:
 
 ## Checks
 
-The runner verifies:
-
 - unified system health via `./runners/health.sh`
 - shell syntax for runner scripts
 - git status visibility before commit
@@ -26,10 +24,6 @@ The runner verifies:
 ## Expected Result
 
     Pre-commit check passed.
-
-## Verification
-
-`./runners/pre_commit_check.sh` passed.
 
 ## Status
 

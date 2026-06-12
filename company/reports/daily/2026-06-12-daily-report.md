@@ -23,6 +23,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-061 - Add Autonomy Operating Policy** (Owner: pm_agent; Status: DONE)
 - **INTERNAL-060 - Add Pre-Commit Safety Check** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-059 - Add System Health Shortcut** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-058 - Add Unified System Health Check** (Owner: devops_agent; Status: DONE)
@@ -86,6 +87,10 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-12: planning_completed | pm_agent | Autonomy operating policy completed (Impact: Added client approval gate and idle internal improvement policy.)
+- 2026-06-12: devops_completed | devops_agent | Pre-commit safety check completed (Impact: Added ./runners/pre_commit_check.sh.)
+- 2026-06-12: task_claimed | pm_agent | Task claimed by pm_agent (Impact: pm_agent claimed INTERNAL-061: Add Autonomy Operating Policy)
+- 2026-06-12: internal_task_created | pm_agent | Add Autonomy Operating Policy (Impact: PM Agent created internal task INTERNAL-061: Add formal operating policy for client approval gates, idle internal improvement mode, and daily/3-day/weekly reporting expectations.)
 - 2026-06-12: devops_completed | devops_agent | Pre-commit safety check completed (Impact: Added ./runners/pre_commit_check.sh.)
 - 2026-06-12: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-060: Add Pre-Commit Safety Check)
 - 2026-06-12: internal_task_created | pm_agent | Add Pre-Commit Safety Check (Impact: PM Agent created internal task INTERNAL-060: Add a pre-commit safety runner that verifies system health, shell syntax, and avoids accidental raw asset staging before commits.)
@@ -94,10 +99,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-12: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-059: Add System Health Shortcut)
 - 2026-06-12: internal_task_created | pm_agent | Add System Health Shortcut (Impact: PM Agent created internal task INTERNAL-059: Add a documented owner shortcut for running the unified system health check and make it visible in handover/status guidance.)
 - 2026-06-12: devops_completed | devops_agent | Unified system health check completed (Impact: Added top-level system health runner.)
-- 2026-06-12: devops_completed | devops_agent | Unified system health check completed (Impact: Added top-level system health runner.)
-- 2026-06-12: devops_completed | devops_agent | Unified system health check completed (Impact: Added top-level system health runner.)
-- 2026-06-12: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-058: Add Unified System Health Check)
-- 2026-06-12: internal_task_created | pm_agent | Add Unified System Health Check (Impact: PM Agent created internal task INTERNAL-058: Add one top-level health check runner that verifies dashboard health, agent services health, company status, and owner inbox readability.)
 
 ## QA Status
 

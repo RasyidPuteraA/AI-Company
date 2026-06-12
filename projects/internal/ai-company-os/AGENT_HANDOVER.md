@@ -1058,3 +1058,11 @@ Added pre-commit safety runner:
     ./runners/pre_commit_check.sh
 
 Run it before commits to verify system health, runner shell syntax, git status visibility, and raw asset staging safety.
+
+## INTERNAL-061 Handover
+
+Added autonomy operating policy:
+
+    projects/internal/ai-company-os/AUTONOMY_OPERATING_POLICY.md
+
+Client project deliveries must wait for Owner approval before finalization. When no client work is active, agents may improve internal infrastructure and the virtual office within safety boundaries.
