@@ -911,3 +911,14 @@ New file:
 The renderer was adapted from the uploaded standalone pixel-office.html prototype. It now runs inside the dashboard Pixel Office panel, hides the previous DOM map overlays, draws the office scene on Canvas, uses JIK agent sprites, and polls `/api/agents/runtime`.
 
 This is the foundation for future live Pixel Office animation.
+
+## INTERNAL-051 Handover
+
+Canvas Pixel Office polish completed.
+
+Updated:
+
+    apps/dashboard/public/office-canvas.js
+    apps/dashboard/public/office.css
+
+The Canvas stage is larger and centered. Selected furniture objects can optionally render from local LimeZu sprites, while falling back safely to procedural drawing when raw LimeZu files are unavailable.

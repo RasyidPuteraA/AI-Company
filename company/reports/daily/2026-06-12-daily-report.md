@@ -20,6 +20,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-051 - Polish Canvas Pixel Office Layout and LimeZu Sprite Fallback** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-050 - Install Canvas Pixel Office Renderer** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-049 - Render LimeZu Modern Office Map v1** (Owner: engineer_agent; Status: IN_PROGRESS)
 - **INTERNAL-048 - Clean Pixel Office CSS and Sprite Frame Selection** (Owner: engineer_agent; Status: IN_PROGRESS)
@@ -73,6 +74,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-12: engineering_completed | engineer_agent | Canvas Pixel Office polish completed (Impact: Canvas stage sizing and optional LimeZu sprite fallback added.)
+- 2026-06-12: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-051: Polish Canvas Pixel Office Layout and LimeZu Sprite Fallback)
+- 2026-06-12: internal_task_created | pm_agent | Polish Canvas Pixel Office Layout and LimeZu Sprite Fallback (Impact: PM Agent created internal task INTERNAL-051: Polish the installed Canvas Pixel Office renderer, enlarge the office stage, and add optional LimeZu sprite fallback for selected furniture objects.)
 - 2026-06-12: engineering_completed | engineer_agent | Canvas Pixel Office renderer installed (Impact: Dashboard Pixel Office now has a Canvas renderer foundation.)
 - 2026-06-12: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-050: Install Canvas Pixel Office Renderer)
 - 2026-06-12: internal_task_created | pm_agent | Install Canvas Pixel Office Renderer (Impact: PM Agent created internal task INTERNAL-050: Adapt the uploaded pixel-office.html Canvas prototype into the AI Company OS dashboard Pixel Office panel.)
@@ -82,9 +86,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-12: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-048: Clean Pixel Office CSS and Sprite Frame Selection)
 - 2026-06-12: internal_task_created | pm_agent | Clean Pixel Office CSS and Sprite Frame Selection (Impact: PM Agent created internal task INTERNAL-048: Clean accumulated Pixel Office CSS overrides, consolidate final office map styles, and prepare frame selection rules for JIK character sprites.)
 - 2026-06-12: engineering_completed | engineer_agent | JIK Character Sprites completed (Impact: Rendered JIK character sprites in Pixel Office and accepted extra-large visual baseline.)
-- 2026-06-12: engineering_completed | engineer_agent | JIK Character Sprites completed (Impact: Rendered JIK character sprites in Pixel Office with static idle frames and shadow support.)
-- 2026-06-12: engineering_completed | engineer_agent | JIK Character Sprites completed (Impact: Rendered JIK character sprites in Pixel Office with static idle frames and shadow support.)
-- 2026-06-12: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-047: Render JIK Character Sprites in Pixel Office)
 
 ## QA Status
 

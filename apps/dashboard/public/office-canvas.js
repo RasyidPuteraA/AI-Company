@@ -21,6 +21,28 @@
   };
 
   const SPRITES = {};
+
+/* INTERNAL-051: optional LimeZu object sprites.
+   These files exist on the VPS but raw LimeZu folders are gitignored.
+   If the files are unavailable in another environment, renderer falls back to procedural furniture. */
+const LIMEZU_OBJECTS = {};
+const LIMEZU_OBJECT_SOURCES = {
+  8: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_38.png",
+  9: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_174.png",
+  10: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_284.png",
+  11: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_286.png",
+  12: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_240.png",
+  15: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_240.png"
+};
+
+function loadOptionalLimeZuObjects() {
+  Object.entries(LIMEZU_OBJECT_SOURCES).forEach(([key, src]) => {
+    const img = new Image();
+    img.src = src;
+    LIMEZU_OBJECTS[key] = img;
+  });
+}
+
   const runtime = {
     pm_agent: { status: "idle", task_key: "" },
     engineer_agent: { status: "idle", task_key: "" },
@@ -97,6 +119,7 @@
   }
 
   Object.entries(ROOMS).forEach(([key, cfg]) => loadSprite(key, cfg.sprite));
+  loadOptionalLimeZuObjects();
 
   function normalizeStatus(s) {
     return String(s || "idle").toLowerCase();
@@ -168,6 +191,14 @@
       }
 
       ctx.restore();
+    }
+
+    function drawOptionalLimeZuFurniture(obj) {
+      const img = LIMEZU_OBJECTS[String(obj.t)];
+      if (!img || !img.complete || img.naturalWidth <= 0) return false;
+
+      ctx.drawImage(img, 0, 0, TS, TS);
+      return true;
     }
 
     function drawFurniture(obj, time) {

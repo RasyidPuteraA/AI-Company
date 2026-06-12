@@ -538,3 +538,22 @@ body.wireframe-dashboard .pixel-office.tilemap-office-v1,
   pointer-events: none;
   z-index: 5;
 }
+
+/* INTERNAL-051: polish Canvas Pixel Office sizing */
+#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
+  height: min(100%, 760px) !important;
+  width: auto !important;
+  aspect-ratio: 10 / 7 !important;
+  max-width: min(100%, 1480px) !important;
+}
+
+#tilemapOffice.canvas-floorplan-mode #officeCanvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
+#tilemapOffice.canvas-floorplan-mode {
+  align-items: center !important;
+  justify-content: center !important;
+}
