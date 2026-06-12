@@ -1001,3 +1001,28 @@ Added dashboard health guard:
     runners/dashboard_health_check.sh
 
 Use it after dashboard changes to verify syntax, service status, and core API endpoints.
+
+
+INTERNAL-057 Handover
+
+Added agent services health guard:
+
+runners/agent_services_health_check.sh
+
+Use it after changes to autonomous agent services or dispatch runners.
+
+Verification passed against:
+
+ai-company-agent@pm_agent.service
+ai-company-agent@engineer_agent.service
+ai-company-agent@qa_agent.service
+ai-company-agent@devops_agent.service
+
+
+## INTERNAL-057 Handover
+
+Added agent services health guard:
+
+    runners/agent_services_health_check.sh
+
+Use it after changes to autonomous agent services or dispatch runners.
