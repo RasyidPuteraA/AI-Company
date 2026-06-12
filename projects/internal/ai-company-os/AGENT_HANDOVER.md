@@ -1066,3 +1066,16 @@ Added autonomy operating policy:
     projects/internal/ai-company-os/AUTONOMY_OPERATING_POLICY.md
 
 Client project deliveries must wait for Owner approval before finalization. When no client work is active, agents may improve internal infrastructure and the virtual office within safety boundaries.
+
+## INTERNAL-062 Handover
+
+Codex CLI is the approved model access path for autonomous agents using Owner ChatGPT subscription login.
+
+Added:
+
+    projects/internal/ai-company-os/CODEX_CLI_AUTONOMOUS_ACCESS_POLICY.md
+    runners/codex_agent_check.sh
+
+Run this to verify Codex access:
+
+    ./runners/codex_agent_check.sh
