@@ -965,3 +965,15 @@ Verified flow:
 Important:
 
 Owner review remains manual by design.
+
+## INTERNAL-054 Handover
+
+Added owner accept + finalize helper:
+
+    runners/owner_accept_and_finalize.sh
+
+Purpose:
+
+    Accept owner review task and finalize accepted project in one command.
+
+This prevents missing the `project_key` argument required by `finalize_accepted_project.sh`.
