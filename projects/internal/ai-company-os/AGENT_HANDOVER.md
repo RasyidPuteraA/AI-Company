@@ -993,3 +993,11 @@ Updated:
     runners/owner_accept_and_finalize.sh
 
 The dashboard now exposes an `Accept + Finalize` button when an owner review task is waiting for acceptance.
+
+## INTERNAL-056 Handover
+
+Added dashboard health guard:
+
+    runners/dashboard_health_check.sh
+
+Use it after dashboard changes to verify syntax, service status, and core API endpoints.
