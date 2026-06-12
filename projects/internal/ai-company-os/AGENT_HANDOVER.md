@@ -824,3 +824,24 @@ Next step:
 - Upload JIK character pack archive into apps/dashboard/public/assets/jik/_incoming/
 - Extract and select sprites for PM, Engineer, QA, DevOps, and Owner
 - Replace CSS agents with real character sprites
+
+## INTERNAL-047 Handover
+
+JIK Character Sprites rendered in Pixel Office.
+
+Current sprite source:
+
+    apps/dashboard/public/assets/jik/metrocity-characters/character-model.png
+
+Shadow source:
+
+    apps/dashboard/public/assets/jik/metrocity-characters/shadow.png
+
+Agents now use static sprite frames instead of CSS block bodies.
+
+Next improvement:
+
+- choose better frames from contact sheet
+- assign outfit/hair variants
+- add idle/walk animation
+- improve tilemap office layout

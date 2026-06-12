@@ -20,6 +20,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-047 - Render JIK Character Sprites in Pixel Office** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-046 - Add JIK Character Pipeline and Custom Office Map** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-045 - Add Tilemap Office Renderer v1** (Owner: engineer_agent; Status: IN_PROGRESS)
 - **INTERNAL-044 - Clean Pixel Office and Add AI Usage Widget** (Owner: engineer_agent; Status: IN_PROGRESS)
@@ -69,6 +70,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-12: engineering_completed | engineer_agent | JIK Character Sprites completed (Impact: Rendered JIK character sprites in Pixel Office with static idle frames and shadow support.)
+- 2026-06-12: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-047: Render JIK Character Sprites in Pixel Office)
+- 2026-06-12: internal_task_created | pm_agent | Render JIK Character Sprites in Pixel Office (Impact: PM Agent created internal task INTERNAL-047: Replace current block-style agent markers with real human sprite rendering from JIK MetroCity assets in the pixel office. Start with static idle frames and shadow support before adding animation.)
 - 2026-06-11: engineering_completed | engineer_agent | JIK character pipeline completed (Impact: Prepared JIK character asset pipeline and custom office map asset structure.)
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-046: Add JIK Character Pipeline and Custom Office Map)
 - 2026-06-11: internal_task_created | pm_agent | Add JIK Character Pipeline and Custom Office Map (Impact: PM Agent created internal task INTERNAL-046: Add JIK-A-4 MetroCity character asset pipeline and keep the office map custom-built instead of using external office tiles.)
@@ -78,9 +82,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-044: Clean Pixel Office and Add AI Usage Widget)
 - 2026-06-11: internal_task_created | pm_agent | Clean Pixel Office and Add AI Usage Widget (Impact: PM Agent created internal task INTERNAL-044: Clean conflicting Pixel Office CSS, rebuild a stable office simulation layout, and add an AI Usage summary widget showing local/API/Codex usage status.)
 - 2026-06-11: engineering_completed | engineer_agent | Pixel Office Simulation Stage v1 completed (Impact: Refactored dashboard Pixel Office toward Claude Office and Pixel Agents style simulation.)
-- 2026-06-11: internal_task_created | pm_agent | Add Pixel Office Simulation Stage v1 (Impact: PM Agent created internal task INTERNAL-043: Refactor Pixel Office from CSS grid rooms into a simulation-style office stage inspired by Claude Office and Pixel Agents, with absolute-position rooms, hallway, agent sprites, movement states, and status bubbles.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-043: Add Pixel Office Simulation Stage v1)
-- 2026-06-11: internal_task_created | pm_agent | Add Pixel Office Simulation Stage v1 (Impact: PM Agent created internal task INTERNAL-043: Refactor Pixel Office from CSS grid rooms into a simulation-style office stage inspired by Claude Office and Pixel Agents, with absolute-position rooms, hallway, agent sprites, movement states, and status bubbles.)
 
 ## QA Status
 

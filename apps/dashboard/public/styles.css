@@ -2293,3 +2293,1130 @@ body.wireframe-dashboard .pixel-office.office-sim-v1 {
   .office-sim-v1 .pixel-agent[data-room="meeting"] { left: 50%; top: 69%; }
   .office-sim-v1 .pixel-agent[data-room="owner"] { left: 50%; top: 84%; }
 }
+
+/* INTERNAL-044: Clean Pixel Office Stable Layout */
+body.wireframe-dashboard .pixel-office.clean-office-v1,
+#officeCleanMap {
+  position: relative !important;
+  width: 100% !important;
+  height: 560px !important;
+  min-height: 560px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 4px solid #334155 !important;
+  border-radius: 22px !important;
+  background: #0f172a !important;
+  box-shadow:
+    inset 0 0 0 3px rgba(2, 6, 23, 0.86),
+    0 24px 80px rgba(0, 0, 0, 0.28) !important;
+}
+
+#officeCleanMap .clean-office-floor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    repeating-conic-gradient(
+      from 45deg,
+      rgba(15, 23, 42, 1) 0% 25%,
+      rgba(30, 41, 59, 0.95) 0% 50%
+    );
+  background-size: 32px 32px, 32px 32px, 48px 48px;
+}
+
+#officeCleanMap .clean-room {
+  position: absolute !important;
+  z-index: 2 !important;
+  width: 28% !important;
+  height: 32% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  display: block !important;
+  overflow: hidden !important;
+  transform: none !important;
+  border: 4px solid #475569 !important;
+  border-radius: 0 !important;
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    repeating-conic-gradient(
+      from 45deg,
+      rgba(15, 23, 42, 0.98) 0% 25%,
+      rgba(30, 41, 59, 0.98) 0% 50%
+    ) !important;
+  background-size: 16px 16px, 16px 16px, 32px 32px !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(2, 6, 23, 0.92),
+    8px 8px 0 rgba(2, 6, 23, 0.22) !important;
+}
+
+#officeCleanMap .clean-room::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 30px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(71, 85, 105, 0.98) 0 14px,
+      rgba(51, 65, 85, 0.98) 14px 28px
+    );
+  border-bottom: 3px solid rgba(2, 6, 23, 0.82);
+}
+
+#officeCleanMap .clean-room::after {
+  content: none !important;
+}
+
+#officeCleanMap .clean-room-pm {
+  left: 4% !important;
+  top: 7% !important;
+}
+
+#officeCleanMap .clean-room-engineer {
+  left: 36% !important;
+  top: 7% !important;
+}
+
+#officeCleanMap .clean-room-qa {
+  left: 68% !important;
+  top: 7% !important;
+}
+
+#officeCleanMap .clean-room-devops {
+  left: 4% !important;
+  top: 61% !important;
+}
+
+#officeCleanMap .clean-room-meeting {
+  left: 36% !important;
+  top: 61% !important;
+}
+
+#officeCleanMap .clean-room-owner {
+  left: 68% !important;
+  top: 61% !important;
+}
+
+#officeCleanMap .clean-hall {
+  position: absolute;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(71, 85, 105, 0.15) 1px, transparent 1px),
+    linear-gradient(rgba(71, 85, 105, 0.15) 1px, transparent 1px),
+    rgba(15, 23, 42, 0.72);
+  background-size: 20px 20px;
+  border: 2px solid rgba(71, 85, 105, 0.20);
+}
+
+#officeCleanMap .clean-hall-x {
+  left: 4%;
+  right: 4%;
+  top: 47%;
+  height: 10%;
+}
+
+#officeCleanMap .clean-hall-y {
+  top: 7%;
+  bottom: 7%;
+  left: 47%;
+  width: 6%;
+}
+
+#officeCleanMap .room-label {
+  position: absolute !important;
+  z-index: 5 !important;
+  top: 8px !important;
+  left: 10px !important;
+  color: #eff6ff !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em !important;
+  text-shadow: 2px 2px 0 #020617 !important;
+}
+
+#officeCleanMap .room-status {
+  position: absolute !important;
+  z-index: 5 !important;
+  top: 28px !important;
+  left: 10px !important;
+  max-width: calc(100% - 20px) !important;
+  color: #93c5fd !important;
+  font-size: 10px !important;
+  text-shadow: 2px 2px 0 #020617 !important;
+}
+
+#officeCleanMap .clean-desk,
+#officeCleanMap .clean-table,
+#officeCleanMap .clean-server,
+#officeCleanMap .clean-board,
+#officeCleanMap .clean-safe,
+#officeCleanMap .clean-monitor {
+  position: absolute;
+  z-index: 4;
+}
+
+#officeCleanMap .clean-desk {
+  left: 18px;
+  bottom: 18px;
+  width: 82px;
+  height: 32px;
+  border: 3px solid #020617;
+  background: linear-gradient(180deg, #92400e, #78350f);
+  box-shadow: 6px 6px 0 rgba(2, 6, 23, 0.30);
+}
+
+#officeCleanMap .clean-desk.wide {
+  width: 108px;
+}
+
+#officeCleanMap .clean-desk.small {
+  width: 72px;
+}
+
+#officeCleanMap .clean-desk.owner {
+  background: linear-gradient(180deg, #0f766e, #134e4a);
+}
+
+#officeCleanMap .clean-monitor {
+  left: 42px;
+  bottom: 54px;
+  width: 26px;
+  height: 18px;
+  border: 3px solid #020617;
+  background: #38bdf8;
+  box-shadow: 0 8px 0 #334155;
+}
+
+#officeCleanMap .clean-monitor.wide {
+  width: 44px;
+}
+
+#officeCleanMap .clean-server {
+  left: 20px;
+  bottom: 18px;
+  width: 46px;
+  height: 84px;
+  border: 3px solid #020617;
+  background:
+    linear-gradient(#22c55e 0 4px, transparent 4px 14px),
+    linear-gradient(#38bdf8 0 4px, transparent 4px 14px),
+    #111827;
+  background-size: 100% 18px;
+}
+
+#officeCleanMap .clean-table {
+  left: 50%;
+  bottom: 28px;
+  width: 120px;
+  height: 42px;
+  transform: translateX(-50%);
+  border: 3px solid #020617;
+  background: linear-gradient(180deg, #7c3aed, #4c1d95);
+}
+
+#officeCleanMap .clean-board {
+  top: 44px;
+  right: 16px;
+  width: 86px;
+  height: 44px;
+  border: 3px solid #020617;
+  background: #dbeafe;
+  color: #0f172a;
+  font-size: 9px;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+}
+
+#officeCleanMap .clean-safe {
+  right: 20px;
+  bottom: 20px;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #020617;
+  background: #334155;
+  box-shadow: inset 0 0 0 5px #475569;
+}
+
+#officeCleanMap .clean-agent {
+  position: absolute !important;
+  z-index: 8 !important;
+  display: block !important;
+  width: 40px !important;
+  height: 54px !important;
+  font-size: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  transition:
+    left 0.55s cubic-bezier(.2,.8,.2,1),
+    top 0.55s cubic-bezier(.2,.8,.2,1) !important;
+  filter: drop-shadow(5px 6px 0 rgba(2, 6, 23, 0.38)) !important;
+}
+
+#officeCleanMap .clean-agent .agent-shadow {
+  position: absolute;
+  left: 5px;
+  bottom: 4px;
+  width: 30px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(2, 6, 23, 0.5);
+}
+
+#officeCleanMap .clean-agent .agent-body {
+  position: absolute !important;
+  left: 10px !important;
+  top: 14px !important;
+  width: 20px !important;
+  height: 27px !important;
+  border-radius: 5px 5px 2px 2px !important;
+  background: #38bdf8;
+  box-shadow:
+    0 -9px 0 #f8c8a9,
+    -7px -6px 0 #111827,
+    7px -6px 0 #111827,
+    -5px 20px 0 #1e293b,
+    5px 20px 0 #1e293b,
+    0 0 0 3px rgba(2, 6, 23, 0.72) !important;
+}
+
+#officeCleanMap .pm-sprite .agent-body {
+  background: #a3e635;
+}
+
+#officeCleanMap .engineer-sprite .agent-body {
+  background: #38bdf8;
+}
+
+#officeCleanMap .qa-sprite .agent-body {
+  background: #c084fc;
+}
+
+#officeCleanMap .devops-sprite .agent-body {
+  background: #f97316;
+}
+
+#officeCleanMap .owner-sprite .agent-body {
+  background: #facc15;
+}
+
+#officeCleanMap .agent-name {
+  position: absolute !important;
+  top: 47px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  color: #eff6ff !important;
+  font-size: 8px !important;
+  font-weight: 900 !important;
+  text-shadow: 1px 1px 0 #020617 !important;
+  white-space: nowrap !important;
+}
+
+#officeCleanMap .agent-bubble {
+  position: absolute !important;
+  display: none;
+  left: 50% !important;
+  bottom: 62px !important;
+  min-width: 52px;
+  max-width: 135px;
+  transform: translateX(-50%) !important;
+  border: 2px solid rgba(226, 232, 240, 0.72);
+  border-radius: 8px;
+  padding: 5px 7px;
+  background: rgba(15, 23, 42, 0.96);
+  color: #e0f2fe;
+  font-size: 9px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 4px 4px 0 rgba(2, 6, 23, 0.42);
+}
+
+#officeCleanMap .clean-agent.state-working .agent-bubble,
+#officeCleanMap .clean-agent.state-blocked .agent-bubble,
+#officeCleanMap .clean-agent.state-failed .agent-bubble {
+  display: block !important;
+}
+
+#officeCleanMap .clean-agent[data-room="pm"] {
+  left: 18% !important;
+  top: 30% !important;
+}
+
+#officeCleanMap .clean-agent[data-room="engineer"] {
+  left: 50% !important;
+  top: 30% !important;
+}
+
+#officeCleanMap .clean-agent[data-room="qa"] {
+  left: 82% !important;
+  top: 30% !important;
+}
+
+#officeCleanMap .clean-agent[data-room="devops"] {
+  left: 18% !important;
+  top: 78% !important;
+}
+
+#officeCleanMap .clean-agent[data-room="meeting"] {
+  left: 50% !important;
+  top: 78% !important;
+}
+
+#officeCleanMap .clean-agent[data-room="owner"] {
+  left: 82% !important;
+  top: 78% !important;
+}
+
+#officeCleanMap .office-room.active {
+  border-color: #38bdf8 !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(2, 6, 23, 0.92),
+    0 0 0 2px rgba(56, 189, 248, 0.18),
+    0 0 28px rgba(56, 189, 248, 0.22) !important;
+}
+
+#officeCleanMap .office-room.owner-active {
+  border-color: #facc15 !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(2, 6, 23, 0.92),
+    0 0 0 2px rgba(250, 204, 21, 0.18),
+    0 0 28px rgba(250, 204, 21, 0.22) !important;
+}
+
+/* AI Usage summary card */
+.workflow-summary-strip {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+}
+
+.ai-usage-summary-card {
+  position: relative;
+}
+
+.ai-usage-summary-card small {
+  position: absolute;
+  left: 16px;
+  bottom: 8px;
+  max-width: calc(100% - 32px);
+  overflow: hidden;
+  color: rgba(226, 232, 240, 0.52);
+  font-size: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 1200px) {
+  .workflow-summary-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  #officeCleanMap {
+    height: 900px !important;
+  }
+
+  #officeCleanMap .clean-room {
+    left: 5% !important;
+    width: 90% !important;
+    height: 13% !important;
+  }
+
+  #officeCleanMap .clean-room-pm { top: 3% !important; }
+  #officeCleanMap .clean-room-engineer { top: 18% !important; }
+  #officeCleanMap .clean-room-qa { top: 33% !important; }
+  #officeCleanMap .clean-room-devops { top: 48% !important; }
+  #officeCleanMap .clean-room-meeting { top: 63% !important; }
+  #officeCleanMap .clean-room-owner { top: 78% !important; }
+
+  #officeCleanMap .clean-hall {
+    display: none !important;
+  }
+
+  #officeCleanMap .clean-agent[data-room="pm"] { left: 50% !important; top: 9% !important; }
+  #officeCleanMap .clean-agent[data-room="engineer"] { left: 50% !important; top: 24% !important; }
+  #officeCleanMap .clean-agent[data-room="qa"] { left: 50% !important; top: 39% !important; }
+  #officeCleanMap .clean-agent[data-room="devops"] { left: 50% !important; top: 54% !important; }
+  #officeCleanMap .clean-agent[data-room="meeting"] { left: 50% !important; top: 69% !important; }
+  #officeCleanMap .clean-agent[data-room="owner"] { left: 50% !important; top: 84% !important; }
+}
+
+/* INTERNAL-045: Tilemap Office Renderer v1 */
+body.wireframe-dashboard .pixel-office.tilemap-office-v1,
+#tilemapOffice {
+  position: relative !important;
+  width: 100% !important;
+  height: 600px !important;
+  min-height: 600px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  border: 4px solid #334155 !important;
+  border-radius: 22px !important;
+  background: #0f172a !important;
+  box-shadow:
+    inset 0 0 0 3px rgba(2, 6, 23, 0.86),
+    0 24px 80px rgba(0, 0, 0, 0.28) !important;
+}
+
+.tilemap-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  image-rendering: pixelated;
+  background: #111827;
+}
+
+.tilemap-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--tile-cols), 1fr);
+  grid-template-rows: repeat(var(--tile-rows), 1fr);
+}
+
+.map-tile {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.tile-floor {
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    repeating-conic-gradient(
+      from 45deg,
+      rgba(15, 23, 42, 1) 0% 25%,
+      rgba(30, 41, 59, 0.96) 0% 50%
+    );
+  background-size: 16px 16px, 16px 16px, 32px 32px;
+}
+
+.tile-wall {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(71, 85, 105, 1) 0 14px,
+      rgba(51, 65, 85, 1) 14px 28px
+    );
+  box-shadow: inset 0 -4px 0 rgba(2, 6, 23, 0.62);
+}
+
+.room-zone {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  display: grid;
+  gap: 2px;
+  color: #e0f2fe;
+  text-shadow: 2px 2px 0 #020617;
+}
+
+.room-zone span {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.room-zone small {
+  color: #93c5fd;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.room-zone-pm { left: 8%; top: 15%; }
+.room-zone-engineer { left: 39%; top: 15%; }
+.room-zone-qa { left: 70%; top: 15%; }
+.room-zone-devops { left: 8%; top: 64%; }
+.room-zone-meeting { left: 39%; top: 64%; }
+.room-zone-owner { left: 70%; top: 64%; }
+
+.map-prop {
+  position: absolute;
+  z-index: 5;
+  image-rendering: pixelated;
+}
+
+.prop-desk {
+  width: 74px;
+  height: 30px;
+  border: 3px solid #020617;
+  background: linear-gradient(180deg, #92400e, #78350f);
+  box-shadow: 5px 5px 0 rgba(2, 6, 23, 0.30);
+}
+
+.prop-computer {
+  width: 28px;
+  height: 18px;
+  border: 3px solid #020617;
+  background: #38bdf8;
+  box-shadow: 0 8px 0 #334155;
+}
+
+.prop-server {
+  width: 48px;
+  height: 84px;
+  border: 3px solid #020617;
+  background:
+    linear-gradient(#22c55e 0 4px, transparent 4px 14px),
+    linear-gradient(#38bdf8 0 4px, transparent 4px 14px),
+    #111827;
+  background-size: 100% 18px;
+}
+
+.prop-table {
+  width: 130px;
+  height: 46px;
+  border: 3px solid #020617;
+  background: linear-gradient(180deg, #7c3aed, #4c1d95);
+}
+
+.prop-board {
+  width: 92px;
+  height: 46px;
+  border: 3px solid #020617;
+  background: #dbeafe;
+  color: #0f172a;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.prop-safe {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #020617;
+  background: #334155;
+  box-shadow: inset 0 0 0 5px #475569;
+}
+
+.pm-desk { left: 10%; top: 35%; }
+.pm-computer { left: 12%; top: 30%; }
+
+.engineer-desk { left: 42%; top: 35%; width: 104px; }
+.engineer-computer { left: 45%; top: 30%; width: 42px; }
+
+.qa-desk { left: 72%; top: 35%; }
+.qa-computer { left: 74%; top: 30%; }
+
+.devops-server { left: 9%; top: 72%; }
+.devops-desk { left: 14%; top: 80%; }
+
+.meeting-table { left: 43%; top: 78%; }
+.meeting-board { left: 56%; top: 68%; }
+
+.owner-desk { left: 72%; top: 80%; background: linear-gradient(180deg, #0f766e, #134e4a); }
+.owner-safe { left: 86%; top: 78%; }
+
+.tile-agent {
+  position: absolute !important;
+  z-index: 8 !important;
+  width: 42px !important;
+  height: 56px !important;
+  display: block !important;
+  font-size: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  transition:
+    left 0.55s cubic-bezier(.2,.8,.2,1),
+    top 0.55s cubic-bezier(.2,.8,.2,1) !important;
+  filter: drop-shadow(5px 6px 0 rgba(2, 6, 23, 0.38));
+}
+
+.tile-agent .agent-shadow {
+  position: absolute;
+  left: 5px;
+  bottom: 4px;
+  width: 32px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(2, 6, 23, 0.5);
+}
+
+.tile-agent .agent-body {
+  position: absolute;
+  left: 10px;
+  top: 14px;
+  width: 22px;
+  height: 29px;
+  border-radius: 5px 5px 2px 2px;
+  background: #38bdf8;
+  box-shadow:
+    0 -10px 0 #f8c8a9,
+    -7px -7px 0 #111827,
+    7px -7px 0 #111827,
+    -5px 21px 0 #1e293b,
+    5px 21px 0 #1e293b,
+    0 0 0 3px rgba(2, 6, 23, 0.72);
+}
+
+.tile-agent.pm-sprite .agent-body { background: #a3e635; }
+.tile-agent.engineer-sprite .agent-body { background: #38bdf8; }
+.tile-agent.qa-sprite .agent-body { background: #c084fc; }
+.tile-agent.devops-sprite .agent-body { background: #f97316; }
+.tile-agent.owner-sprite .agent-body { background: #facc15; }
+
+.tile-agent .agent-name {
+  position: absolute;
+  top: 49px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #eff6ff;
+  font-size: 8px;
+  font-weight: 900;
+  text-shadow: 1px 1px 0 #020617;
+  white-space: nowrap;
+}
+
+.tile-agent .agent-bubble {
+  position: absolute;
+  display: none;
+  left: 50%;
+  bottom: 64px;
+  min-width: 52px;
+  max-width: 135px;
+  transform: translateX(-50%);
+  border: 2px solid rgba(226, 232, 240, 0.72);
+  border-radius: 8px;
+  padding: 5px 7px;
+  background: rgba(15, 23, 42, 0.96);
+  color: #e0f2fe;
+  font-size: 9px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 4px 4px 0 rgba(2, 6, 23, 0.42);
+}
+
+.tile-agent.state-working .agent-bubble,
+.tile-agent.state-blocked .agent-bubble,
+.tile-agent.state-failed .agent-bubble {
+  display: block;
+}
+
+.tile-agent.state-working {
+  animation: tile-agent-working 0.72s steps(2) infinite;
+}
+
+@keyframes tile-agent-working {
+  0% { transform: translate(-50%, -50%) translateY(0); }
+  100% { transform: translate(-50%, -50%) translateY(-4px); }
+}
+
+/* HOTFIX INTERNAL-045: Center and scale tilemap office correctly */
+body.wireframe-dashboard .pixel-office.tilemap-office-v1,
+#tilemapOffice {
+  display: grid !important;
+  place-items: center !important;
+  height: 620px !important;
+  min-height: 620px !important;
+  padding: 18px !important;
+  background:
+    radial-gradient(circle at center, rgba(56, 189, 248, 0.08), transparent 36%),
+    #0f172a !important;
+}
+
+#tilemapOffice .tilemap-stage {
+  position: relative !important;
+  width: min(100%, 1280px) !important;
+  height: 100% !important;
+  max-height: 580px !important;
+  aspect-ratio: 24 / 13 !important;
+  border: 3px solid rgba(71, 85, 105, 0.88) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  background: #111827 !important;
+  box-shadow:
+    inset 0 0 0 3px rgba(2, 6, 23, 0.86),
+    0 18px 60px rgba(0, 0, 0, 0.28) !important;
+}
+
+#tilemapOffice .tilemap-grid {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(var(--tile-cols), minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(var(--tile-rows), minmax(0, 1fr)) !important;
+}
+
+#tilemapOffice .map-tile {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Reduce weird empty visual dominance */
+#tilemapOffice .tile-floor {
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.045) 1px, transparent 1px),
+    linear-gradient(rgba(148, 163, 184, 0.045) 1px, transparent 1px),
+    repeating-conic-gradient(
+      from 45deg,
+      rgba(15, 23, 42, 1) 0% 25%,
+      rgba(30, 41, 59, 0.92) 0% 50%
+    ) !important;
+  background-size: 16px 16px, 16px 16px, 32px 32px !important;
+}
+
+#tilemapOffice .tile-wall {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(71, 85, 105, 0.98) 0 14px,
+      rgba(51, 65, 85, 0.98) 14px 28px
+    ) !important;
+  box-shadow: inset 0 -4px 0 rgba(2, 6, 23, 0.62) !important;
+}
+
+/* Keep props and agents inside the map stage */
+#tilemapOffice .map-prop,
+#tilemapOffice .room-zone,
+#tilemapOffice .tile-agent {
+  transform-origin: center center;
+}
+
+/* Slightly larger characters for readability */
+#tilemapOffice .tile-agent {
+  width: 48px !important;
+  height: 62px !important;
+}
+
+#tilemapOffice .tile-agent .agent-body {
+  left: 12px !important;
+  top: 16px !important;
+  width: 24px !important;
+  height: 32px !important;
+}
+
+#tilemapOffice .tile-agent .agent-name {
+  top: 55px !important;
+}
+
+/* Better prop placement after scaling */
+#tilemapOffice .pm-desk { left: 10%; top: 34%; }
+#tilemapOffice .pm-computer { left: 12%; top: 29%; }
+
+#tilemapOffice .engineer-desk { left: 42%; top: 34%; }
+#tilemapOffice .engineer-computer { left: 45%; top: 29%; }
+
+#tilemapOffice .qa-desk { left: 72%; top: 34%; }
+#tilemapOffice .qa-computer { left: 74%; top: 29%; }
+
+#tilemapOffice .devops-server { left: 9%; top: 69%; }
+#tilemapOffice .devops-desk { left: 14%; top: 80%; }
+
+#tilemapOffice .meeting-table { left: 43%; top: 78%; }
+#tilemapOffice .meeting-board { left: 56%; top: 68%; }
+
+#tilemapOffice .owner-desk { left: 72%; top: 80%; }
+#tilemapOffice .owner-safe { left: 86%; top: 77%; }
+
+/* INTERNAL-047: JIK Character Sprite Rendering */
+#tilemapOffice .tile-agent,
+#officeCleanMap .clean-agent,
+.office-sim-v1 .pixel-agent {
+  width: 64px !important;
+  height: 76px !important;
+}
+
+#tilemapOffice .tile-agent .agent-body,
+#officeCleanMap .clean-agent .agent-body,
+.office-sim-v1 .pixel-agent .agent-body {
+  display: none !important;
+}
+
+#tilemapOffice .tile-agent .agent-shadow,
+#officeCleanMap .clean-agent .agent-shadow,
+.office-sim-v1 .pixel-agent .agent-shadow {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 8px !important;
+  width: 40px !important;
+  height: 16px !important;
+  transform: translateX(-50%) !important;
+  background-image: url("/assets/jik/metrocity-characters/shadow.png") !important;
+  background-repeat: no-repeat !important;
+  background-size: 40px 40px !important;
+  background-position: center !important;
+  opacity: 0.78;
+  border-radius: 0 !important;
+}
+
+.jik-sprite-frame {
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  width: 32px;
+  height: 32px;
+  transform: translateX(-50%) scale(2);
+  transform-origin: top center;
+  background-image: url("/assets/jik/metrocity-characters/character-model.png");
+  background-repeat: no-repeat;
+  background-size: 1536px 384px; /* original 768x192 scaled 2x */
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 3px 0 rgba(2, 6, 23, 0.45));
+}
+
+/* Different idle frames per agent.
+   Frame size: 32x32.
+   Sheet assumed: 24 columns x 6 rows.
+   Because background-size is 2x, offsets are also 2x. */
+.pm-sprite .jik-sprite-frame {
+  background-position: 0px 0px;
+}
+
+.engineer-sprite .jik-sprite-frame {
+  background-position: -64px 0px;
+}
+
+.qa-sprite .jik-sprite-frame {
+  background-position: -128px 0px;
+}
+
+.devops-sprite .jik-sprite-frame {
+  background-position: -192px 0px;
+}
+
+.owner-sprite .jik-sprite-frame {
+  background-position: -256px 0px;
+}
+
+#tilemapOffice .tile-agent .agent-name,
+#officeCleanMap .clean-agent .agent-name,
+.office-sim-v1 .pixel-agent .agent-name {
+  top: 66px !important;
+  font-size: 9px !important;
+}
+
+#tilemapOffice .tile-agent .agent-bubble,
+#officeCleanMap .clean-agent .agent-bubble,
+.office-sim-v1 .pixel-agent .agent-bubble {
+  bottom: 78px !important;
+}
+
+/* working bob still applies to sprite agent */
+#tilemapOffice .tile-agent.state-working .jik-sprite-frame,
+#officeCleanMap .clean-agent.state-working .jik-sprite-frame,
+.office-sim-v1 .pixel-agent.state-working .jik-sprite-frame {
+  animation: jik-idle-bob 0.72s steps(2) infinite;
+}
+
+@keyframes jik-idle-bob {
+  0% {
+    top: 4px;
+  }
+
+  100% {
+    top: 1px;
+  }
+}
+EOFcd /opt/ai-company
+
+cat >> apps/dashboard/public/styles.css << 'EOF'
+
+/* INTERNAL-047: JIK Character Sprite Rendering */
+#tilemapOffice .tile-agent,
+#officeCleanMap .clean-agent,
+.office-sim-v1 .pixel-agent {
+  width: 64px !important;
+  height: 76px !important;
+}
+
+#tilemapOffice .tile-agent .agent-body,
+#officeCleanMap .clean-agent .agent-body,
+.office-sim-v1 .pixel-agent .agent-body {
+  display: none !important;
+}
+
+#tilemapOffice .tile-agent .agent-shadow,
+#officeCleanMap .clean-agent .agent-shadow,
+.office-sim-v1 .pixel-agent .agent-shadow {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 8px !important;
+  width: 40px !important;
+  height: 16px !important;
+  transform: translateX(-50%) !important;
+  background-image: url("/assets/jik/metrocity-characters/shadow.png") !important;
+  background-repeat: no-repeat !important;
+  background-size: 40px 40px !important;
+  background-position: center !important;
+  opacity: 0.78;
+  border-radius: 0 !important;
+}
+
+.jik-sprite-frame {
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  width: 32px;
+  height: 32px;
+  transform: translateX(-50%) scale(2);
+  transform-origin: top center;
+  background-image: url("/assets/jik/metrocity-characters/character-model.png");
+  background-repeat: no-repeat;
+  background-size: 1536px 384px; /* original 768x192 scaled 2x */
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 3px 0 rgba(2, 6, 23, 0.45));
+}
+
+/* Different idle frames per agent.
+   Frame size: 32x32.
+   Sheet assumed: 24 columns x 6 rows.
+   Because background-size is 2x, offsets are also 2x. */
+.pm-sprite .jik-sprite-frame {
+  background-position: 0px 0px;
+}
+
+.engineer-sprite .jik-sprite-frame {
+  background-position: -64px 0px;
+}
+
+.qa-sprite .jik-sprite-frame {
+  background-position: -128px 0px;
+}
+
+.devops-sprite .jik-sprite-frame {
+  background-position: -192px 0px;
+}
+
+.owner-sprite .jik-sprite-frame {
+  background-position: -256px 0px;
+}
+
+#tilemapOffice .tile-agent .agent-name,
+#officeCleanMap .clean-agent .agent-name,
+.office-sim-v1 .pixel-agent .agent-name {
+  top: 66px !important;
+  font-size: 9px !important;
+}
+
+#tilemapOffice .tile-agent .agent-bubble,
+#officeCleanMap .clean-agent .agent-bubble,
+.office-sim-v1 .pixel-agent .agent-bubble {
+  bottom: 78px !important;
+}
+
+/* working bob still applies to sprite agent */
+#tilemapOffice .tile-agent.state-working .jik-sprite-frame,
+#officeCleanMap .clean-agent.state-working .jik-sprite-frame,
+.office-sim-v1 .pixel-agent.state-working .jik-sprite-frame {
+  animation: jik-idle-bob 0.72s steps(2) infinite;
+}
+
+@keyframes jik-idle-bob {
+  0% {
+    top: 4px;
+  }
+
+  100% {
+    top: 1px;
+  }
+}
+
+/* INTERNAL-047: JIK Character Sprite Rendering */
+#tilemapOffice .tile-agent,
+#officeCleanMap .clean-agent,
+.office-sim-v1 .pixel-agent {
+  width: 64px !important;
+  height: 76px !important;
+}
+
+#tilemapOffice .tile-agent .agent-body,
+#officeCleanMap .clean-agent .agent-body,
+.office-sim-v1 .pixel-agent .agent-body {
+  display: none !important;
+}
+
+#tilemapOffice .tile-agent .agent-shadow,
+#officeCleanMap .clean-agent .agent-shadow,
+.office-sim-v1 .pixel-agent .agent-shadow {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 8px !important;
+  width: 40px !important;
+  height: 16px !important;
+  transform: translateX(-50%) !important;
+  background-image: url("/assets/jik/metrocity-characters/shadow.png") !important;
+  background-repeat: no-repeat !important;
+  background-size: 40px 40px !important;
+  background-position: center !important;
+  opacity: 0.78;
+  border-radius: 0 !important;
+}
+
+.jik-sprite-frame {
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  width: 32px;
+  height: 32px;
+  transform: translateX(-50%) scale(2);
+  transform-origin: top center;
+  background-image: url("/assets/jik/metrocity-characters/character-model.png");
+  background-repeat: no-repeat;
+  background-size: 1536px 384px; /* original 768x192 scaled 2x */
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 3px 0 rgba(2, 6, 23, 0.45));
+}
+
+/* Different idle frames per agent.
+   Frame size: 32x32.
+   Sheet assumed: 24 columns x 6 rows.
+   Because background-size is 2x, offsets are also 2x. */
+.pm-sprite .jik-sprite-frame {
+  background-position: 0px 0px;
+}
+
+.engineer-sprite .jik-sprite-frame {
+  background-position: -64px 0px;
+}
+
+.qa-sprite .jik-sprite-frame {
+  background-position: -128px 0px;
+}
+
+.devops-sprite .jik-sprite-frame {
+  background-position: -192px 0px;
+}
+
+.owner-sprite .jik-sprite-frame {
+  background-position: -256px 0px;
+}
+
+#tilemapOffice .tile-agent .agent-name,
+#officeCleanMap .clean-agent .agent-name,
+.office-sim-v1 .pixel-agent .agent-name {
+  top: 66px !important;
+  font-size: 9px !important;
+}
+
+#tilemapOffice .tile-agent .agent-bubble,
+#officeCleanMap .clean-agent .agent-bubble,
+.office-sim-v1 .pixel-agent .agent-bubble {
+  bottom: 78px !important;
+}
+
+/* working bob still applies to sprite agent */
+#tilemapOffice .tile-agent.state-working .jik-sprite-frame,
+#officeCleanMap .clean-agent.state-working .jik-sprite-frame,
+.office-sim-v1 .pixel-agent.state-working .jik-sprite-frame {
+  animation: jik-idle-bob 0.72s steps(2) infinite;
+}
+
+@keyframes jik-idle-bob {
+  0% {
+    top: 4px;
+  }
+
+  100% {
+    top: 1px;
+  }
+}
