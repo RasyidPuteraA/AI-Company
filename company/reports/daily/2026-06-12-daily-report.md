@@ -23,7 +23,8 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
-- **INTERNAL-062 - Add 3-Day and Weekly Meeting Reports** (Owner: pm_agent; Status: DONE)
+- **INTERNAL-063 - Add 3-Day and Weekly Meeting Reports** (Owner: pm_agent; Status: DONE)
+- **INTERNAL-062 - Add Codex CLI Autonomous Access Policy** (Owner: pm_agent; Status: DONE)
 - **INTERNAL-061 - Add Autonomy Operating Policy** (Owner: pm_agent; Status: DONE)
 - **INTERNAL-060 - Add Pre-Commit Safety Check** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-059 - Add System Health Shortcut** (Owner: devops_agent; Status: DONE)
@@ -88,6 +89,10 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-12: planning_completed | pm_agent | 3-day and weekly meeting reports completed (Impact: Added generate_3day_report and generate_weekly_report runners.)
+- 2026-06-12: internal_task_created | pm_agent | Add 3-Day and Weekly Meeting Reports (Impact: PM Agent created internal task INTERNAL-063: Add report generators for 3-day review meetings and weekly end-of-week review meetings.)
+- 2026-06-12: task_claimed | pm_agent | Task claimed by pm_agent (Impact: pm_agent claimed INTERNAL-063: Add 3-Day and Weekly Meeting Reports)
+- 2026-06-12: internal_task_created | pm_agent | Add 3-Day and Weekly Meeting Reports (Impact: PM Agent created internal task INTERNAL-063: Add report generators for 3-day review meetings and weekly end-of-week review meetings.)
 - 2026-06-12: planning_completed | pm_agent | Codex CLI autonomous access policy completed (Impact: Added Codex CLI policy and smoke check.)
 - 2026-06-12: internal_task_created | pm_agent | Add Codex CLI Autonomous Access Policy (Impact: PM Agent created internal task INTERNAL-062: Set Codex CLI with ChatGPT subscription login as the approved model access path for autonomous agents without storing API keys in repo.)
 - 2026-06-12: internal_task_created | pm_agent | Add Codex CLI Autonomous Access Policy (Impact: PM Agent created internal task INTERNAL-062: Set Codex CLI with ChatGPT subscription login as the approved model access path for autonomous agents without storing API keys in repo.)
@@ -96,10 +101,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-12: planning_completed | pm_agent | Autonomy operating policy completed (Impact: Added client approval gate and idle internal improvement policy.)
 - 2026-06-12: devops_completed | devops_agent | Pre-commit safety check completed (Impact: Added ./runners/pre_commit_check.sh.)
 - 2026-06-12: task_claimed | pm_agent | Task claimed by pm_agent (Impact: pm_agent claimed INTERNAL-061: Add Autonomy Operating Policy)
-- 2026-06-12: internal_task_created | pm_agent | Add Autonomy Operating Policy (Impact: PM Agent created internal task INTERNAL-061: Add formal operating policy for client approval gates, idle internal improvement mode, and daily/3-day/weekly reporting expectations.)
-- 2026-06-12: devops_completed | devops_agent | Pre-commit safety check completed (Impact: Added ./runners/pre_commit_check.sh.)
-- 2026-06-12: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-060: Add Pre-Commit Safety Check)
-- 2026-06-12: internal_task_created | pm_agent | Add Pre-Commit Safety Check (Impact: PM Agent created internal task INTERNAL-060: Add a pre-commit safety runner that verifies system health, shell syntax, and avoids accidental raw asset staging before commits.)
 
 ## QA Status
 

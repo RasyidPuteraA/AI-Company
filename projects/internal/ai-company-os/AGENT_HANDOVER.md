@@ -1079,3 +1079,17 @@ Added:
 Run this to verify Codex access:
 
     ./runners/codex_agent_check.sh
+
+## INTERNAL-063 Handover
+
+Added 3-day and weekly meeting report generators.
+
+Commands:
+
+    ./runners/generate_3day_report.sh
+    ./runners/generate_weekly_report.sh
+
+Output paths:
+
+    company/reports/3day/YYYY-MM-DD-3day-report.md
+    company/reports/weekly/YYYY-MM-DD-weekly-report.md
