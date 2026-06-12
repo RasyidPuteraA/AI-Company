@@ -1050,3 +1050,11 @@ Added owner health shortcut:
     ./runners/health.sh
 
 This is the short command for the unified system health check.
+
+## INTERNAL-060 Handover
+
+Added pre-commit safety runner:
+
+    ./runners/pre_commit_check.sh
+
+Run it before commits to verify system health, runner shell syntax, git status visibility, and raw asset staging safety.
