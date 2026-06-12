@@ -977,3 +977,19 @@ Purpose:
     Accept owner review task and finalize accepted project in one command.
 
 This prevents missing the `project_key` argument required by `finalize_accepted_project.sh`.
+
+## INTERNAL-055 Handover
+
+Added dashboard Owner Review action panel.
+
+New file:
+
+    apps/dashboard/public/owner-review-actions.js
+
+Updated:
+
+    apps/dashboard/public/index.html
+    apps/dashboard/server.js
+    runners/owner_accept_and_finalize.sh
+
+The dashboard now exposes an `Accept + Finalize` button when an owner review task is waiting for acceptance.
