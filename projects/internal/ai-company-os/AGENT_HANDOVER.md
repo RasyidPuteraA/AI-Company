@@ -922,3 +922,24 @@ Updated:
     apps/dashboard/public/office.css
 
 The Canvas stage is larger and centered. Selected furniture objects can optionally render from local LimeZu sprites, while falling back safely to procedural drawing when raw LimeZu files are unavailable.
+
+## INTERNAL-052 Handover
+
+Autonomous agent worker services enabled.
+
+Services:
+
+    ai-company-agent@pm_agent.service
+    ai-company-agent@engineer_agent.service
+    ai-company-agent@qa_agent.service
+    ai-company-agent@devops_agent.service
+
+Important safety note:
+
+The worker loop max iteration limit is 20. Do not set systemd ExecStart above `--max-iterations 20`.
+
+Current autonomous mode uses bounded loops with systemd restart.
+
+Verification:
+
+    pm_agent automatically claimed CLIENT-2-001.
