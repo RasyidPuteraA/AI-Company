@@ -1042,3 +1042,11 @@ Added unified system health guard:
     runners/system_health_check.sh
 
 Use it as the top-level smoke test after dashboard, agent service, queue, or workflow runner changes.
+
+## INTERNAL-059 Handover
+
+Added owner health shortcut:
+
+    ./runners/health.sh
+
+This is the short command for the unified system health check.

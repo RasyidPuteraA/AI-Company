@@ -23,6 +23,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-059 - Add System Health Shortcut** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-058 - Add Unified System Health Check** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-057 - Add Agent Services Health Guard** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-056 - Add Dashboard Health Guard** (Owner: devops_agent; Status: DONE)
@@ -84,6 +85,10 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-12: devops_completed | devops_agent | System health shortcut completed (Impact: Added ./runners/health.sh shortcut.)
+- 2026-06-12: internal_task_created | pm_agent | Add System Health Shortcut (Impact: PM Agent created internal task INTERNAL-059: Add a documented owner shortcut for running the unified system health check and make it visible in handover/status guidance.)
+- 2026-06-12: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-059: Add System Health Shortcut)
+- 2026-06-12: internal_task_created | pm_agent | Add System Health Shortcut (Impact: PM Agent created internal task INTERNAL-059: Add a documented owner shortcut for running the unified system health check and make it visible in handover/status guidance.)
 - 2026-06-12: devops_completed | devops_agent | Unified system health check completed (Impact: Added top-level system health runner.)
 - 2026-06-12: devops_completed | devops_agent | Unified system health check completed (Impact: Added top-level system health runner.)
 - 2026-06-12: devops_completed | devops_agent | Unified system health check completed (Impact: Added top-level system health runner.)
@@ -92,10 +97,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-12: devops_completed | devops_agent | Agent services health guard completed (Impact: Added health check for autonomous agent services.)
 - 2026-06-12: devops_completed | devops_agent | Agent services health guard completed (Impact: Added health check for autonomous agent services.)
 - 2026-06-12: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-057: Add Agent Services Health Guard)
-- 2026-06-12: internal_task_created | pm_agent | Add Agent Services Health Guard (Impact: PM Agent created internal task INTERNAL-057: Add a health check runner for autonomous agent systemd services, runtime status, queues, and recent crash logs.)
-- 2026-06-12: devops_completed | devops_agent | Dashboard health guard completed (Impact: Added dashboard health check runner.)
-- 2026-06-12: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-056: Add Dashboard Health Guard)
-- 2026-06-12: internal_task_created | pm_agent | Add Dashboard Health Guard (Impact: PM Agent created internal task INTERNAL-056: Add a dashboard health check runner to verify syntax, service status, and key API endpoints before and after dashboard changes.)
 
 ## QA Status
 
