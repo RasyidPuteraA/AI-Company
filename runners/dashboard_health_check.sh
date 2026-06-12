@@ -29,10 +29,28 @@ fi
 
 echo "Dashboard service is active."
 
+curl_status() {
+  local name="$1"
+  local url="$2"
+  local output_file="$3"
+  shift 3
+
+  local status
+  status="$(curl -m 10 -sS -o "$output_file" -w "%{http_code}" "$@" "$url" 2>"$output_file.err" || true)"
+
+  if [ -s "$output_file.err" ]; then
+    echo "- $name curl stderr:"
+    cat "$output_file.err" || true
+  fi
+
+  echo "$status"
+}
+
 echo
 echo "## API smoke tests"
 
-SUMMARY_STATUS="$(curl -m 5 -s -o /tmp/ai-company-dashboard-summary.out -w "%{http_code}" "$BASE_URL/api/summary")"
+SUMMARY_STATUS="$(curl_status '/api/summary' "$BASE_URL/api/summary" /tmp/ai-company-dashboard-summary.out)"
+SUMMARY_STATUS="$(printf '%s\n' "$SUMMARY_STATUS" | tail -1)"
 echo "- /api/summary HTTP $SUMMARY_STATUS"
 
 if [ "$SUMMARY_STATUS" != "200" ]; then
@@ -41,7 +59,8 @@ if [ "$SUMMARY_STATUS" != "200" ]; then
   exit 1
 fi
 
-TASKS_STATUS="$(curl -m 5 -s -o /tmp/ai-company-dashboard-tasks.out -w "%{http_code}" "$BASE_URL/api/tasks")"
+TASKS_STATUS="$(curl_status '/api/tasks' "$BASE_URL/api/tasks" /tmp/ai-company-dashboard-tasks.out)"
+TASKS_STATUS="$(printf '%s\n' "$TASKS_STATUS" | tail -1)"
 echo "- /api/tasks HTTP $TASKS_STATUS"
 
 if [ "$TASKS_STATUS" != "200" ]; then
@@ -50,10 +69,11 @@ if [ "$TASKS_STATUS" != "200" ]; then
   exit 1
 fi
 
-OWNER_ENDPOINT_STATUS="$(curl -m 5 -s -o /tmp/ai-company-dashboard-owner.out -w "%{http_code}" \
-  -X POST "$BASE_URL/api/owner/review/accept-finalize" \
+OWNER_ENDPOINT_STATUS="$(curl_status '/api/owner/review/accept-finalize' "$BASE_URL/api/owner/review/accept-finalize" /tmp/ai-company-dashboard-owner.out \
+  -X POST \
   -H 'Content-Type: application/json' \
   -d '{}')"
+OWNER_ENDPOINT_STATUS="$(printf '%s\n' "$OWNER_ENDPOINT_STATUS" | tail -1)"
 
 echo "- /api/owner/review/accept-finalize empty-body HTTP $OWNER_ENDPOINT_STATUS"
 
