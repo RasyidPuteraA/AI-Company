@@ -1026,3 +1026,11 @@ Added agent services health guard:
     runners/agent_services_health_check.sh
 
 Use it after changes to autonomous agent services or dispatch runners.
+
+## INTERNAL-057 Handover
+
+Added agent services health guard:
+
+    runners/agent_services_health_check.sh
+
+Use it after changes to autonomous agent services or dispatch runners.
