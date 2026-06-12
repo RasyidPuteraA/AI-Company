@@ -753,3 +753,56 @@ if (pathname === "/api/summary") {
 server.listen(PORT, HOST, () => {
   console.log(`AI Company Dashboard running on http://${HOST}:${PORT}`);
 });
+
+// INTERNAL-055 hotfix: owner review accept finalize endpoint
+if (!global.__aiCompanyOwnerReviewAcceptFinalizeRouteInstalled) {
+  global.__aiCompanyOwnerReviewAcceptFinalizeRouteInstalled = true;
+
+  app.post('/api/owner/review/accept-finalize', (req, res) => {
+    const body = req.body || {};
+    const reviewTaskKey = body.review_task_key || body.task_key;
+    const ownerNote = body.owner_note || 'Owner accepted delivery from dashboard.';
+
+    if (!reviewTaskKey) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Missing review_task_key'
+      });
+    }
+
+    const childProcess = require('child_process');
+
+    childProcess.execFile(
+      '/bin/bash',
+      [
+        '-lc',
+        './runners/owner_accept_and_finalize.sh "$1" "$2"',
+        'owner_accept_and_finalize',
+        String(reviewTaskKey),
+        String(ownerNote)
+      ],
+      {
+        cwd: process.cwd(),
+        timeout: 180000,
+        maxBuffer: 1024 * 1024
+      },
+      (error, stdout, stderr) => {
+        if (error) {
+          return res.status(500).json({
+            ok: false,
+            error: error.message,
+            stdout,
+            stderr
+          });
+        }
+
+        return res.json({
+          ok: true,
+          review_task_key: reviewTaskKey,
+          stdout,
+          stderr
+        });
+      }
+    );
+  });
+}
