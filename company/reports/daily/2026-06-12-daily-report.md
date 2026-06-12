@@ -20,6 +20,9 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-050 - Install Canvas Pixel Office Renderer** (Owner: engineer_agent; Status: DONE)
+- **INTERNAL-049 - Render LimeZu Modern Office Map v1** (Owner: engineer_agent; Status: IN_PROGRESS)
+- **INTERNAL-048 - Clean Pixel Office CSS and Sprite Frame Selection** (Owner: engineer_agent; Status: IN_PROGRESS)
 - **INTERNAL-047 - Render JIK Character Sprites in Pixel Office** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-046 - Add JIK Character Pipeline and Custom Office Map** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-045 - Add Tilemap Office Renderer v1** (Owner: engineer_agent; Status: IN_PROGRESS)
@@ -70,18 +73,18 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-12: engineering_completed | engineer_agent | Canvas Pixel Office renderer installed (Impact: Dashboard Pixel Office now has a Canvas renderer foundation.)
+- 2026-06-12: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-050: Install Canvas Pixel Office Renderer)
+- 2026-06-12: internal_task_created | pm_agent | Install Canvas Pixel Office Renderer (Impact: PM Agent created internal task INTERNAL-050: Adapt the uploaded pixel-office.html Canvas prototype into the AI Company OS dashboard Pixel Office panel.)
+- 2026-06-12: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-049: Render LimeZu Modern Office Map v1)
+- 2026-06-12: internal_task_created | pm_agent | Render LimeZu Modern Office Map v1 (Impact: PM Agent created internal task INTERNAL-049: Build a new Pixel Office map using purchased LimeZu Modern Office assets while keeping JIK MetroCity characters for agents.)
+- 2026-06-12: internal_task_created | pm_agent | Clean Pixel Office CSS and Sprite Frame Selection (Impact: PM Agent created internal task INTERNAL-048: Clean accumulated Pixel Office CSS overrides, consolidate final office map styles, and prepare frame selection rules for JIK character sprites.)
+- 2026-06-12: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-048: Clean Pixel Office CSS and Sprite Frame Selection)
+- 2026-06-12: internal_task_created | pm_agent | Clean Pixel Office CSS and Sprite Frame Selection (Impact: PM Agent created internal task INTERNAL-048: Clean accumulated Pixel Office CSS overrides, consolidate final office map styles, and prepare frame selection rules for JIK character sprites.)
 - 2026-06-12: engineering_completed | engineer_agent | JIK Character Sprites completed (Impact: Rendered JIK character sprites in Pixel Office and accepted extra-large visual baseline.)
 - 2026-06-12: engineering_completed | engineer_agent | JIK Character Sprites completed (Impact: Rendered JIK character sprites in Pixel Office with static idle frames and shadow support.)
 - 2026-06-12: engineering_completed | engineer_agent | JIK Character Sprites completed (Impact: Rendered JIK character sprites in Pixel Office with static idle frames and shadow support.)
 - 2026-06-12: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-047: Render JIK Character Sprites in Pixel Office)
-- 2026-06-12: internal_task_created | pm_agent | Render JIK Character Sprites in Pixel Office (Impact: PM Agent created internal task INTERNAL-047: Replace current block-style agent markers with real human sprite rendering from JIK MetroCity assets in the pixel office. Start with static idle frames and shadow support before adding animation.)
-- 2026-06-11: engineering_completed | engineer_agent | JIK character pipeline completed (Impact: Prepared JIK character asset pipeline and custom office map asset structure.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-046: Add JIK Character Pipeline and Custom Office Map)
-- 2026-06-11: internal_task_created | pm_agent | Add JIK Character Pipeline and Custom Office Map (Impact: PM Agent created internal task INTERNAL-046: Add JIK-A-4 MetroCity character asset pipeline and keep the office map custom-built instead of using external office tiles.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-045: Add Tilemap Office Renderer v1)
-- 2026-06-11: internal_task_created | pm_agent | Add Tilemap Office Renderer v1 (Impact: PM Agent created internal task INTERNAL-045: Replace room-card Pixel Office layout with a single top-down tilemap office renderer inspired by MetroCity interior assets, using wall/floor/prop tiles and coordinate-based agent placement.)
-- 2026-06-11: internal_task_created | pm_agent | Clean Pixel Office and Add AI Usage Widget (Impact: PM Agent created internal task INTERNAL-044: Clean conflicting Pixel Office CSS, rebuild a stable office simulation layout, and add an AI Usage summary widget showing local/API/Codex usage status.)
-- 2026-06-11: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-044: Clean Pixel Office and Add AI Usage Widget)
 
 ## QA Status
 

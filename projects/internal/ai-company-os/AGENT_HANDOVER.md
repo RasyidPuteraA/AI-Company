@@ -899,3 +899,15 @@ Next improvement:
 - choose better sprite frames
 - add idle/walk animation
 - clean old accumulated Pixel Office CSS overrides
+
+## INTERNAL-050 Handover
+
+Canvas Pixel Office renderer installed.
+
+New file:
+
+    apps/dashboard/public/office-canvas.js
+
+The renderer was adapted from the uploaded standalone pixel-office.html prototype. It now runs inside the dashboard Pixel Office panel, hides the previous DOM map overlays, draws the office scene on Canvas, uses JIK agent sprites, and polls `/api/agents/runtime`.
+
+This is the foundation for future live Pixel Office animation.
