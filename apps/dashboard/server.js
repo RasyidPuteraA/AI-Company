@@ -764,20 +764,14 @@ if (pathname === "/api/summary") {
       try {
         body = rawBody ? JSON.parse(rawBody) : {};
       } catch (error) {
-        return json(res, {
-          ok: false,
-          error: "Invalid JSON body"
-        }, 400);
+        return json(res, { ok: false, error: "Invalid JSON body" }, 400);
       }
 
       const reviewTaskKey = body.review_task_key || body.task_key;
       const ownerNote = body.owner_note || "Owner accepted delivery from dashboard.";
 
       if (!reviewTaskKey) {
-        return json(res, {
-          ok: false,
-          error: "Missing review_task_key"
-        }, 400);
+        return json(res, { ok: false, error: "Missing review_task_key" }, 400);
       }
 
       const childProcess = require("child_process");
