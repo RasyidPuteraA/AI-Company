@@ -33,3 +33,5 @@ apps/dashboard/public/assets/limezu/_processed/
 apps/dashboard/public/assets/limezu/modern-office/
 apps/dashboard/public/assets/limezu/_preview/
 runners/*.bak-internal-*
+
+company/runtime/
