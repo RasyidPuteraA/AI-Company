@@ -1093,3 +1093,18 @@ Output paths:
 
     company/reports/3day/YYYY-MM-DD-3day-report.md
     company/reports/weekly/YYYY-MM-DD-weekly-report.md
+
+## INTERNAL-064 Handover
+
+Added idle internal improvement planner.
+
+Command:
+
+    ./runners/idle_internal_improvement_planner.sh --dry-run
+    ./runners/idle_internal_improvement_planner.sh --once
+
+Behavior:
+
+- skips when Owner attention is required
+- skips when active client work exists
+- creates one predefined safe internal improvement task when idle
