@@ -1356,3 +1356,29 @@ Behavior:
 Validation:
 
     ./runners/pixel_office_asset_check.sh
+
+## INTERNAL-076 Handover
+
+Added controlled autonomous code development foundation.
+
+New runners:
+
+    runners/autonomous_code_context.sh
+    runners/autonomous_code_guard.sh
+    runners/autonomous_code_dev.sh
+
+Config:
+
+    company/config/autonomous_development.env
+
+Usage:
+
+    ./runners/autonomous_code_dev.sh engineer_agent TASK_KEY --dry-run
+    AI_COMPANY_ENABLE_AUTO_EDIT=1 AI_COMPANY_ENABLE_AUTO_COMMIT=1 ./runners/autonomous_code_dev.sh engineer_agent TASK_KEY --run
+
+Safety:
+
+- edits are denied for secret/auth/token/password/.env/runtime/binary paths
+- working tree must be clean before auto-edit starts
+- code is committed to an autodev branch, not directly to master
+- pre_commit_check must pass before auto-commit

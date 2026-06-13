@@ -23,6 +23,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-076 - Add Controlled Auto-Edit and Auto-Commit Developer Worker** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-075 - Connect Pixel Office Renderer to Optional Asset Config** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-074 - Prepare Pixel Office Custom Asset Mapping** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-073 - Polish Pixel Office Map Fit and Room Labels** (Owner: engineer_agent; Status: DONE)
@@ -101,6 +102,10 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-13: engineering_completed | engineer_agent | Controlled auto-edit worker completed (Impact: Added autonomous code context, guard, and dev runner.)
+- 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-076-plan.md)
+- 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-076: Add Controlled Auto-Edit and Auto-Commit Developer Worker)
+- 2026-06-13: internal_task_created | pm_agent | Add Controlled Auto-Edit and Auto-Commit Developer Worker (Impact: PM Agent created internal task INTERNAL-076: Add a guarded autonomous developer worker that can learn repository context, run Codex in workspace-write mode, edit code, run safety checks, and optionally auto-commit to an autodev branch.)
 - 2026-06-13: engineering_completed | engineer_agent | Pixel Office optional asset config completed (Impact: Renderer now reads optional assets/office config and safely falls back to synthetic mode.)
 - 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-075-plan.md)
 - 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-075: Connect Pixel Office Renderer to Optional Asset Config)
@@ -109,10 +114,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-074-plan.md)
 - 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-074: Prepare Pixel Office Custom Asset Mapping)
 - 2026-06-13: internal_task_created | pm_agent | Prepare Pixel Office Custom Asset Mapping (Impact: PM Agent created internal task INTERNAL-074: Prepare dashboard Pixel Office custom asset folders, config template, gitignore rules, and validation runner for future tileset and character PNG integration without committing raw assets.)
-- 2026-06-13: engineering_completed | engineer_agent | Pixel Office map polish completed (Impact: Widened office canvas, added room labels, and improved fit above summary cards.)
-- 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-073-plan.md)
-- 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-073: Polish Pixel Office Map Fit and Room Labels)
-- 2026-06-13: internal_task_created | pm_agent | Polish Pixel Office Map Fit and Room Labels (Impact: PM Agent created internal task INTERNAL-073: Polish the production Pixel Office dashboard map by improving canvas fit, centering, room labels, agent spacing, and status bubbles.)
 
 ## QA Status
 
