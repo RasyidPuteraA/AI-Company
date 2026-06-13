@@ -1,5 +1,41 @@
 # AGENT_HANDOVER
 
+## INTERNAL-079 Handover
+
+Polished AI Company OS autonomous runtime state and autonomous task classification.
+
+Updated runtime state behavior:
+
+    ./runners/ai_company_os_control.sh off
+    ./runners/ai_company_os_status.sh
+
+- Owner OFF writes `owner_switch=OFF`, `mode=PAUSED_BY_OWNER`, `active_agent=none`, refreshed `updated_at`, and an OFF status note.
+- Orchestrator skip, completion, and error terminal states clear `active_agent`.
+- Orchestrator active work still shows `engineer_agent` during discovery/reporting and `qa_agent` during verification.
+- `AI_COMPANY_OS_STATUS_NOTE` is now written to runtime state and shown by text/json status output for clearer skip/error reasons.
+- Unresolved `AUTO-*` tasks block new discovery with a message naming the unresolved task when available.
+
+Updated task classification:
+
+- `runners/company_status.sh` no longer counts `AUTO-*` tasks as client tasks.
+- Client Task Status excludes `AUTO-*`.
+- Autonomous Internal Task Status is displayed separately.
+- `runners/owner_inbox.sh` keeps the existing owner queues and adds a separate autonomous internal task section.
+
+Updated scan/context hygiene:
+
+- `runners/autonomous_code_context.sh` prunes `data`, `node_modules`, `.git`, `company/runtime`, and `company/reports/autonomous-discovery` before scanning.
+- `/company/reports/autonomous-discovery/` and `/company/runtime/autonomous-discovery/` remain ignored in `.gitignore`.
+- Daily, weekly, 3-day, and ops reports are not newly ignored.
+
+Useful test commands:
+
+    ./runners/ai_company_os_control.sh off
+    ./runners/ai_company_os_status.sh
+    ./runners/ai_company_os_control.sh on
+    ./runners/ai_company_autonomous_orchestrator.sh
+    ./runners/company_status.sh
+
 ## INTERNAL-078 Handover
 
 Master autonomous operations mode implemented.

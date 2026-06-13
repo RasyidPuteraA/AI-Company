@@ -64,6 +64,19 @@ ORDER BY id DESC
 LIMIT 10;
 "
 
+run_query "Autonomous Internal Tasks" "
+SELECT
+  task_key,
+  title,
+  status,
+  COALESCE(assigned_agent_key, '') AS agent,
+  COALESCE(handover_note, '') AS handover_note
+FROM tasks
+WHERE task_key LIKE 'AUTO-%'
+ORDER BY updated_at DESC, id DESC
+LIMIT 10;
+"
+
 echo "## Suggested Owner Commands"
 echo
 echo "Accept a delivery:"

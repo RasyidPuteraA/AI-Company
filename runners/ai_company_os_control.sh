@@ -18,8 +18,12 @@ if [ -f "$CONFIG" ]; then
 fi
 
 if [ -f "$STATE_FILE" ]; then
-  # shellcheck disable=SC1090
-  source "$STATE_FILE"
+  if bash -n "$STATE_FILE" 2>/dev/null; then
+    # shellcheck disable=SC1090
+    source "$STATE_FILE"
+  else
+    echo "Warning: ignoring malformed AI Company OS state file: $STATE_FILE" >&2
+  fi
 fi
 
 : "${AI_COMPANY_OS_ENABLED:=0}"
@@ -28,6 +32,7 @@ fi
 : "${AI_COMPANY_OS_ACTIVE_AGENT:=}"
 : "${AI_COMPANY_OS_LATEST_EVENT:=}"
 : "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:=}"
+: "${AI_COMPANY_OS_STATUS_NOTE:=}"
 
 shell_quote() {
   printf "'%s'" "$(printf "%s" "$1" | sed "s/'/'\\\\''/g")"
@@ -37,19 +42,24 @@ write_state() {
   local owner_switch="$1"
   local mode="$2"
   local event="$3"
+  local active_agent="${4:-}"
+  local status_note="${5:-$event}"
   local updated_at
+  local tmp_file
   updated_at="$(date -Iseconds)"
+  tmp_file="${STATE_FILE}.$$.$RANDOM.tmp"
 
   {
     printf "AI_COMPANY_OS_OWNER_SWITCH=%s\n" "$(shell_quote "$owner_switch")"
     printf "AI_COMPANY_OS_MODE=%s\n" "$(shell_quote "$mode")"
-    printf "AI_COMPANY_OS_ACTIVE_AGENT=%s\n" "$(shell_quote "$AI_COMPANY_OS_ACTIVE_AGENT")"
+    printf "AI_COMPANY_OS_ACTIVE_AGENT=%s\n" "$(shell_quote "$active_agent")"
     printf "AI_COMPANY_OS_LATEST_EVENT=%s\n" "$(shell_quote "$event")"
+    printf "AI_COMPANY_OS_STATUS_NOTE=%s\n" "$(shell_quote "$status_note")"
     printf "AI_COMPANY_OS_LATEST_DISCOVERY_REPORT=%s\n" "$(shell_quote "$AI_COMPANY_OS_LATEST_DISCOVERY_REPORT")"
     printf "AI_COMPANY_OS_UPDATED_AT=%s\n" "$(shell_quote "$updated_at")"
-  } > "$STATE_FILE.tmp"
+  } > "$tmp_file"
 
-  mv "$STATE_FILE.tmp" "$STATE_FILE"
+  mv "$tmp_file" "$STATE_FILE"
 }
 
 log_control_event() {
@@ -72,11 +82,11 @@ log_control_event() {
 
 case "$ACTION" in
   on|ON|enable|start)
-    write_state "ON" "RUNNING" "AI Company OS turned ON by owner"
+    write_state "ON" "RUNNING" "AI Company OS turned ON by owner" "" "Owner switch is ON; orchestrator may run when gates allow it."
     log_control_event "RUNNING" "AI Company OS ON" "Owner turned AI Company OS master autonomous mode ON."
     ;;
   off|OFF|disable|stop)
-    write_state "OFF" "PAUSED_BY_OWNER" "AI Company OS turned OFF by owner"
+    write_state "OFF" "PAUSED_BY_OWNER" "AI Company OS turned OFF by owner" "" "Owner switch is OFF; autonomous runtime is paused and no agent is active."
     log_control_event "PAUSED_BY_OWNER" "AI Company OS OFF" "Owner turned AI Company OS master autonomous mode OFF."
     ;;
   status)

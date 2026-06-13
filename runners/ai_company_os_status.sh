@@ -16,8 +16,12 @@ if [ -f "$CONFIG" ]; then
 fi
 
 if [ -f "$STATE_FILE" ]; then
-  # shellcheck disable=SC1090
-  source "$STATE_FILE"
+  if bash -n "$STATE_FILE" 2>/dev/null; then
+    # shellcheck disable=SC1090
+    source "$STATE_FILE"
+  else
+    echo "Warning: ignoring malformed AI Company OS state file: $STATE_FILE" >&2
+  fi
 fi
 
 : "${AI_COMPANY_OS_ENABLED:=0}"
@@ -25,6 +29,7 @@ fi
 : "${AI_COMPANY_OS_MODE:=OFF}"
 : "${AI_COMPANY_OS_ACTIVE_AGENT:=}"
 : "${AI_COMPANY_OS_LATEST_EVENT:=}"
+: "${AI_COMPANY_OS_STATUS_NOTE:=}"
 : "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:=}"
 : "${AI_COMPANY_OS_UPDATED_AT:=}"
 : "${AI_COMPANY_AUTOSOLVE_ENABLED:=1}"
@@ -48,12 +53,16 @@ budget_note="$(printf "%s\n" "$budget_output" | awk -F= '$1=="BUDGET_NOTE"{print
 : "${budget_state:=UNKNOWN}"
 
 effective_mode="$AI_COMPANY_OS_MODE"
+effective_active_agent="$AI_COMPANY_OS_ACTIVE_AGENT"
 if [ "$AI_COMPANY_OS_OWNER_SWITCH" != "ON" ]; then
   effective_mode="PAUSED_BY_OWNER"
+  effective_active_agent=""
 elif [ "$work_status" -ne 0 ]; then
   effective_mode="PAUSED_OUTSIDE_WORK_HOURS"
+  effective_active_agent=""
 elif [ "$budget_status" -eq 2 ] || [ "$budget_state" = "STOP" ]; then
   effective_mode="PAUSED_BUDGET_LIMIT"
+  effective_active_agent=""
 elif [ -z "$effective_mode" ] || [ "$effective_mode" = "OFF" ] || [[ "$effective_mode" == PAUSED_* ]]; then
   effective_mode="RUNNING"
 fi
@@ -64,7 +73,7 @@ if [ -z "$AI_COMPANY_OS_LATEST_DISCOVERY_REPORT" ] && [ -n "$latest_report" ]; t
 fi
 
 latest_event="$AI_COMPANY_OS_LATEST_EVENT"
-if command -v docker >/dev/null 2>&1; then
+if [ "$AI_COMPANY_OS_OWNER_SWITCH" = "ON" ] && command -v docker >/dev/null 2>&1; then
   db_event="$(docker exec -i ai_company_postgres psql -U ai_company -d ai_company -t -A -F '|' -c "
     SELECT COALESCE(event_type,''), COALESCE(agent_key,''), COALESCE(state,''), COALESCE(topic,''), created_at
     FROM events
@@ -77,9 +86,9 @@ if command -v docker >/dev/null 2>&1; then
 fi
 
 if [ "$FORMAT" = "--json" ] || [ "$FORMAT" = "json" ]; then
-  python3 - "$AI_COMPANY_OS_OWNER_SWITCH" "$effective_mode" "$AI_COMPANY_OS_ACTIVE_AGENT" \
+  python3 - "$AI_COMPANY_OS_OWNER_SWITCH" "$effective_mode" "$effective_active_agent" \
     "$work_state" "$budget_state" "$budget_note" "$latest_event" \
-    "$AI_COMPANY_OS_LATEST_DISCOVERY_REPORT" "$AI_COMPANY_OS_UPDATED_AT" \
+    "$AI_COMPANY_OS_STATUS_NOTE" "$AI_COMPANY_OS_LATEST_DISCOVERY_REPORT" "$AI_COMPANY_OS_UPDATED_AT" \
     "$AI_COMPANY_AUTOSOLVE_ENABLED" "$AI_COMPANY_CLIENT_PRIORITY" \
     "$AI_COMPANY_INTERNAL_IDLE_WORK_ENABLED" "$AI_COMPANY_MAX_AUTONOMOUS_ITERATIONS" \
     "$AI_COMPANY_DISCOVERY_ONLY_AFTER_RESOLUTION" <<'PY'
@@ -94,6 +103,7 @@ keys = [
     "budget_state",
     "budget_note",
     "latest_event",
+    "status_note",
     "latest_discovery_report",
     "updated_at",
     "autosolve_enabled",
@@ -112,10 +122,11 @@ fi
 echo "# AI Company OS Status"
 echo "- owner_switch: $AI_COMPANY_OS_OWNER_SWITCH"
 echo "- mode: $effective_mode"
-echo "- active_agent: ${AI_COMPANY_OS_ACTIVE_AGENT:-none}"
+echo "- active_agent: ${effective_active_agent:-none}"
 echo "- work_hours_state: $work_state"
 echo "- budget_state: $budget_state"
 echo "- budget_note: ${budget_note:-Internal AI Company budget estimate.}"
 echo "- latest_event: ${latest_event:-none}"
+echo "- status_note: ${AI_COMPANY_OS_STATUS_NOTE:-none}"
 echo "- latest_discovery_report: ${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-none}"
 echo "- updated_at: ${AI_COMPANY_OS_UPDATED_AT:-unknown}"

@@ -9,6 +9,35 @@ mkdir -p "$OUT_DIR"
 STAMP="$(date +%Y%m%d%H%M%S)"
 OUT="$OUT_DIR/${STAMP}-repo-context.md"
 
+find_files() {
+  local root="$1"
+  local maxdepth="$2"
+  local reports_discovery_path="$root/autonomous-discovery"
+  shift
+  shift
+
+  find "$root" -maxdepth "$maxdepth" \
+    \( -path "$root/node_modules" \
+      -o -path "$root/node_modules/*" \
+      -o -path "$root/runtime" \
+      -o -path "$root/runtime/*" \
+      -o -path "$reports_discovery_path" \
+      -o -path "$reports_discovery_path/*" \
+      -o -path './data' \
+      -o -path './data/*' \
+      -o -path './node_modules' \
+      -o -path './node_modules/*' \
+      -o -path './.git' \
+      -o -path './.git/*' \
+      -o -path './company/runtime' \
+      -o -path './company/runtime/*' \
+      -o -path './company/reports/autonomous-discovery' \
+      -o -path './company/reports/autonomous-discovery/*' \
+      -o -path '*/node_modules' \
+      -o -path '*/node_modules/*' \) -prune \
+    -o "$@" -print
+}
+
 {
   echo "# AI Company OS Repository Context"
   echo
@@ -34,9 +63,7 @@ OUT="$OUT_DIR/${STAMP}-repo-context.md"
   for d in apps runners projects/internal company/config company/reports; do
     if [ -d "$d" ]; then
       echo "### $d"
-      find "$d" -maxdepth 3 -type f \
-        ! -path '*/node_modules/*' \
-        ! -path '*/company/runtime/*' \
+      find_files "$d" 3 -type f \
         ! -iname '*.png' \
         ! -iname '*.jpg' \
         ! -iname '*.jpeg' \
@@ -49,8 +76,7 @@ OUT="$OUT_DIR/${STAMP}-repo-context.md"
 
   echo "## Dashboard files"
   echo
-  find apps/dashboard -maxdepth 4 -type f \
-    ! -path '*/node_modules/*' \
+  find_files apps/dashboard 4 -type f \
     ! -iname '*.png' \
     ! -iname '*.jpg' \
     ! -iname '*.jpeg' \
@@ -60,8 +86,7 @@ OUT="$OUT_DIR/${STAMP}-repo-context.md"
 
   echo "## Package manifests"
   echo
-  find . -maxdepth 4 -name package.json -type f \
-    ! -path '*/node_modules/*' \
+  find_files . 4 -name package.json -type f \
     | sort | while read -r f; do
       echo "### $f"
       python3 - "$f" << 'PYJSON'

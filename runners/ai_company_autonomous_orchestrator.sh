@@ -17,8 +17,12 @@ if [ -f "$CONFIG" ]; then
 fi
 
 if [ -f "$STATE_FILE" ]; then
-  # shellcheck disable=SC1090
-  source "$STATE_FILE"
+  if bash -n "$STATE_FILE" 2>/dev/null; then
+    # shellcheck disable=SC1090
+    source "$STATE_FILE"
+  else
+    echo "Warning: ignoring malformed AI Company OS state file: $STATE_FILE" >&2
+  fi
 fi
 
 : "${AI_COMPANY_OS_ENABLED:=0}"
@@ -28,6 +32,7 @@ fi
 : "${AI_COMPANY_INTERNAL_IDLE_WORK_ENABLED:=1}"
 : "${AI_COMPANY_MAX_AUTONOMOUS_ITERATIONS:=1}"
 : "${AI_COMPANY_DISCOVERY_ONLY_AFTER_RESOLUTION:=1}"
+: "${AI_COMPANY_OS_STATUS_NOTE:=}"
 
 shell_quote() {
   printf "'%s'" "$(printf "%s" "$1" | sed "s/'/'\\\\''/g")"
@@ -38,19 +43,23 @@ write_state() {
   local active_agent="${2:-}"
   local event="${3:-}"
   local report="${4:-${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}}"
+  local status_note="${5:-$event}"
   local updated_at
+  local tmp_file
   updated_at="$(date -Iseconds)"
+  tmp_file="${STATE_FILE}.$$.$RANDOM.tmp"
 
   {
     printf "AI_COMPANY_OS_OWNER_SWITCH=%s\n" "$(shell_quote "$AI_COMPANY_OS_OWNER_SWITCH")"
     printf "AI_COMPANY_OS_MODE=%s\n" "$(shell_quote "$mode")"
     printf "AI_COMPANY_OS_ACTIVE_AGENT=%s\n" "$(shell_quote "$active_agent")"
     printf "AI_COMPANY_OS_LATEST_EVENT=%s\n" "$(shell_quote "$event")"
+    printf "AI_COMPANY_OS_STATUS_NOTE=%s\n" "$(shell_quote "$status_note")"
     printf "AI_COMPANY_OS_LATEST_DISCOVERY_REPORT=%s\n" "$(shell_quote "$report")"
     printf "AI_COMPANY_OS_UPDATED_AT=%s\n" "$(shell_quote "$updated_at")"
-  } > "$STATE_FILE.tmp"
+  } > "$tmp_file"
 
-  mv "$STATE_FILE.tmp" "$STATE_FILE"
+  mv "$tmp_file" "$STATE_FILE"
 }
 
 log_event_safe() {
@@ -74,22 +83,31 @@ psql_scalar() {
   docker exec -i ai_company_postgres psql -U ai_company -d ai_company -t -A -c "$sql" 2>/dev/null | tr -d '[:space:]' || true
 }
 
+on_unexpected_error() {
+  local line="$1"
+  local command="$2"
+  write_state "ERROR" "" "Unexpected orchestrator failure" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "Unexpected failure at line $line while running: $command"
+  log_event_safe "ERROR" "Unexpected orchestrator failure" "Line $line failed while running: $command"
+}
+
+trap 'on_unexpected_error "$LINENO" "$BASH_COMMAND"' ERR
+
 if [ "$AI_COMPANY_OS_OWNER_SWITCH" != "ON" ]; then
-  write_state "PAUSED_BY_OWNER" "" "AI Company OS is OFF"
+  write_state "PAUSED_BY_OWNER" "" "AI Company OS is OFF" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "Owner switch is OFF; autonomous runtime is paused and no agent is active."
   log_event_safe "PAUSED_BY_OWNER" "AI Company OS paused" "Master autonomous mode is OFF."
   echo "AI Company OS is OFF. Nothing to do."
   exit 0
 fi
 
 if [ "${AI_COMPANY_AGENT_EMERGENCY_STOP:-0}" = "1" ]; then
-  write_state "ERROR" "" "Emergency stop active"
+  write_state "ERROR" "" "Emergency stop active" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "AI_COMPANY_AGENT_EMERGENCY_STOP=1; orchestrator halted before starting work."
   log_event_safe "ERROR" "Emergency stop active" "AI_COMPANY_AGENT_EMERGENCY_STOP=1; orchestrator halted."
   echo "Emergency stop active. Nothing to do."
   exit 0
 fi
 
 if ! ./runners/ai_company_work_hours_gate.sh >/tmp/ai-company-work-hours-gate.out 2>&1; then
-  write_state "PAUSED_OUTSIDE_WORK_HOURS" "" "Paused outside work hours"
+  write_state "PAUSED_OUTSIDE_WORK_HOURS" "" "Paused outside work hours" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "Outside configured work hours; autonomous runtime skipped this cycle."
   log_event_safe "PAUSED_OUTSIDE_WORK_HOURS" "Outside work hours" "Master autonomous mode paused outside configured work hours."
   cat /tmp/ai-company-work-hours-gate.out
   exit 0
@@ -100,7 +118,7 @@ set +e
 budget_status=$?
 set -e
 if [ "$budget_status" -eq 2 ]; then
-  write_state "PAUSED_BUDGET_LIMIT" "budget_manager" "Paused by internal budget STOP"
+  write_state "PAUSED_BUDGET_LIMIT" "" "Paused by internal budget STOP" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "Internal Codex budget gate returned STOP; autonomous work skipped this cycle."
   log_event_safe "PAUSED_BUDGET_LIMIT" "Budget STOP" "Internal Codex budget gate returned STOP; autonomous work paused."
   cat /tmp/ai-company-budget-gate.out
   exit 0
@@ -120,20 +138,21 @@ if [ "$AI_COMPANY_CLIENT_PRIORITY" = "1" ] && command -v docker >/dev/null 2>&1;
 fi
 
 if [ "$client_pending" -gt 0 ]; then
-  write_state "WORKING_ON_CLIENT" "pm_agent" "Client work has priority"
+  write_state "WORKING_ON_CLIENT" "" "Client work has priority" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "Client queue has $client_pending pending task(s); internal autonomous discovery skipped."
   log_event_safe "WORKING_ON_CLIENT" "Client priority" "Client project/task queue has pending work; existing agent workflow keeps priority."
   echo "Client work pending: $client_pending. Internal autonomous work skipped this cycle."
   exit 0
 fi
 
 if [ "$AI_COMPANY_INTERNAL_IDLE_WORK_ENABLED" != "1" ]; then
-  write_state "RUNNING" "" "Internal idle work disabled"
+  write_state "RUNNING" "" "Internal idle work disabled" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "No client work pending, but internal idle autonomous work is disabled."
   log_event_safe "RUNNING" "Internal idle work disabled" "No client work pending, but internal idle autonomous work is disabled."
   echo "Internal idle work disabled."
   exit 0
 fi
 
 active_auto_count=0
+active_auto_task=""
 if command -v docker >/dev/null 2>&1; then
   active_auto_count="$(psql_scalar "
     SELECT count(*)
@@ -142,12 +161,21 @@ if command -v docker >/dev/null 2>&1; then
       AND status NOT IN ('DONE','ACCEPTED','IMPLEMENTED','QA_PASSED','FAILED','BLOCKED','SKIPPED');
   ")"
   active_auto_count="${active_auto_count:-0}"
+  active_auto_task="$(docker exec -i ai_company_postgres psql -U ai_company -d ai_company -t -A -F '|' -c "
+    SELECT task_key || ' (' || status || ')'
+    FROM tasks
+    WHERE task_key LIKE 'AUTO-%'
+      AND status NOT IN ('DONE','ACCEPTED','IMPLEMENTED','QA_PASSED','FAILED','BLOCKED','SKIPPED')
+    ORDER BY updated_at DESC, id DESC
+    LIMIT 1;
+  " 2>/dev/null | tr -d '\r' | sed '/^[[:space:]]*$/d' | head -1 || true)"
 fi
 
 if [ "$AI_COMPANY_DISCOVERY_ONLY_AFTER_RESOLUTION" = "1" ] && [ "$active_auto_count" -gt 0 ]; then
-  write_state "SOLVING_ISSUE" "engineer_agent" "Active AUTO issue still unresolved"
-  log_event_safe "SOLVING_ISSUE" "Continuing active AUTO issue" "Discovery skipped because an active AUTO task is not resolved yet."
-  echo "Active unresolved AUTO task count: $active_auto_count. Discovery skipped."
+  reason="Discovery skipped: $active_auto_count unresolved AUTO task(s) remain. Resolve or close ${active_auto_task:-the active AUTO task} before creating another autonomous discovery task."
+  write_state "SOLVING_ISSUE" "" "Active AUTO issue still unresolved" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "$reason"
+  log_event_safe "SOLVING_ISSUE" "Discovery skipped for unresolved AUTO task" "$reason"
+  echo "$reason"
   exit 0
 fi
 
@@ -175,18 +203,26 @@ if [ -z "$report" ]; then
 fi
 
 if [ "$status" -ne 0 ]; then
-  write_state "ERROR" "engineer_agent" "Autonomous discovery/solve failed" "$report"
+  write_state "ERROR" "" "Autonomous discovery/solve failed" "$report" "Autonomous discovery/solve exited with status $status. Report: ${report:-none}"
   log_event_safe "ERROR" "Autonomous cycle failed" "Autonomous discovery or solve exited with status $status. Report: ${report:-none}"
   exit "$status"
 fi
 
-write_state "REPORTING" "engineer_agent" "Autonomous cycle completed" "$report"
+write_state "REPORTING" "engineer_agent" "Autonomous cycle completed" "$report" "Discovery/solve finished; preparing verification."
 log_event_safe "REPORTING" "Autonomous cycle completed" "Autonomous discovery/solve cycle completed. Report: ${report:-none}"
 
 if [ -x ./runners/pre_commit_check.sh ]; then
-  write_state "VERIFYING" "qa_agent" "Running pre_commit_check" "$report"
+  write_state "VERIFYING" "qa_agent" "Running pre_commit_check" "$report" "Running pre_commit_check after autonomous cycle."
+  set +e
   ./runners/pre_commit_check.sh
+  verify_status=$?
+  set -e
+  if [ "$verify_status" -ne 0 ]; then
+    write_state "ERROR" "" "pre_commit_check failed" "$report" "pre_commit_check exited with status $verify_status after autonomous cycle. Report: ${report:-none}"
+    log_event_safe "ERROR" "Autonomous verification failed" "pre_commit_check exited with status $verify_status after autonomous cycle. Report: ${report:-none}"
+    exit "$verify_status"
+  fi
 fi
 
-write_state "RUNNING" "" "AI Company OS cycle complete" "$report"
+write_state "RUNNING" "" "AI Company OS cycle complete" "$report" "Autonomous cycle completed successfully; no agent is currently active."
 echo "AI Company OS autonomous orchestrator cycle complete."

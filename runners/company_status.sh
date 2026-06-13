@@ -19,8 +19,9 @@ run_query() {
 
 run_query "Task Health Summary" "
 SELECT
-  COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%') AS client_tasks,
+  COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%' AND task_key NOT LIKE 'AUTO-%') AS client_tasks,
   COUNT(*) FILTER (WHERE task_key LIKE 'INTERNAL-%') AS internal_tasks,
+  COUNT(*) FILTER (WHERE task_key LIKE 'AUTO-%') AS autonomous_tasks,
   COUNT(*) FILTER (WHERE status = 'WAITING_OWNER_ACCEPTANCE') AS waiting_owner,
   COUNT(*) FILTER (WHERE status = 'ACCEPTED') AS accepted,
   COUNT(*) FILTER (WHERE status = 'DONE') AS done,
@@ -36,6 +37,7 @@ SELECT
   COALESCE(assigned_agent_key, '') AS agent
 FROM tasks
 WHERE task_key NOT LIKE 'INTERNAL-%'
+  AND task_key NOT LIKE 'AUTO-%'
 ORDER BY id DESC;
 "
 
@@ -47,6 +49,19 @@ SELECT
 FROM tasks
 WHERE task_key LIKE 'INTERNAL-%'
 ORDER BY id DESC
+LIMIT 12;
+"
+
+run_query "Autonomous Internal Task Status" "
+SELECT
+  task_key,
+  title,
+  status,
+  COALESCE(assigned_agent_key, '') AS agent,
+  COALESCE(handover_note, '') AS note
+FROM tasks
+WHERE task_key LIKE 'AUTO-%'
+ORDER BY updated_at DESC, id DESC
 LIMIT 12;
 "
 
