@@ -23,6 +23,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-071 - Add Codex Usage Dashboard Panel** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-070 - Enable Codex Agent Loop in Managed Services** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-069 - Wire Autonomous Codex Hook Into Agent Loop** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-068 - Add Autonomous Codex Dispatcher Hook** (Owner: engineer_agent; Status: DONE)
@@ -96,6 +97,10 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-13: engineering_completed | engineer_agent | Codex usage dashboard panel completed (Impact: Added /api/codex/usage and dashboard Codex usage panel.)
+- 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-071-plan.md)
+- 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-071: Add Codex Usage Dashboard Panel)
+- 2026-06-13: internal_task_created | pm_agent | Add Codex Usage Dashboard Panel (Impact: PM Agent created internal task INTERNAL-071: Add a dashboard API and UI panel for Codex CLI usage, internal token budget, budget state, per-agent usage, and recent Codex runs.)
 - 2026-06-13: devops_completed | devops_agent | Codex-enabled managed services completed (Impact: Installed systemd drop-in for Codex-enabled agent loop.)
 - 2026-06-13: devops_completed | devops_agent | Codex-enabled agent loop completed (Impact: Marked INTERNAL-069 done after Codex-enabled loop commit.)
 - 2026-06-13: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-070: Enable Codex Agent Loop in Managed Services)
@@ -104,10 +109,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-13: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-069: Wire Autonomous Codex Hook Into Agent Loop)
 - 2026-06-13: internal_task_created | pm_agent | Wire Autonomous Codex Hook Into Agent Loop (Impact: PM Agent created internal task INTERNAL-069: Wire the safe autonomous Codex dispatcher hook into the agent loop so eligible internal tasks can automatically receive Codex planning through the tracked wrapper.)
 - 2026-06-13: engineering_completed | engineer_agent | Autonomous Codex dispatcher hook completed (Impact: Added plan-only dispatcher hook for eligible internal tasks.)
-- 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-068-plan.md)
-- 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-068: Add Autonomous Codex Dispatcher Hook)
-- 2026-06-13: internal_task_created | pm_agent | Add Autonomous Codex Dispatcher Hook (Impact: PM Agent created internal task INTERNAL-068: Add a safe autonomous dispatcher hook that lets eligible internal tasks run through codex_task_plan.sh via the tracked Codex wrapper.)
-- 2026-06-13: engineering_completed | engineer_agent | Autonomous agents connected to Codex wrapper (Impact: Added codex_task_brief and codex_task_plan runners.)
 
 ## QA Status
 

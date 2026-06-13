@@ -1257,3 +1257,22 @@ Safety:
 - loop remains bounded
 - RestartSec is set to 30 seconds
 - no secrets are stored in service config
+
+## INTERNAL-071 Handover
+
+Added Codex usage dashboard API and UI panel.
+
+API:
+
+    GET /api/codex/usage
+
+UI:
+
+    apps/dashboard/public/codex-usage-panel.js
+
+Safety:
+
+- reads internal usage ledger only
+- does not read Codex auth files
+- exposes internal budget estimate only
+- read-only panel

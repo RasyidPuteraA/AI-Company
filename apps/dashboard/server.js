@@ -7,6 +7,9 @@ const os = require("os");
 const PORT = process.env.PORT || 8787;
 const HOST = process.env.HOST || "127.0.0.1";
 const PUBLIC_DIR = path.join(__dirname, "public");
+const ROOT_DIR = path.join(__dirname, "..", "..");
+const CODEX_BUDGET_FILE = path.join(ROOT_DIR, "company", "config", "codex_budget.env");
+const CODEX_LEDGER_FILE = path.join(ROOT_DIR, "company", "runtime", "codex_usage.jsonl");
 
 function runSql(sql) {
   const output = execFileSync(
@@ -144,15 +147,153 @@ function getDiskUsage() {
 }
 
 
+
+function readEnvConfig(filePath) {
+  const result = {};
+
+  if (!fs.existsSync(filePath)) return result;
+
+  const lines = fs.readFileSync(filePath, "utf8").split(/\r?\n/);
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+
+    const index = trimmed.indexOf("=");
+    const key = trimmed.slice(0, index).trim();
+    const value = trimmed.slice(index + 1).trim();
+    result[key] = value;
+  }
+
+  return result;
+}
+
+function readJsonl(filePath) {
+  if (!fs.existsSync(filePath)) return [];
+
+  return fs.readFileSync(filePath, "utf8")
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => {
+      try {
+        return JSON.parse(line);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
+}
+
+function startOfToday(now) {
+  const d = new Date(now);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function startOfWeek(now) {
+  const d = startOfToday(now);
+  const day = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - day);
+  return d;
+}
+
+function startOfMonth(now) {
+  const d = startOfToday(now);
+  d.setDate(1);
+  return d;
+}
+
+function tokensSince(items, startDate) {
+  return items.reduce((sum, item) => {
+    const created = new Date(item.created_at || 0);
+    if (Number.isNaN(created.getTime())) return sum;
+    if (created >= startDate) return sum + Number(item.tokens_used || 0);
+    return sum;
+  }, 0);
+}
+
+function getCodexUsageDashboardSummary() {
+  const config = readEnvConfig(CODEX_BUDGET_FILE);
+  const items = readJsonl(CODEX_LEDGER_FILE);
+
+  const now = new Date();
+  const dailySoft = Number(config.CODEX_DAILY_SOFT_LIMIT_TOKENS || 300000);
+  const dailyHard = Number(config.CODEX_DAILY_HARD_LIMIT_TOKENS || 500000);
+  const weeklySoft = Number(config.CODEX_WEEKLY_SOFT_LIMIT_TOKENS || 2000000);
+  const monthlySoft = Number(config.CODEX_MONTHLY_SOFT_LIMIT_TOKENS || 8000000);
+
+  const todayUsed = tokensSince(items, startOfToday(now));
+  const weekUsed = tokensSince(items, startOfWeek(now));
+  const monthUsed = tokensSince(items, startOfMonth(now));
+
+  const dailyState = todayUsed >= dailyHard ? "STOP" : todayUsed >= dailySoft ? "WARN" : "OK";
+  const weeklyState = weekUsed >= weeklySoft ? "WARN" : "OK";
+  const monthlyState = monthUsed >= monthlySoft ? "WARN" : "OK";
+
+  const byAgentMap = new Map();
+
+  for (const item of items) {
+    const agent = item.agent_key || "unknown";
+    byAgentMap.set(agent, (byAgentMap.get(agent) || 0) + Number(item.tokens_used || 0));
+  }
+
+  const byAgent = Array.from(byAgentMap.entries())
+    .map(([agent_key, tokens_used]) => ({ agent_key, tokens_used }))
+    .sort((a, b) => b.tokens_used - a.tokens_used);
+
+  const recentRuns = items
+    .slice(-20)
+    .reverse()
+    .map((item) => ({
+      created_at: item.created_at || "",
+      agent_key: item.agent_key || "",
+      task_key: item.task_key || "",
+      mode: item.mode || "",
+      sandbox: item.sandbox || "",
+      tokens_used: Number(item.tokens_used || 0),
+      exit_status: Number(item.exit_status || 0),
+      run_seconds: Number(item.run_seconds || 0)
+    }));
+
+  return {
+    generated_at: now.toISOString(),
+    note: "Internal Codex CLI budget estimate, not official OpenAI remaining quota.",
+    source: {
+      ledger_exists: fs.existsSync(CODEX_LEDGER_FILE),
+      budget_file_exists: fs.existsSync(CODEX_BUDGET_FILE)
+    },
+    budget: {
+      today: {
+        used_tokens: todayUsed,
+        soft_limit_tokens: dailySoft,
+        hard_limit_tokens: dailyHard,
+        state: dailyState
+      },
+      week: {
+        used_tokens: weekUsed,
+        soft_limit_tokens: weeklySoft,
+        state: weeklyState
+      },
+      month: {
+        used_tokens: monthUsed,
+        soft_limit_tokens: monthlySoft,
+        state: monthlyState
+      }
+    },
+    by_agent: byAgent,
+    recent_runs: recentRuns
+  };
+}
+
 function getAiUsageSummary() {
   return {
     mode: "local_workflow",
     api_tokens_today: 0,
     api_tokens_limit: null,
     api_cost_today_usd: 0,
-    codex_usage: "not_used_by_vps",
+    codex_usage: "tracked_internal_estimate",
     chatgpt_plan_quota: "external_not_available",
-    note: "AI Company OS dashboard is currently running local workflow runners. No OpenAI API token usage is tracked from this VPS yet."
+    note: "AI Company OS tracks Codex CLI usage through an internal ledger. Limits are internal estimates, not official OpenAI remaining quota."
   };
 }
 
@@ -507,6 +648,11 @@ const server = http.createServer(async (req, res) => {
     
 
 
+
+    if (pathname === "/api/codex/usage" && req.method === "GET") {
+      json(res, getCodexUsageDashboardSummary());
+      return;
+    }
 
     if (pathname === "/api/ai/usage" && req.method === "GET") {
       json(res, getAiUsageSummary());
