@@ -1,5 +1,51 @@
 # AGENT_HANDOVER
 
+## INTERNAL-082 Handover
+
+Added the safe operational self-learning memory layer.
+
+New config lives in `company/config/ai_company_scheduler.env`:
+
+    AI_COMPANY_LEARNING_ENABLED=1
+    AI_COMPANY_LEARNING_AUTO_APPLY=0
+    AI_COMPANY_LEARNING_CREATE_TASKS=1
+    AI_COMPANY_LEARNING_MAX_LESSONS_PER_RUN=10
+    AI_COMPANY_LEARNING_LOOKBACK_EVENTS=50
+    AI_COMPANY_LEARNING_MIN_PATTERN_COUNT=2
+
+New memory/report paths:
+
+- `company/learning/lessons/`
+- `company/learning/patterns/`
+- `company/learning/agent-scorecards/`
+- `company/learning/context/latest-learning-context.md`
+- `company/reports/learning/`
+
+New commands:
+
+    ./runners/learning_extract_lessons.sh
+    ./runners/learning_failure_patterns.sh
+    ./runners/learning_agent_scorecard.sh
+    ./runners/learning_context_builder.sh
+    ./runners/learning_daily_review.sh
+
+Scheduler integration:
+
+- `runners/ai_company_multi_agent_scheduler.sh` runs daily learning review after successful `NORMAL_WORK` cycles when learning is enabled.
+- Learning failure is logged as a warning and does not block scheduler operation.
+
+Dashboard integration:
+
+- `GET /api/learning/summary`
+- AI Company OS panel shows learning enabled state, lesson count, top repeated pattern, and latest context path.
+
+Safety notes:
+
+- Operational self-learning only.
+- No model fine-tuning or weight changes.
+- No auto-apply of code or policy changes by default.
+- Generated evidence is sanitized/truncated and should not contain raw secrets.
+
 ## INTERNAL-079 Handover
 
 Polished AI Company OS autonomous runtime state and autonomous task classification.

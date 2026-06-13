@@ -86,6 +86,7 @@ async function loadAiCompanyOsStatus() {
     setText("aiCompanyOsLatestEvent", status.latest_event || "No autonomous event yet.");
     setText("aiCompanyOsLatestReport", status.latest_discovery_report || "No discovery report yet.");
     setText("aiCompanyOsBudgetNote", status.budget_note || "Internal AI Company budget estimate, not official OpenAI remaining quota.");
+    loadLearningSummary().catch(console.error);
 
     const scheduler = status.scheduler || {};
     const roles = Array.isArray(scheduler.roles) ? scheduler.roles : [];
@@ -107,6 +108,16 @@ async function loadAiCompanyOsStatus() {
     setText("aiCompanyOsMode", "ERROR");
     console.error(error);
   }
+}
+
+async function loadLearningSummary() {
+  const learning = await loadJson("/api/learning/summary");
+  const enabled = learning.enabled ? "enabled" : "disabled";
+  const topPattern = learning.top_pattern
+    ? `${learning.top_pattern.title} (${learning.top_pattern.count})`
+    : "no repeated pattern";
+  setText("aiCompanyLearningSummary", `${enabled} · lessons ${learning.lessons_count || 0} · ${topPattern}`);
+  setText("aiCompanyLearningContext", learning.latest_context_path || "No learning context generated yet.");
 }
 
 function setupAiCompanyOsToggle() {

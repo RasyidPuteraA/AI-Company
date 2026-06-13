@@ -45,6 +45,7 @@ fi
 : "${AI_COMPANY_OVERTIME_ALLOW_INTERNAL_IMPROVEMENT:=0}"
 : "${AI_COMPANY_OVERTIME_ALLOW_QA:=1}"
 : "${AI_COMPANY_OVERTIME_ALLOW_REPORTING:=1}"
+: "${AI_COMPANY_LEARNING_ENABLED:=1}"
 
 if ! [[ "$AI_COMPANY_MAX_PARALLEL_AGENTS" =~ ^[0-9]+$ ]] || [ "$AI_COMPANY_MAX_PARALLEL_AGENTS" -lt 1 ]; then
   AI_COMPANY_MAX_PARALLEL_AGENTS=1
@@ -88,6 +89,28 @@ log_scheduler_event() {
     autonomous_scheduler \
     "$topic" \
     "$summary" >/dev/null 2>&1 || true
+}
+
+run_learning_review_if_allowed() {
+  if [ "${AI_COMPANY_LEARNING_ENABLED:-1}" != "1" ]; then
+    return 0
+  fi
+
+  if [ "${WORK_HOURS_MODE:-unknown}" != "NORMAL_WORK" ]; then
+    return 0
+  fi
+
+  if [ ! -x ./runners/learning_daily_review.sh ]; then
+    return 0
+  fi
+
+  local output_file
+  output_file="/tmp/ai-company-learning-daily-review.out"
+  if ./runners/learning_daily_review.sh >"$output_file" 2>&1; then
+    log_scheduler_event "DONE" "Learning daily review complete" "Learning daily review completed without blocking scheduler."
+  else
+    log_scheduler_event "WARN" "Learning daily review warning" "Learning daily review failed; scheduler continued. See $output_file."
+  fi
 }
 
 psql_scalar() {
@@ -269,6 +292,7 @@ run_iteration() {
 
   write_scheduler_state "idle" "$mode" "" "Scheduler cycle complete" "$WORK_HOURS_MODE" "$overtime_info"
   log_scheduler_event "DONE" "Scheduler cycle complete" "Mode=$mode work_hours_mode=$WORK_HOURS_MODE roles=$active_agents completed."
+  run_learning_review_if_allowed
 }
 
 iteration=0

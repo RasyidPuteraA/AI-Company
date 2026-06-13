@@ -10,6 +10,11 @@ const PUBLIC_DIR = path.join(__dirname, "public");
 const ROOT_DIR = path.join(__dirname, "..", "..");
 const CODEX_BUDGET_FILE = path.join(ROOT_DIR, "company", "config", "codex_budget.env");
 const CODEX_LEDGER_FILE = path.join(ROOT_DIR, "company", "runtime", "codex_usage.jsonl");
+const LEARNING_CONFIG_FILE = path.join(ROOT_DIR, "company", "config", "ai_company_scheduler.env");
+const LEARNING_LESSONS_DIR = path.join(ROOT_DIR, "company", "learning", "lessons");
+const LEARNING_PATTERNS_DIR = path.join(ROOT_DIR, "company", "learning", "patterns");
+const LEARNING_CONTEXT_FILE = path.join(ROOT_DIR, "company", "learning", "context", "latest-learning-context.md");
+const LEARNING_REPORTS_DIR = path.join(ROOT_DIR, "company", "reports", "learning");
 const AI_COMPANY_OS_STATUS_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_os_status.sh");
 const AI_COMPANY_OS_CONTROL_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_os_control.sh");
 
@@ -296,6 +301,47 @@ function getAiUsageSummary() {
     codex_usage: "tracked_internal_estimate",
     chatgpt_plan_quota: "external_not_available",
     note: "AI Company OS tracks Codex CLI usage through an internal ledger. Limits are internal estimates, not official OpenAI remaining quota."
+  };
+}
+
+function listMarkdownFiles(dirPath) {
+  if (!fs.existsSync(dirPath)) return [];
+  return fs.readdirSync(dirPath)
+    .filter((name) => name.endsWith(".md"))
+    .map((name) => path.join(dirPath, name))
+    .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
+}
+
+function readDashField(text, fieldName) {
+  const escaped = fieldName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = text.match(new RegExp(`^- ${escaped}: (.*)$`, "m"));
+  return match ? match[1].trim() : "";
+}
+
+function getLearningDashboardSummary() {
+  const config = readEnvConfig(LEARNING_CONFIG_FILE);
+  const lessons = listMarkdownFiles(LEARNING_LESSONS_DIR);
+  const patterns = listMarkdownFiles(LEARNING_PATTERNS_DIR);
+  const reports = listMarkdownFiles(LEARNING_REPORTS_DIR);
+
+  let topPattern = null;
+  if (patterns.length > 0) {
+    const text = fs.readFileSync(patterns[0], "utf8");
+    topPattern = {
+      path: path.relative(ROOT_DIR, patterns[0]),
+      title: readDashField(text, "title") || path.basename(patterns[0], ".md"),
+      count: Number(readDashField(text, "count") || 0)
+    };
+  }
+
+  return {
+    enabled: String(config.AI_COMPANY_LEARNING_ENABLED || "1") === "1",
+    auto_apply: String(config.AI_COMPANY_LEARNING_AUTO_APPLY || "0") === "1",
+    create_tasks: String(config.AI_COMPANY_LEARNING_CREATE_TASKS || "1") === "1",
+    lessons_count: lessons.length,
+    latest_report: reports.length > 0 ? path.relative(ROOT_DIR, reports[0]) : "",
+    top_pattern: topPattern,
+    latest_context_path: fs.existsSync(LEARNING_CONTEXT_FILE) ? path.relative(ROOT_DIR, LEARNING_CONTEXT_FILE) : ""
   };
 }
 
@@ -699,6 +745,11 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === "/api/ai-company-os/status" && req.method === "GET") {
       json(res, runAiCompanyOsStatus());
+      return;
+    }
+
+    if (pathname === "/api/learning/summary" && req.method === "GET") {
+      json(res, getLearningDashboardSummary());
       return;
     }
 
