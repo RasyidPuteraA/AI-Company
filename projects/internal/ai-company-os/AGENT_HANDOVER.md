@@ -1234,3 +1234,26 @@ Safety:
 - plan/read-only dispatcher path
 - usage tracked through Codex ledger
 - no auto-edit, no auto-commit, no client finalization
+
+## INTERNAL-070 Handover
+
+Enabled Codex-enabled worker loop for managed agent services via systemd drop-in.
+
+Install command:
+
+    ./runners/install_codex_agent_service_dropin.sh --apply
+
+Drop-in path:
+
+    /etc/systemd/system/ai-company-agent@.service.d/10-codex-loop.conf
+
+Service ExecStart:
+
+    /opt/ai-company/runners/agent_worker_loop_with_codex.sh %i --loop --interval 10 --max-iterations 1
+
+Safety:
+
+- Codex dispatcher is explicitly enabled in the managed service environment
+- loop remains bounded
+- RestartSec is set to 30 seconds
+- no secrets are stored in service config
