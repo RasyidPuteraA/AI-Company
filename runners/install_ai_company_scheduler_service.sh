@@ -5,8 +5,10 @@ cd "$(dirname "$0")/.."
 
 SERVICE_FILE="/etc/systemd/system/ai-company-multi-agent-scheduler.service"
 ROOT_DIR="$(pwd)"
-USER_NAME="${AI_COMPANY_SERVICE_USER:-$(id -un)}"
-GROUP_NAME="${AI_COMPANY_SERVICE_GROUP:-$(id -gn)}"
+DEFAULT_SERVICE_USER="${SUDO_USER:-$(id -un)}"
+DEFAULT_SERVICE_GROUP="$(id -gn "$DEFAULT_SERVICE_USER")"
+USER_NAME="${AI_COMPANY_SERVICE_USER:-$DEFAULT_SERVICE_USER}"
+GROUP_NAME="${AI_COMPANY_SERVICE_GROUP:-$DEFAULT_SERVICE_GROUP}"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "ERROR: run with sudo to install the systemd service file."
