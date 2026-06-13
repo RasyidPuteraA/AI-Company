@@ -1153,3 +1153,29 @@ Safety:
 - agents should use codex_agent_run.sh, not raw codex exec
 - Codex credentials must never be logged or committed
 - budget limits are internal estimates, not official OpenAI remaining quota
+
+## INTERNAL-067 Handover
+
+Connected autonomous task context to Codex wrapper.
+
+Commands:
+
+    ./runners/codex_task_brief.sh AGENT_KEY TASK_KEY
+    ./runners/codex_task_plan.sh AGENT_KEY TASK_KEY
+
+Flow:
+
+    task queue -> task brief -> codex_agent_run.sh -> usage ledger -> usage report
+
+Verification:
+
+- engineer_agent ran a Codex plan for INTERNAL-067
+- usage report recorded 3024 tokens
+- exit status was 0
+
+Safety:
+
+- plan/read-only mode first
+- no direct raw codex exec
+- no credential access
+- no client finalization without Owner approval

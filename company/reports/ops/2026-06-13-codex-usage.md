@@ -1,6 +1,6 @@
 # AI Company OS Codex CLI Usage Report
 
-Generated at: 2026-06-13 07:56:40
+Generated at: 2026-06-13 08:04:01
 
 > Internal Codex CLI budget estimate, not official OpenAI remaining quota.
 
@@ -8,20 +8,22 @@ Generated at: 2026-06-13 07:56:40
 
 | Window | Used Tokens | Internal Limit | State |
 | --- | --- | --- | --- |
-| Today | 1322 | soft 300000 / hard 500000 | OK |
-| This Week | 1322 | 2000000 | OK |
-| This Month | 1322 | 8000000 | OK |
+| Today | 4346 | soft 300000 / hard 500000 | OK |
+| This Week | 4346 | 2000000 | OK |
+| This Month | 4346 | 8000000 | OK |
 
 ## Usage By Agent
 
 | Agent | Tokens Used |
 | --- | --- |
+| engineer_agent | 3024 |
 | pm_agent | 1322 |
 
 ## Recent Codex Runs
 
 | Created At | Agent | Task | Mode | Tokens | Exit | Seconds | Output |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-06-13T08:02:45 | engineer_agent | INTERNAL-067 | plan | 3024 | 0 | 213 | company/runtime/codex_runs/2026-06-13/20260613075911-engineer_agent-INTERNAL-067-plan.out |
 | 2026-06-13T07:52:51 | pm_agent | INTERNAL-066 | plan | 1322 | 0 | 162 | company/runtime/codex_runs/2026-06-13/20260613075008-pm_agent-INTERNAL-066-plan.out |
 
 ## Policy
