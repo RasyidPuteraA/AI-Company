@@ -1126,3 +1126,30 @@ Safety:
 - report-only
 - no automatic task mutation
 - recommends manual review/resume/split/close/reassign
+
+## INTERNAL-066 Handover
+
+Added Codex CLI usage ledger and internal budget guard.
+
+Commands:
+
+    ./runners/codex_agent_run.sh AGENT_KEY TASK_KEY MODE "prompt..."
+    ./runners/codex_usage_report.sh
+
+Tracked config:
+
+    company/config/codex_budget.env
+
+Runtime ledger:
+
+    company/runtime/codex_usage.jsonl
+
+Report:
+
+    company/reports/ops/YYYY-MM-DD-codex-usage.md
+
+Safety:
+
+- agents should use codex_agent_run.sh, not raw codex exec
+- Codex credentials must never be logged or committed
+- budget limits are internal estimates, not official OpenAI remaining quota
