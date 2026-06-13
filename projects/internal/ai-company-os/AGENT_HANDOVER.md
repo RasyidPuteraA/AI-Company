@@ -1,5 +1,28 @@
 # AGENT_HANDOVER
 
+## INTERNAL-084 Handover
+
+Stabilized the dashboard Codex token card so realtime refresh no longer clears it back to placeholder values.
+
+Dashboard/API behavior:
+
+- `GET /api/codex/usage` now exposes stable top-level fields: `limit_tokens`, `week_total_tokens`, `month_total_tokens`, `wrapper_total_tokens`, `danger_logged_total_tokens`, `total_estimated_tokens`, `status`, `last_updated`, `note`, and `is_estimate`.
+- The Codex card main number uses the first nonzero value from `total_estimated_tokens`, `month_total_tokens`, `week_total_tokens`, then `wrapper_total_tokens + danger_logged_total_tokens`.
+- `0` is shown only when all tracked totals are actually zero.
+- Wrapper usage and dangerous logged usage remain separate display lines.
+- Usage remains labeled as an internal estimate, not official OpenAI usage or remaining quota.
+
+Rendering changes:
+
+- Summary cards mount once and update values in place instead of replacing the entire strip every 5 seconds.
+- The Codex panel owns the former AI usage summary card and updates text nodes in place.
+- Codex polling remains every 30 seconds, avoids duplicate intervals and overlapping fetches, preserves last known good data while pending, and shows `STALE` if a fetch fails.
+- No blink/pulse animation is used for token values.
+
+Docs:
+
+    projects/internal/ai-company-os/INTERNAL-084.md
+
 ## INTERNAL-083 Handover
 
 Fixed dashboard realtime refresh and added logged tracking for owner-approved dangerous Codex exec runs.

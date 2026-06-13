@@ -1,25 +1,46 @@
 (() => {
   const PANEL_ID = "codex-usage-panel";
+  const SUMMARY_CARD_ID = "aiUsageSummaryCard";
+  const REFRESH_MS = 30000;
+
   let refreshTimer = null;
-  let rendering = false;
+  let refreshInterval = null;
+  let refreshInFlight = false;
   let observerStarted = false;
+  let booted = false;
+  let lastGoodData = null;
+
+  function numberValue(value) {
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  }
 
   function formatNumber(value) {
     return Number(value || 0).toLocaleString();
   }
 
+  function formatUpdated(value) {
+    const date = value ? new Date(value) : new Date();
+    const valid = Number.isNaN(date.getTime()) ? new Date() : date;
+    return valid.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  }
+
   function stateColor(state) {
     if (state === "STOP") return "#ef4444";
     if (state === "WARN") return "#f59e0b";
+    if (state === "STALE" || state === "DEGRADED") return "#94a3b8";
     return "#22c55e";
   }
 
   function findAiTokensCard() {
+    const byId = document.getElementById(SUMMARY_CARD_ID);
+    if (byId) return byId;
+
     const candidates = Array.from(document.querySelectorAll("div, section, article"));
 
     return candidates.find((el) => {
       const text = (el.textContent || "").trim();
-      if (!text.includes("AI API Tokens")) return false;
+      if (!text.includes("AI API Tokens") && !text.includes("Codex Tokens")) return false;
 
       const rect = el.getBoundingClientRect();
       return rect.width >= 120 && rect.width <= 560 && rect.height >= 35 && rect.height <= 190;
@@ -41,14 +62,15 @@
   }
 
   function ensurePanel() {
-    const existing = document.getElementById(PANEL_ID);
-    if (existing) return existing;
+    let panel = document.getElementById(PANEL_ID);
+    if (panel) return panel;
 
     const aiTokensCard = findAiTokensCard();
 
     if (aiTokensCard) {
       aiTokensCard.id = PANEL_ID;
       aiTokensCard.setAttribute("data-codex-usage-card", "true");
+      aiTokensCard.classList.add("codex-usage-card");
       return aiTokensCard;
     }
 
@@ -58,11 +80,7 @@
       const card = document.createElement("div");
       card.id = PANEL_ID;
       card.setAttribute("data-codex-usage-card", "true");
-      card.style.border = "1px solid rgba(148, 163, 184, 0.18)";
-      card.style.borderRadius = "14px";
-      card.style.padding = "14px 16px";
-      card.style.background = "rgba(15, 23, 42, 0.72)";
-      card.style.minWidth = "190px";
+      card.className = "card ai-usage-summary-card codex-usage-card";
       summaryRow.appendChild(card);
       return card;
     }
@@ -70,68 +88,153 @@
     return null;
   }
 
-  function render(data) {
-    const panel = ensurePanel();
+  function ensurePanelTemplate(panel) {
+    if (panel.querySelector("[data-codex-main-tokens]")) return;
 
+    panel.replaceChildren();
+
+    const content = document.createElement("div");
+    content.className = "codex-usage-content";
+
+    const body = document.createElement("div");
+    body.className = "codex-usage-body";
+
+    const label = document.createElement("span");
+    label.className = "codex-usage-label";
+    label.textContent = "Codex Tokens";
+
+    const totalRow = document.createElement("div");
+    totalRow.className = "codex-usage-total-row";
+
+    const main = document.createElement("strong");
+    main.className = "codex-usage-main";
+    main.dataset.codexMainTokens = "true";
+    main.textContent = "--";
+
+    const limit = document.createElement("small");
+    limit.className = "codex-usage-limit";
+    limit.dataset.codexLimitTokens = "true";
+    limit.textContent = "/ --";
+
+    totalRow.append(main, limit);
+
+    const windows = document.createElement("small");
+    windows.className = "codex-usage-line";
+    windows.dataset.codexWindowTotals = "true";
+    windows.textContent = "Week -- · Month --";
+
+    const sources = document.createElement("small");
+    sources.className = "codex-usage-line";
+    sources.dataset.codexSourceTotals = "true";
+    sources.textContent = "Wrapper -- · Dangerous logged --";
+
+    const note = document.createElement("small");
+    note.className = "codex-usage-note";
+    note.dataset.codexNote = "true";
+    note.textContent = "Internal AI Company Codex CLI budget estimate, not official OpenAI remaining quota.";
+
+    const updated = document.createElement("small");
+    updated.className = "codex-usage-updated";
+    updated.dataset.codexUpdated = "true";
+    updated.textContent = "Updated --";
+
+    body.append(label, totalRow, windows, sources, note, updated);
+
+    const status = document.createElement("div");
+    status.className = "codex-usage-status";
+
+    const statusDot = document.createElement("span");
+    statusDot.className = "codex-usage-status-dot";
+    statusDot.dataset.codexStatusDot = "true";
+
+    const statusText = document.createElement("span");
+    statusText.dataset.codexStatus = "true";
+    statusText.textContent = "--";
+
+    status.append(statusDot, statusText);
+    content.append(body, status);
+    panel.appendChild(content);
+  }
+
+  function pickMainTotal(data) {
+    const wrapper = numberValue(data.wrapper_total_tokens ?? data.source_breakdown?.wrapper);
+    const danger = numberValue(data.danger_logged_total_tokens ?? data.source_breakdown?.direct_danger_logged);
+    const candidates = [
+      data.total_estimated_tokens,
+      data.month_total_tokens ?? data.budget?.month?.used_tokens,
+      data.week_total_tokens ?? data.budget?.week?.used_tokens,
+      wrapper + danger
+    ];
+
+    for (const value of candidates) {
+      const n = numberValue(value);
+      if (n > 0) return n;
+    }
+
+    return 0;
+  }
+
+  function normalize(data, degraded = false) {
+    const week = numberValue(data.week_total_tokens ?? data.budget?.week?.used_tokens);
+    const month = numberValue(data.month_total_tokens ?? data.budget?.month?.used_tokens);
+    const wrapper = numberValue(data.wrapper_total_tokens ?? data.source_breakdown?.wrapper);
+    const danger = numberValue(data.danger_logged_total_tokens ?? data.source_breakdown?.direct_danger_logged);
+    const status = degraded ? "STALE" : String(data.status || data.budget?.today?.state || "OK");
+
+    return {
+      main: pickMainTotal(data),
+      limit: numberValue(data.limit_tokens ?? data.budget?.today?.hard_limit_tokens),
+      week,
+      month,
+      wrapper,
+      danger,
+      status,
+      note: data.note || "Internal AI Company Codex CLI budget estimate, not official OpenAI remaining quota.",
+      lastUpdated: data.last_updated || data.generated_at,
+      degraded
+    };
+  }
+
+  function setText(panel, selector, value) {
+    const el = panel.querySelector(selector);
+    if (el) el.textContent = value;
+  }
+
+  function render(data, degraded = false) {
+    const panel = ensurePanel();
     if (!panel) return false;
 
-    const today = data.budget.today;
-    const week = data.budget.week;
-    const month = data.budget.month;
+    ensurePanelTemplate(panel);
 
-    rendering = true;
+    const usage = normalize(data, degraded);
+    const color = stateColor(usage.status);
 
-    panel.innerHTML = `
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;width:100%;">
-        <div style="min-width:0;">
-          <div style="font-size:11px;font-weight:800;color:#e5e7eb;margin-bottom:8px;letter-spacing:.02em;">
-            Codex Tokens
-          </div>
+    setText(panel, "[data-codex-main-tokens]", formatNumber(usage.main));
+    setText(panel, "[data-codex-limit-tokens]", `/ ${formatNumber(usage.limit)}`);
+    setText(panel, "[data-codex-window-totals]", `Week ${formatNumber(usage.week)} · Month ${formatNumber(usage.month)}`);
+    setText(panel, "[data-codex-source-totals]", `Wrapper ${formatNumber(usage.wrapper)} · Dangerous logged ${formatNumber(usage.danger)}`);
+    setText(panel, "[data-codex-note]", usage.degraded ? `${usage.note} Current fetch degraded; showing last successful data.` : usage.note);
+    setText(panel, "[data-codex-updated]", `Updated ${formatUpdated(usage.lastUpdated)}`);
+    setText(panel, "[data-codex-status]", usage.status);
 
-          <div style="display:flex;align-items:baseline;gap:8px;">
-            <div style="font-size:24px;line-height:1;font-weight:900;color:#38bdf8;">
-              ${formatNumber(today.used_tokens)}
-            </div>
-            <div style="font-size:10px;color:#94a3b8;">
-              / ${formatNumber(today.hard_limit_tokens)}
-            </div>
-          </div>
-
-          <div style="margin-top:7px;font-size:10px;color:#94a3b8;line-height:1.35;">
-            Week ${formatNumber(week.used_tokens)} · Month ${formatNumber(month.used_tokens)}
-          </div>
-          <div style="margin-top:5px;font-size:10px;color:#94a3b8;line-height:1.35;">
-            Wrapper ${formatNumber(data.source_breakdown?.wrapper || 0)}
-            · Dangerous logged ${formatNumber(data.source_breakdown?.direct_danger_logged || 0)}
-          </div>
-          <div style="margin-top:5px;font-size:9px;color:#94a3b8;line-height:1.35;">
-            ${data.note || "Internal AI Company Codex CLI budget estimate, not official OpenAI remaining quota."}
-          </div>
-          <div style="margin-top:5px;font-size:9px;color:#64748b;">
-            Updated ${new Date(data.generated_at || Date.now()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-          </div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:6px;font-size:10px;font-weight:800;color:${stateColor(today.state)};">
-          <span style="width:7px;height:7px;border-radius:999px;background:${stateColor(today.state)};display:inline-block;"></span>
-          ${today.state}
-        </div>
-      </div>
-    `;
-
-    setTimeout(() => {
-      rendering = false;
-    }, 100);
+    const status = panel.querySelector(".codex-usage-status");
+    const dot = panel.querySelector("[data-codex-status-dot]");
+    if (status) status.style.color = color;
+    if (dot) dot.style.background = color;
 
     return true;
   }
 
   async function refresh() {
+    if (refreshInFlight) return;
+
+    refreshInFlight = true;
     try {
       const response = await fetch("/api/codex/usage", { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const data = await response.json();
+      lastGoodData = data;
       const rendered = render(data);
 
       if (!rendered) {
@@ -139,6 +242,9 @@
       }
     } catch (error) {
       console.warn("Failed to load Codex usage panel", error);
+      if (lastGoodData) render(lastGoodData, true);
+    } finally {
+      refreshInFlight = false;
     }
   }
 
@@ -153,13 +259,12 @@
     observerStarted = true;
 
     const observer = new MutationObserver(() => {
-      if (rendering) return;
-
       const panel = document.getElementById(PANEL_ID);
-      const hasCodexPanel = panel && (panel.textContent || "").includes("Codex Tokens");
+      const hasCodexPanel = panel && panel.querySelector("[data-codex-main-tokens]");
       const hasAiTokensCard = Boolean(findAiTokensCard());
 
       if (!hasCodexPanel && hasAiTokensCard) {
+        if (lastGoodData) render(lastGoodData);
         scheduleRefresh(150);
       }
     });
@@ -171,13 +276,21 @@
   }
 
   function boot() {
+    if (booted) return;
+    booted = true;
+
     startObserver();
     scheduleRefresh(0);
-    setInterval(() => scheduleRefresh(0), 30000);
+    refreshInterval = setInterval(() => scheduleRefresh(0), REFRESH_MS);
   }
 
+  window.addEventListener("beforeunload", () => {
+    clearTimeout(refreshTimer);
+    clearInterval(refreshInterval);
+  });
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot);
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
   } else {
     boot();
   }

@@ -8,6 +8,15 @@ function card(label, value) {
   return `<div class="card"><span>${label}</span><strong>${value}</strong></div>`;
 }
 
+const summaryCardDefinitions = [
+  ["client_tasks", "Client Tasks"],
+  ["internal_tasks", "Internal Tasks"],
+  ["autonomous_tasks", "Autonomous Tasks"],
+  ["waiting_owner", "Waiting Owner"],
+  ["accepted", "Accepted"],
+  ["needs_attention", "Needs Attention"]
+];
+
 function formatUpdatedAt(date = new Date()) {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
@@ -42,22 +51,30 @@ function renderEvents(events) {
 
 async function loadSummaryCards() {
   const summary = await loadJson("/api/summary");
-  document.getElementById("summaryCards").innerHTML = [
-    card("Client Tasks", summary.client_tasks),
-    card("Internal Tasks", summary.internal_tasks),
-    card("Autonomous Tasks", summary.autonomous_tasks || 0),
-    card("Waiting Owner", summary.waiting_owner),
-    card("Accepted", summary.accepted),
-    card("Needs Attention", summary.needs_attention),
-    `<div class="card ai-usage-summary-card" id="aiUsageSummaryCard">
-      <span>AI API Tokens</span>
-      <strong>0</strong>
-      <small>Internal estimates, quota external</small>
-    </div>`
-  ].join("");
+  const summaryCards = document.getElementById("summaryCards");
+
+  if (!summaryCards.dataset.mounted) {
+    summaryCards.innerHTML = summaryCardDefinitions.map(([key, label]) => `
+      <div class="card" data-summary-card="${key}">
+        <span>${label}</span>
+        <strong data-summary-value="${key}">--</strong>
+      </div>
+    `).join("") + `
+      <div class="card ai-usage-summary-card" id="aiUsageSummaryCard">
+        <span>Codex Tokens</span>
+        <strong>--</strong>
+        <small>Internal estimates, not official OpenAI quota</small>
+      </div>
+    `;
+    summaryCards.dataset.mounted = "true";
+  }
+
+  summaryCardDefinitions.forEach(([key]) => {
+    const el = summaryCards.querySelector(`[data-summary-value="${key}"]`);
+    if (el) el.textContent = summary[key] || 0;
+  });
 
   setUpdated("summaryUpdatedAt");
-  loadAiUsageSummary().catch(console.error);
 }
 
 async function loadLatestTasks() {
@@ -1773,6 +1790,7 @@ loadPixelOfficeRuntimeStatus();
 async function loadAiUsageSummary() {
   const card = document.getElementById("aiUsageSummaryCard");
   if (!card) return;
+  if (card.dataset.codexUsageCard === "true") return;
 
   const usage = await loadJson("/api/ai/usage");
 

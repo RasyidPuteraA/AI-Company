@@ -262,6 +262,10 @@ function getCodexUsageDashboardSummary() {
     .map(([agent_key, tokens_used]) => ({ agent_key, tokens_used }))
     .sort((a, b) => b.tokens_used - a.tokens_used);
 
+  const wrapperTotal = sourceBreakdownMap.get("wrapper") || 0;
+  const dangerLoggedTotal = sourceBreakdownMap.get("direct_danger_logged") || 0;
+  const totalEstimated = wrapperTotal + dangerLoggedTotal;
+
   const recentRuns = items
     .slice(-20)
     .reverse()
@@ -280,8 +284,17 @@ function getCodexUsageDashboardSummary() {
 
   return {
     generated_at: now.toISOString(),
+    last_updated: now.toISOString(),
     note: "Internal AI Company Codex CLI budget estimate, not official OpenAI remaining quota.",
     estimates: true,
+    is_estimate: true,
+    limit_tokens: dailyHard,
+    week_total_tokens: weekUsed,
+    month_total_tokens: monthUsed,
+    wrapper_total_tokens: wrapperTotal,
+    danger_logged_total_tokens: dangerLoggedTotal,
+    total_estimated_tokens: totalEstimated,
+    status: dailyState,
     source: {
       ledger_exists: fs.existsSync(CODEX_LEDGER_FILE),
       budget_file_exists: fs.existsSync(CODEX_BUDGET_FILE),
@@ -307,8 +320,8 @@ function getCodexUsageDashboardSummary() {
     },
     by_agent: byAgent,
     source_breakdown: {
-      wrapper: sourceBreakdownMap.get("wrapper") || 0,
-      direct_danger_logged: sourceBreakdownMap.get("direct_danger_logged") || 0,
+      wrapper: wrapperTotal,
+      direct_danger_logged: dangerLoggedTotal,
       estimated_reconciled: 0
     },
     recent_runs: recentRuns

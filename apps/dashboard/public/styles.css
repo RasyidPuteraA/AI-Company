@@ -2802,6 +2802,97 @@ body.wireframe-dashboard .pixel-office.clean-office-v1,
   text-overflow: ellipsis;
 }
 
+.codex-usage-card {
+  min-height: 138px;
+}
+
+.codex-usage-card small {
+  position: static;
+  max-width: none;
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+}
+
+.codex-usage-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.codex-usage-body {
+  min-width: 0;
+}
+
+.codex-usage-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #e5e7eb;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.codex-usage-total-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.codex-usage-main {
+  display: block;
+  min-width: 8ch;
+  margin-top: 0;
+  color: #38bdf8;
+  font-variant-numeric: tabular-nums;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.codex-usage-limit,
+.codex-usage-line,
+.codex-usage-note,
+.codex-usage-updated {
+  display: block;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
+.codex-usage-line {
+  margin-top: 7px;
+  font-size: 10px;
+}
+
+.codex-usage-note {
+  margin-top: 5px;
+  font-size: 9px;
+}
+
+.codex-usage-updated {
+  margin-top: 5px;
+  color: #64748b;
+  font-size: 9px;
+}
+
+.codex-usage-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.codex-usage-status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+}
+
 @media (max-width: 1200px) {
   .workflow-summary-strip {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
