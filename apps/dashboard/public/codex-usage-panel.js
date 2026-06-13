@@ -1,6 +1,8 @@
 (() => {
   const PANEL_ID = "codex-usage-panel";
-  let retryCount = 0;
+  let refreshTimer = null;
+  let rendering = false;
+  let observerStarted = false;
 
   function formatNumber(value) {
     return Number(value || 0).toLocaleString();
@@ -20,7 +22,7 @@
       if (!text.includes("AI API Tokens")) return false;
 
       const rect = el.getBoundingClientRect();
-      return rect.width >= 120 && rect.width <= 520 && rect.height >= 40 && rect.height <= 180;
+      return rect.width >= 120 && rect.width <= 560 && rect.height >= 35 && rect.height <= 190;
     });
   }
 
@@ -34,7 +36,7 @@
       if (!text.includes("Waiting Owner")) return false;
 
       const rect = el.getBoundingClientRect();
-      return rect.width > 500 && rect.height >= 40 && rect.height <= 220;
+      return rect.width > 700 && rect.height >= 40 && rect.height <= 240;
     });
   }
 
@@ -71,17 +73,13 @@
   function render(data) {
     const panel = ensurePanel();
 
-    if (!panel) {
-      retryCount += 1;
-      if (retryCount <= 20) {
-        setTimeout(() => render(data), 500);
-      }
-      return;
-    }
+    if (!panel) return false;
 
     const today = data.budget.today;
     const week = data.budget.week;
     const month = data.budget.month;
+
+    rendering = true;
 
     panel.innerHTML = `
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;width:100%;">
@@ -110,18 +108,67 @@
         </div>
       </div>
     `;
+
+    setTimeout(() => {
+      rendering = false;
+    }, 100);
+
+    return true;
   }
 
   async function refresh() {
     try {
       const response = await fetch("/api/codex/usage", { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      render(await response.json());
+
+      const data = await response.json();
+      const rendered = render(data);
+
+      if (!rendered) {
+        scheduleRefresh(500);
+      }
     } catch (error) {
       console.warn("Failed to load Codex usage panel", error);
     }
   }
 
-  refresh();
-  setInterval(refresh, 60000);
+  function scheduleRefresh(delay = 150) {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(refresh, delay);
+  }
+
+  function startObserver() {
+    if (observerStarted || !document.body) return;
+
+    observerStarted = true;
+
+    const observer = new MutationObserver(() => {
+      if (rendering) return;
+
+      const panel = document.getElementById(PANEL_ID);
+      const hasCodexPanel = panel && (panel.textContent || "").includes("Codex Tokens");
+      const hasAiTokensCard = Boolean(findAiTokensCard());
+
+      if (!hasCodexPanel && hasAiTokensCard) {
+        scheduleRefresh(150);
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  function boot() {
+    startObserver();
+    scheduleRefresh(0);
+    setInterval(() => scheduleRefresh(0), 15000);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
 })();
