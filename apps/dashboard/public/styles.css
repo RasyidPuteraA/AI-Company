@@ -222,7 +222,7 @@ h1 {
 
 .ai-company-os-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 12px;
   margin-top: 14px;
 }

@@ -85,13 +85,18 @@ if [ "$AI_COMPANY_OS_OWNER_SWITCH" = "ON" ] && command -v docker >/dev/null 2>&1
   fi
 fi
 
+scheduler_json="{}"
+if [ -x ./runners/ai_company_scheduler_status.sh ]; then
+  scheduler_json="$(./runners/ai_company_scheduler_status.sh --json 2>/dev/null || printf '{}')"
+fi
+
 if [ "$FORMAT" = "--json" ] || [ "$FORMAT" = "json" ]; then
   python3 - "$AI_COMPANY_OS_OWNER_SWITCH" "$effective_mode" "$effective_active_agent" \
     "$work_state" "$budget_state" "$budget_note" "$latest_event" \
     "$AI_COMPANY_OS_STATUS_NOTE" "$AI_COMPANY_OS_LATEST_DISCOVERY_REPORT" "$AI_COMPANY_OS_UPDATED_AT" \
     "$AI_COMPANY_AUTOSOLVE_ENABLED" "$AI_COMPANY_CLIENT_PRIORITY" \
     "$AI_COMPANY_INTERNAL_IDLE_WORK_ENABLED" "$AI_COMPANY_MAX_AUTONOMOUS_ITERATIONS" \
-    "$AI_COMPANY_DISCOVERY_ONLY_AFTER_RESOLUTION" <<'PY'
+    "$AI_COMPANY_DISCOVERY_ONLY_AFTER_RESOLUTION" "$scheduler_json" <<'PY'
 import json
 import sys
 
@@ -111,9 +116,14 @@ keys = [
     "internal_idle_work_enabled",
     "max_autonomous_iterations",
     "discovery_only_after_resolution",
+    "scheduler_raw",
 ]
 data = dict(zip(keys, sys.argv[1:]))
 data["enabled"] = data["owner_switch"] == "ON"
+try:
+    data["scheduler"] = json.loads(data.pop("scheduler_raw") or "{}")
+except json.JSONDecodeError:
+    data["scheduler"] = {}
 print(json.dumps(data, indent=2))
 PY
   exit 0
@@ -130,3 +140,7 @@ echo "- latest_event: ${latest_event:-none}"
 echo "- status_note: ${AI_COMPANY_OS_STATUS_NOTE:-none}"
 echo "- latest_discovery_report: ${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-none}"
 echo "- updated_at: ${AI_COMPANY_OS_UPDATED_AT:-unknown}"
+echo
+if [ -x ./runners/ai_company_scheduler_status.sh ]; then
+  ./runners/ai_company_scheduler_status.sh
+fi

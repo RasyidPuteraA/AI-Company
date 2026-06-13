@@ -85,6 +85,20 @@ async function loadAiCompanyOsStatus() {
     setText("aiCompanyOsLatestEvent", status.latest_event || "No autonomous event yet.");
     setText("aiCompanyOsLatestReport", status.latest_discovery_report || "No discovery report yet.");
     setText("aiCompanyOsBudgetNote", status.budget_note || "Internal AI Company budget estimate, not official OpenAI remaining quota.");
+
+    const scheduler = status.scheduler || {};
+    const roles = Array.isArray(scheduler.roles) ? scheduler.roles : [];
+    const locks = Array.isArray(scheduler.locks) ? scheduler.locks : [];
+    const roleSummary = roles
+      .map((role) => `${role.role}:${role.state}${role.task ? `/${role.task}` : ""}`)
+      .join(" · ");
+    const lockSummary = locks
+      .map((lock) => `${lock.name}:${String(lock.state || "").split(":")[0]}`)
+      .join(" · ");
+
+    setText("aiCompanySchedulerState", scheduler.state ? `${scheduler.state} (${scheduler.mode || "unknown"})` : "unknown");
+    setText("aiCompanySchedulerRoles", roleSummary || "none");
+    setText("aiCompanySchedulerLocks", lockSummary || "none");
   } catch (error) {
     toggle.disabled = true;
     toggle.textContent = "Unavailable";

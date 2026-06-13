@@ -1,0 +1,279 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+OS_CONFIG="company/config/ai_company_os.env"
+SCHEDULER_CONFIG="company/config/ai_company_scheduler.env"
+OS_STATE_FILE="company/runtime/ai-company-os/state.env"
+STATE_DIR="company/runtime/ai-company-scheduler"
+STATE_FILE="$STATE_DIR/state.env"
+CURSOR_FILE="$STATE_DIR/internal-role-cursor"
+
+mkdir -p "$STATE_DIR" company/runtime/locks
+
+if [ -f "$OS_CONFIG" ]; then
+  # shellcheck disable=SC1091
+  source "$OS_CONFIG"
+fi
+
+if [ -f "$SCHEDULER_CONFIG" ]; then
+  # shellcheck disable=SC1091
+  source "$SCHEDULER_CONFIG"
+fi
+
+if [ -f "$OS_STATE_FILE" ] && bash -n "$OS_STATE_FILE" 2>/dev/null; then
+  # shellcheck disable=SC1090
+  source "$OS_STATE_FILE"
+fi
+
+: "${AI_COMPANY_OS_ENABLED:=0}"
+: "${AI_COMPANY_OS_OWNER_SWITCH:=$([ "$AI_COMPANY_OS_ENABLED" = "1" ] && echo ON || echo OFF)}"
+: "${AI_COMPANY_SCHEDULER_ENABLED:=1}"
+: "${AI_COMPANY_MAX_PARALLEL_AGENTS:=2}"
+: "${AI_COMPANY_CLIENT_PRIORITY:=1}"
+: "${AI_COMPANY_INTERNAL_IDLE_WORK_ENABLED:=1}"
+: "${AI_COMPANY_SCHEDULER_INTERVAL_SECONDS:=60}"
+: "${AI_COMPANY_SCHEDULER_MAX_ITERATIONS:=1}"
+: "${AI_COMPANY_SCHEDULER_ROLE_ORDER:=pm,engineer,qa,devops}"
+: "${AI_COMPANY_INTERNAL_ROLE_ORDER:=pm,engineer,qa,devops}"
+: "${AI_COMPANY_ENABLE_PM_PARALLEL:=1}"
+: "${AI_COMPANY_ENABLE_ENGINEER_PARALLEL:=1}"
+: "${AI_COMPANY_ENABLE_QA_PARALLEL:=1}"
+: "${AI_COMPANY_ENABLE_DEVOPS_PARALLEL:=1}"
+
+if ! [[ "$AI_COMPANY_MAX_PARALLEL_AGENTS" =~ ^[0-9]+$ ]] || [ "$AI_COMPANY_MAX_PARALLEL_AGENTS" -lt 1 ]; then
+  AI_COMPANY_MAX_PARALLEL_AGENTS=1
+fi
+
+shell_quote() {
+  printf "'%s'" "$(printf "%s" "$1" | sed "s/'/'\\\\''/g")"
+}
+
+write_scheduler_state() {
+  local state="$1"
+  local mode="${2:-unknown}"
+  local active_agents="${3:-}"
+  local event="${4:-}"
+  local tmp_file
+  tmp_file="${STATE_FILE}.$$.$RANDOM.tmp"
+  {
+    printf "AI_COMPANY_SCHEDULER_STATE=%s\n" "$(shell_quote "$state")"
+    printf "AI_COMPANY_SCHEDULER_MODE=%s\n" "$(shell_quote "$mode")"
+    printf "AI_COMPANY_SCHEDULER_ACTIVE_AGENTS=%s\n" "$(shell_quote "$active_agents")"
+    printf "AI_COMPANY_SCHEDULER_LATEST_EVENT=%s\n" "$(shell_quote "$event")"
+    printf "AI_COMPANY_SCHEDULER_UPDATED_AT=%s\n" "$(shell_quote "$(date -Iseconds)")"
+  } > "$tmp_file"
+  mv "$tmp_file" "$STATE_FILE"
+}
+
+log_scheduler_event() {
+  local state="$1"
+  local topic="$2"
+  local summary="$3"
+  ./runners/log_event.sh \
+    internal-ai-company-os \
+    INTERNAL-080 \
+    pm_agent \
+    multi_agent_scheduler \
+    "$state" \
+    autonomous_scheduler \
+    "$topic" \
+    "$summary" >/dev/null 2>&1 || true
+}
+
+psql_scalar() {
+  docker exec -i ai_company_postgres psql \
+    -U ai_company \
+    -d ai_company \
+    -t \
+    -A \
+    -v ON_ERROR_STOP=1 \
+    -c "$1" 2>/dev/null | tr -d '[:space:]' || true
+}
+
+role_enabled() {
+  case "$1" in
+    pm) [ "$AI_COMPANY_ENABLE_PM_PARALLEL" = "1" ] ;;
+    engineer) [ "$AI_COMPANY_ENABLE_ENGINEER_PARALLEL" = "1" ] ;;
+    qa) [ "$AI_COMPANY_ENABLE_QA_PARALLEL" = "1" ] ;;
+    devops) [ "$AI_COMPANY_ENABLE_DEVOPS_PARALLEL" = "1" ] ;;
+    *) return 1 ;;
+  esac
+}
+
+role_csv_to_array() {
+  local csv="$1"
+  local -n out_ref="$2"
+  local index
+  IFS=',' read -r -a out_ref <<< "$csv"
+  for index in "${!out_ref[@]}"; do
+    out_ref[$index]="$(printf "%s" "${out_ref[$index]}" | xargs)"
+  done
+}
+
+select_internal_roles() {
+  local -n selected_ref="$1"
+  local roles=()
+  local enabled_roles=()
+  local cursor=0
+  local count
+  local i
+  local idx
+  local role
+
+  role_csv_to_array "$AI_COMPANY_INTERNAL_ROLE_ORDER" roles
+  for role in "${roles[@]}"; do
+    if role_enabled "$role"; then
+      enabled_roles+=("$role")
+    fi
+  done
+
+  count="${#enabled_roles[@]}"
+  if [ "$count" -eq 0 ]; then
+    return
+  fi
+
+  if [ -f "$CURSOR_FILE" ]; then
+    cursor="$(tr -dc '0-9' < "$CURSOR_FILE" || true)"
+    cursor="${cursor:-0}"
+  fi
+
+  for ((i = 0; i < count && ${#selected_ref[@]} < AI_COMPANY_MAX_PARALLEL_AGENTS; i++)); do
+    idx=$(((cursor + i) % count))
+    selected_ref+=("${enabled_roles[$idx]}")
+  done
+
+  printf "%s\n" "$(((cursor + ${#selected_ref[@]}) % count))" > "$CURSOR_FILE"
+}
+
+select_client_roles() {
+  local -n selected_ref="$1"
+  local roles=()
+  local role
+  role_csv_to_array "$AI_COMPANY_SCHEDULER_ROLE_ORDER" roles
+  for role in "${roles[@]}"; do
+    if [ "${#selected_ref[@]}" -ge "$AI_COMPANY_MAX_PARALLEL_AGENTS" ]; then
+      break
+    fi
+    if role_enabled "$role"; then
+      selected_ref+=("$role")
+    fi
+  done
+}
+
+run_iteration() {
+  if [ "$AI_COMPANY_OS_OWNER_SWITCH" != "ON" ]; then
+    write_scheduler_state "paused_by_owner" "paused" "" "AI Company OS is OFF"
+    echo "AI Company OS is OFF. Scheduler paused."
+    return 0
+  fi
+
+  if [ "$AI_COMPANY_SCHEDULER_ENABLED" != "1" ]; then
+    write_scheduler_state "disabled" "paused" "" "Scheduler disabled by config"
+    echo "Scheduler disabled by config."
+    return 0
+  fi
+
+  if [ "${AI_COMPANY_AGENT_EMERGENCY_STOP:-0}" = "1" ]; then
+    write_scheduler_state "emergency_stop" "paused" "" "Emergency stop active"
+    echo "Emergency stop active. Scheduler paused."
+    return 0
+  fi
+
+  if ! ./runners/ai_company_work_hours_gate.sh >/tmp/ai-company-scheduler-work-hours.out 2>&1; then
+    write_scheduler_state "paused_outside_work_hours" "paused" "" "Outside work hours"
+    cat /tmp/ai-company-scheduler-work-hours.out
+    return 0
+  fi
+
+  set +e
+  ./runners/ai_company_budget_gate.sh >/tmp/ai-company-scheduler-budget.out 2>&1
+  budget_status=$?
+  set -e
+  if [ "$budget_status" -eq 2 ]; then
+    write_scheduler_state "paused_budget_stop" "paused" "" "Budget STOP"
+    cat /tmp/ai-company-scheduler-budget.out
+    return 0
+  fi
+
+  client_pending=0
+  if [ "$AI_COMPANY_CLIENT_PRIORITY" = "1" ]; then
+    client_pending="$(psql_scalar "
+      SELECT count(*)
+      FROM tasks
+      WHERE project_id IS NOT NULL
+        AND task_key NOT LIKE 'INTERNAL-%'
+        AND task_key NOT LIKE 'AUTO-%'
+        AND status IN ('TODO','INTERNAL_BACKLOG','IN_PROGRESS','NEEDS_REVISION','QA_FAILED','BLOCKED','WAITING_OWNER_ACCEPTANCE');
+    ")"
+    client_pending="${client_pending:-0}"
+  fi
+
+  mode="internal"
+  roles=()
+  if [ "$AI_COMPANY_CLIENT_PRIORITY" = "1" ] && [ "$client_pending" -gt 0 ]; then
+    mode="client"
+    select_client_roles roles
+  elif [ "$AI_COMPANY_INTERNAL_IDLE_WORK_ENABLED" = "1" ]; then
+    mode="internal"
+    select_internal_roles roles
+  else
+    write_scheduler_state "idle" "internal" "" "No client work and internal idle work disabled"
+    echo "No client work pending; internal idle work disabled."
+    return 0
+  fi
+
+  if [ "${#roles[@]}" -eq 0 ]; then
+    write_scheduler_state "idle" "$mode" "" "No enabled roles selected"
+    echo "No enabled roles selected."
+    return 0
+  fi
+
+  active_agents="$(IFS=','; printf "%s" "${roles[*]}")"
+  write_scheduler_state "running" "$mode" "$active_agents" "Starting ${#roles[@]} role cycle(s)"
+  log_scheduler_event "RUNNING" "Scheduler cycle started" "Mode=$mode roles=$active_agents client_pending=$client_pending."
+
+  pids=()
+  for role in "${roles[@]}"; do
+    ./runners/ai_company_role_cycle.sh "$role" "$mode" &
+    pids+=("$!")
+  done
+
+  failed=0
+  for pid in "${pids[@]}"; do
+    if ! wait "$pid"; then
+      failed=1
+    fi
+  done
+
+  if [ "$failed" -ne 0 ]; then
+    write_scheduler_state "error" "$mode" "" "One or more role cycles failed"
+    log_scheduler_event "ERROR" "Scheduler cycle failed" "One or more $mode role cycles failed."
+    return 1
+  fi
+
+  write_scheduler_state "idle" "$mode" "" "Scheduler cycle complete"
+  log_scheduler_event "DONE" "Scheduler cycle complete" "Mode=$mode roles=$active_agents completed."
+}
+
+iteration=0
+while true; do
+  iteration=$((iteration + 1))
+  echo
+  echo "## Multi-agent scheduler iteration $iteration / $AI_COMPANY_SCHEDULER_MAX_ITERATIONS"
+  run_iteration
+
+  if [ "$iteration" -ge "$AI_COMPANY_SCHEDULER_MAX_ITERATIONS" ]; then
+    break
+  fi
+
+  sleep "$AI_COMPANY_SCHEDULER_INTERVAL_SECONDS"
+
+  if [ -f "$OS_STATE_FILE" ] && bash -n "$OS_STATE_FILE" 2>/dev/null; then
+    # shellcheck disable=SC1090
+    source "$OS_STATE_FILE"
+  fi
+done
+
+echo "AI Company multi-agent scheduler complete."

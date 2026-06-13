@@ -1490,3 +1490,43 @@ Task creation:
 Auto-solve:
 
     AI_COMPANY_SELF_DIRECTED_CREATE_TASKS=1 AI_COMPANY_SELF_DIRECTED_AUTO_SOLVE=1 AI_COMPANY_ENABLE_AUTO_EDIT=1 AI_COMPANY_ENABLE_AUTO_COMMIT=1 ./runners/autonomous_self_directed_loop.sh engineer_agent --once
+
+## INTERNAL-080 Handover
+
+Added bounded multi-agent autonomous operations scheduler.
+
+New files:
+
+    company/config/ai_company_scheduler.env
+    runners/ai_company_lock.sh
+    runners/ai_company_multi_agent_scheduler.sh
+    runners/ai_company_role_cycle.sh
+    runners/ai_company_scheduler_status.sh
+    runners/install_ai_company_scheduler_service.sh
+
+Docs:
+
+    projects/internal/ai-company-os/INTERNAL-080.md
+
+Manual one-cycle run:
+
+    ./runners/ai_company_multi_agent_scheduler.sh
+
+Status:
+
+    ./runners/ai_company_scheduler_status.sh
+    ./runners/ai_company_os_status.sh
+
+Optional service install:
+
+    sudo ./runners/install_ai_company_scheduler_service.sh
+
+Safety:
+
+- owner ON/OFF, work-hours, budget STOP, and emergency stop are checked before scheduler and role work
+- client work has priority over internal idle work
+- default max parallel autonomous role cycles is 2
+- repo-writing paths use `company/runtime/locks/repo_write.lock`
+- DevOps/service checks use `company/runtime/locks/devops.lock`
+- QA role checks use `company/runtime/locks/qa.lock`
+- dashboard now surfaces scheduler state, role status, and lock state through AI Company OS status
