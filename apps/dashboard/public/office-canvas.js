@@ -65,6 +65,126 @@
     { label: "OWNER", x: 28, y: 11 }
   ];
 
+
+  let pixelOfficeAssetConfig = null;
+  let customTilesetImage = null;
+  let customTilesReady = false;
+
+  function shouldUseCustomTiles() {
+    return Boolean(
+      pixelOfficeAssetConfig &&
+      pixelOfficeAssetConfig.mode === "custom" &&
+      customTilesetImage &&
+      customTilesReady
+    );
+  }
+
+  function tileKeyForGround(tile) {
+    if (tile === "F") return "FLOOR_OFFICE";
+    if (tile === "B") return "FLOOR_BREAK";
+    if (tile === "W") return "WALL";
+    if (tile === "S") return "SERVER";
+    return null;
+  }
+
+  function tileKeyForFurniture(type) {
+    const map = {
+      desk: "DESK_LEFT",
+      managerDesk: "DESK_LEFT",
+      monitor: "MONITOR",
+      server: "SERVER",
+      bookshelf: "BOOKSHELF",
+      plant: "PLANT",
+      sofa: "SOFA",
+      table: "TABLE_SMALL",
+      cooler: "COOLER",
+      meeting: "TABLE_SMALL",
+      whiteboard: "WHITEBOARD"
+    };
+
+    return map[type] || null;
+  }
+
+  function drawMappedTile(tileKey, tx, ty) {
+    if (!shouldUseCustomTiles()) return false;
+    if (!tileKey) return false;
+
+    const mapping = pixelOfficeAssetConfig.tileMapping || {};
+    const id = Number(mapping[tileKey]);
+
+    if (!Number.isFinite(id) || id < 0) return false;
+
+    const tileset = pixelOfficeAssetConfig.assets?.tileset || {};
+    const tileWidth = Number(tileset.tileWidth || 48);
+    const tileHeight = Number(tileset.tileHeight || 48);
+    const tilesPerRow = Number(tileset.tilesPerRow || 16);
+
+    const sx = (id % tilesPerRow) * tileWidth;
+    const sy = Math.floor(id / tilesPerRow) * tileHeight;
+
+    ctx.drawImage(
+      customTilesetImage,
+      sx,
+      sy,
+      tileWidth,
+      tileHeight,
+      tx * TS,
+      ty * TS,
+      TS,
+      TS
+    );
+
+    return true;
+  }
+
+  function drawMappedGroundTile(tile, tx, ty) {
+    return drawMappedTile(tileKeyForGround(tile), tx, ty);
+  }
+
+  function drawMappedFurnitureTile(type, x, y) {
+    if (!shouldUseCustomTiles()) return false;
+
+    if (type === "desk" || type === "managerDesk") {
+      const left = drawMappedTile("DESK_LEFT", x, y);
+      const right = drawMappedTile("DESK_RIGHT", x + 1, y);
+      return left || right;
+    }
+
+    return drawMappedTile(tileKeyForFurniture(type), x, y);
+  }
+
+  async function loadAssetConfig() {
+    try {
+      const response = await fetch("/assets/office/config.json", { cache: "no-store" });
+      if (!response.ok) return;
+
+      const config = await response.json();
+      pixelOfficeAssetConfig = config;
+      window.AI_COMPANY_PIXEL_OFFICE_ASSET_CONFIG = config;
+
+      if (config.mode !== "custom") {
+        return;
+      }
+
+      const filename = config.assets?.tileset?.filename;
+      if (!filename) return;
+
+      const image = new Image();
+      image.onload = () => {
+        customTilesetImage = image;
+        customTilesReady = true;
+        console.info("Pixel Office custom tileset loaded:", image.src);
+      };
+      image.onerror = () => {
+        customTilesReady = false;
+        console.warn("Pixel Office custom tileset failed to load:", image.src);
+      };
+      image.src = `/assets/office/${filename}`;
+    } catch (error) {
+      console.warn("Pixel Office asset config unavailable; using synthetic renderer.", error);
+    }
+  }
+
   let runtimeByAgent = {};
   let canvas = null;
   let ctx = null;
@@ -121,6 +241,8 @@
         const tile = GROUND[y][x];
         const px = x * TS;
         const py = y * TS;
+
+        if (drawMappedGroundTile(tile, x, y)) continue;
 
         if (tile === ".") {
           pr(px, py, TS, TS, "#070b18");
@@ -209,6 +331,8 @@
 
   function drawFurniture(time) {
     for (const [type, x, y] of furniture) {
+      if (drawMappedFurnitureTile(type, x, y)) continue;
+
       if (type === "desk") drawDesk(x, y, 2);
       if (type === "managerDesk") drawDesk(x, y, 2);
       if (type === "monitor") drawMonitor(x, y, time);
@@ -354,6 +478,7 @@
   }
 
   function boot() {
+    loadAssetConfig();
     refreshRuntime();
     setInterval(refreshRuntime, 5000);
 

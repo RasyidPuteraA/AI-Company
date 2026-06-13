@@ -1334,3 +1334,25 @@ Validation:
 Next step:
 
     copy approved tileset/character assets to the ignored folders, then map tile IDs in config.json.
+
+## INTERNAL-075 Handover
+
+Connected Pixel Office renderer to optional asset config.
+
+Config:
+
+    apps/dashboard/public/assets/office/config.json
+
+Renderer:
+
+    apps/dashboard/public/office-canvas.js
+
+Behavior:
+
+- mode=template keeps synthetic renderer active
+- mode=custom attempts to load configured tileset PNG from ignored asset folder
+- missing PNG falls back safely
+
+Validation:
+
+    ./runners/pixel_office_asset_check.sh
