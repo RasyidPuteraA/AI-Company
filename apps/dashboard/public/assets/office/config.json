@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "project": "AI Company Pixel Office",
+  "mode": "template",
+  "notes": [
+    "This config prepares future custom pixel office assets.",
+    "Do not commit raw PNG assets unless explicitly approved.",
+    "Place tileset PNG files in assets/office/tilesets/.",
+    "Place character PNG files in assets/office/characters/."
+  ],
+  "assets": {
+    "tileset": {
+      "filename": "modern-office.png",
+      "width": 768,
+      "height": 1024,
+      "tileWidth": 48,
+      "tileHeight": 48,
+      "tilesPerRow": 16
+    },
+    "characters": {
+      "filename": "office-workers.png",
+      "width": 384,
+      "height": 384,
+      "charWidth": 96,
+      "charHeight": 96,
+      "charsPerRow": 4
+    }
+  },
+  "map": {
+    "width": 36,
+    "height": 14,
+    "tileSize": 48
+  },
+  "tileMapping": {
+    "EMPTY": 0,
+    "FLOOR_OFFICE": 1,
+    "FLOOR_BREAK": 2,
+    "WALL": 3,
+    "DESK_LEFT": 4,
+    "DESK_RIGHT": 5,
+    "MONITOR": 6,
+    "CHAIR": 7,
+    "PLANT": 8,
+    "BOOKSHELF": 9,
+    "SERVER": 10,
+    "COOLER": 11,
+    "AC": 12,
+    "SOFA": 13,
+    "TABLE_SMALL": 14,
+    "WHITEBOARD": 15
+  },
+  "tileIdFormula": "Tile ID = row * 16 + column"
+}

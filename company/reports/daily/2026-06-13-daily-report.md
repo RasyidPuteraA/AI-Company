@@ -23,6 +23,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-074 - Prepare Pixel Office Custom Asset Mapping** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-073 - Polish Pixel Office Map Fit and Room Labels** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-072 - Upgrade Pixel Office Map Renderer from Production Package** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-071 - Add Codex Usage Dashboard Panel** (Owner: engineer_agent; Status: DONE)
@@ -99,6 +100,10 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-13: engineering_completed | engineer_agent | Pixel Office asset mapping foundation completed (Impact: Added asset folders, config template, gitignore rules, and validation runner.)
+- 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-074-plan.md)
+- 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-074: Prepare Pixel Office Custom Asset Mapping)
+- 2026-06-13: internal_task_created | pm_agent | Prepare Pixel Office Custom Asset Mapping (Impact: PM Agent created internal task INTERNAL-074: Prepare dashboard Pixel Office custom asset folders, config template, gitignore rules, and validation runner for future tileset and character PNG integration without committing raw assets.)
 - 2026-06-13: engineering_completed | engineer_agent | Pixel Office map polish completed (Impact: Widened office canvas, added room labels, and improved fit above summary cards.)
 - 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-073-plan.md)
 - 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-073: Polish Pixel Office Map Fit and Room Labels)
@@ -107,10 +112,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-13: internal_task_created | pm_agent | Upgrade Pixel Office Map Renderer from Production Package (Impact: PM Agent created internal task INTERNAL-072: Upgrade dashboard Pixel Office map using the uploaded production renderer concept: layered ground map, furniture objects, animated agents, and loading-safe replacement of the old office canvas.)
 - 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-072-plan.md)
 - 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-072: Upgrade Pixel Office Map Renderer from Production Package)
-- 2026-06-13: internal_task_created | pm_agent | Upgrade Pixel Office Map Renderer from Production Package (Impact: PM Agent created internal task INTERNAL-072: Upgrade the dashboard Pixel Office map using the uploaded production pixel-office renderer concepts: layered ground map, furniture objects, animated characters, loading-safe rendering, and no old-map flicker.)
-- 2026-06-13: engineering_completed | engineer_agent | Codex usage dashboard panel completed (Impact: Added /api/codex/usage and dashboard Codex usage panel.)
-- 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-071-plan.md)
-- 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-071: Add Codex Usage Dashboard Panel)
 
 ## QA Status
 

@@ -35,3 +35,12 @@ apps/dashboard/public/assets/limezu/_preview/
 runners/*.bak-internal-*
 
 company/runtime/
+# Pixel Office custom raw assets
+apps/dashboard/public/assets/office/tilesets/*.png
+apps/dashboard/public/assets/office/tilesets/*.jpg
+apps/dashboard/public/assets/office/tilesets/*.jpeg
+apps/dashboard/public/assets/office/tilesets/*.webp
+apps/dashboard/public/assets/office/characters/*.png
+apps/dashboard/public/assets/office/characters/*.jpg
+apps/dashboard/public/assets/office/characters/*.jpeg
+apps/dashboard/public/assets/office/characters/*.webp

@@ -1310,3 +1310,27 @@ Notes:
 - agent positions are more spread out
 - canvas height is balanced to avoid covering summary cards
 - cache-busted dashboard office assets to v=076
+
+## INTERNAL-074 Handover
+
+Prepared Pixel Office custom asset mapping foundation.
+
+Tracked files:
+
+    apps/dashboard/public/assets/office/config.json
+    apps/dashboard/public/assets/office/tilesets/.gitkeep
+    apps/dashboard/public/assets/office/characters/.gitkeep
+    runners/pixel_office_asset_check.sh
+
+Raw image assets are intentionally ignored by git:
+
+    apps/dashboard/public/assets/office/tilesets/*.png
+    apps/dashboard/public/assets/office/characters/*.png
+
+Validation:
+
+    ./runners/pixel_office_asset_check.sh
+
+Next step:
+
+    copy approved tileset/character assets to the ignored folders, then map tile IDs in config.json.
