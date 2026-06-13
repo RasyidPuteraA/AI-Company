@@ -59,6 +59,76 @@ main().catch(error => {
   document.body.innerHTML = `<pre>${error.stack}</pre>`;
 });
 
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value || "--";
+}
+
+async function loadAiCompanyOsStatus() {
+  const toggle = document.getElementById("aiCompanyOsToggle");
+  if (!toggle) return;
+
+  try {
+    const status = await loadJson("/api/ai-company-os/status");
+    const enabled = status.enabled === true;
+
+    toggle.disabled = false;
+    toggle.dataset.nextAction = enabled ? "off" : "on";
+    toggle.textContent = enabled ? "Turn OFF" : "Turn ON";
+    toggle.classList.toggle("is-on", enabled);
+
+    setText("aiCompanyOsState", enabled ? "ON" : "OFF");
+    setText("aiCompanyOsMode", status.mode);
+    setText("aiCompanyOsAgent", status.active_agent || "none");
+    setText("aiCompanyOsBudget", status.budget_state);
+    setText("aiCompanyOsWorkHours", status.work_hours_state);
+    setText("aiCompanyOsLatestEvent", status.latest_event || "No autonomous event yet.");
+    setText("aiCompanyOsLatestReport", status.latest_discovery_report || "No discovery report yet.");
+    setText("aiCompanyOsBudgetNote", status.budget_note || "Internal AI Company budget estimate, not official OpenAI remaining quota.");
+  } catch (error) {
+    toggle.disabled = true;
+    toggle.textContent = "Unavailable";
+    setText("aiCompanyOsMode", "ERROR");
+    console.error(error);
+  }
+}
+
+function setupAiCompanyOsToggle() {
+  const toggle = document.getElementById("aiCompanyOsToggle");
+  if (!toggle) return;
+
+  toggle.addEventListener("click", async () => {
+    const action = toggle.dataset.nextAction || "on";
+    toggle.disabled = true;
+    toggle.textContent = action === "on" ? "Turning ON" : "Turning OFF";
+
+    try {
+      const response = await fetch("/api/ai-company-os/control", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ action })
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || `Control failed: ${response.status}`);
+      }
+
+      await loadAiCompanyOsStatus();
+    } catch (error) {
+      toggle.disabled = false;
+      toggle.textContent = "Retry";
+      console.error(error);
+    }
+  });
+}
+
+setupAiCompanyOsToggle();
+loadAiCompanyOsStatus();
+setInterval(loadAiCompanyOsStatus, 5000);
+
 
 function setLiveStatus(text, state) {
   const el = document.getElementById("liveStatus");

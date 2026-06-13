@@ -1,5 +1,47 @@
 # AGENT_HANDOVER
 
+## INTERNAL-078 Handover
+
+Master autonomous operations mode implemented.
+
+New config and runtime state:
+
+    company/config/ai_company_os.env
+    company/runtime/ai-company-os/state.env
+
+New commands:
+
+    ./runners/ai_company_os_control.sh on
+    ./runners/ai_company_os_control.sh off
+    ./runners/ai_company_os_status.sh
+    ./runners/ai_company_os_status.sh --json
+    ./runners/ai_company_autonomous_orchestrator.sh
+
+New gates:
+
+    ./runners/ai_company_work_hours_gate.sh
+    ./runners/ai_company_budget_gate.sh
+
+Dashboard now has:
+
+    GET /api/ai-company-os/status
+    POST /api/ai-company-os/control
+    AI Company OS ON/OFF panel with mode, active agent, work-hours state, internal budget state, latest event, and latest discovery report.
+
+Behavior:
+
+- Owner OFF pauses autonomous operation with `PAUSED_BY_OWNER`.
+- `AI_COMPANY_AGENT_EMERGENCY_STOP=1` halts the orchestrator.
+- Outside configured work hours pauses autonomous operation.
+- Internal Codex budget `STOP` pauses autonomous operation.
+- Client work has priority over internal improvement.
+- Internal idle mode reuses `runners/autonomous_self_directed_loop.sh`.
+- Discovery only starts when no unresolved active `AUTO-*` task exists.
+- Discovered issues create deduplicated `AUTO-*` internal tasks.
+- Auto-solve remains guarded by existing autonomous code guard and `pre_commit_check.sh`.
+
+No raw asset, secret, owner review compatibility, emergency stop, duplicate issue, budget, work-hours, or test guard was removed.
+
 ## Latest Task
 
 - `INTERNAL-004`: Connect Daily Report Generator to PostgreSQL

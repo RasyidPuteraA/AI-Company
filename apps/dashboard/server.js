@@ -10,6 +10,8 @@ const PUBLIC_DIR = path.join(__dirname, "public");
 const ROOT_DIR = path.join(__dirname, "..", "..");
 const CODEX_BUDGET_FILE = path.join(ROOT_DIR, "company", "config", "codex_budget.env");
 const CODEX_LEDGER_FILE = path.join(ROOT_DIR, "company", "runtime", "codex_usage.jsonl");
+const AI_COMPANY_OS_STATUS_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_os_status.sh");
+const AI_COMPANY_OS_CONTROL_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_os_control.sh");
 
 function runSql(sql) {
   const output = execFileSync(
@@ -295,6 +297,42 @@ function getAiUsageSummary() {
     chatgpt_plan_quota: "external_not_available",
     note: "AI Company OS tracks Codex CLI usage through an internal ledger. Limits are internal estimates, not official OpenAI remaining quota."
   };
+}
+
+function runAiCompanyOsStatus() {
+  const output = execFileSync(
+    AI_COMPANY_OS_STATUS_RUNNER,
+    ["--json"],
+    {
+      cwd: ROOT_DIR,
+      encoding: "utf8",
+      timeout: 30000,
+      maxBuffer: 1024 * 1024
+    }
+  );
+
+  return JSON.parse(output);
+}
+
+function setAiCompanyOsPower(action) {
+  const normalized = String(action || "").trim().toLowerCase();
+
+  if (!["on", "off"].includes(normalized)) {
+    throw new Error("action must be on or off");
+  }
+
+  execFileSync(
+    AI_COMPANY_OS_CONTROL_RUNNER,
+    [normalized],
+    {
+      cwd: ROOT_DIR,
+      encoding: "utf8",
+      timeout: 30000,
+      maxBuffer: 1024 * 1024
+    }
+  );
+
+  return runAiCompanyOsStatus();
 }
 
 function getSystemMetrics() {
@@ -656,6 +694,17 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === "/api/ai/usage" && req.method === "GET") {
       json(res, getAiUsageSummary());
+      return;
+    }
+
+    if (pathname === "/api/ai-company-os/status" && req.method === "GET") {
+      json(res, runAiCompanyOsStatus());
+      return;
+    }
+
+    if (pathname === "/api/ai-company-os/control" && req.method === "POST") {
+      const payload = await readJson(req);
+      json(res, setAiCompanyOsPower(payload.action));
       return;
     }
 

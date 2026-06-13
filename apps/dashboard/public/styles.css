@@ -195,6 +195,84 @@ h1 {
   background: rgba(239, 68, 68, 0.16);
 }
 
+.ai-company-os-panel {
+  margin: 18px 0;
+  border-radius: 8px;
+}
+
+.ai-company-os-toggle {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: #38bdf8;
+  color: #03111f;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.ai-company-os-toggle.is-on {
+  background: #f87171;
+  color: #280607;
+}
+
+.ai-company-os-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.ai-company-os-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.ai-company-os-grid > div {
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.62);
+}
+
+.ai-company-os-grid span,
+.ai-company-os-meta span {
+  display: block;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.ai-company-os-grid strong {
+  display: block;
+  color: #e2e8f0;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+.ai-company-os-meta {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  color: #cbd5e1;
+}
+
+.ai-company-os-meta p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.ai-company-os-meta small {
+  color: #94a3b8;
+}
+
+@media (max-width: 900px) {
+  .ai-company-os-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* Pixel Office v0 */
 .pixel-office {
   width: 420px;
