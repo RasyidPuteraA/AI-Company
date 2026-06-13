@@ -23,6 +23,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-068 - Add Autonomous Codex Dispatcher Hook** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-067 - Connect Autonomous Agents to Codex Wrapper** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-066 - Add Codex CLI Usage Ledger and Budget Guard** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-065 - Add Stale Internal Task Recovery Guard** (Owner: devops_agent; Status: DONE)
@@ -93,6 +94,10 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-13: engineering_completed | engineer_agent | Autonomous Codex dispatcher hook completed (Impact: Added plan-only dispatcher hook for eligible internal tasks.)
+- 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-068-plan.md)
+- 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-068: Add Autonomous Codex Dispatcher Hook)
+- 2026-06-13: internal_task_created | pm_agent | Add Autonomous Codex Dispatcher Hook (Impact: PM Agent created internal task INTERNAL-068: Add a safe autonomous dispatcher hook that lets eligible internal tasks run through codex_task_plan.sh via the tracked Codex wrapper.)
 - 2026-06-13: engineering_completed | engineer_agent | Autonomous agents connected to Codex wrapper (Impact: Added codex_task_brief and codex_task_plan runners.)
 - 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-067: Connect Autonomous Agents to Codex Wrapper)
 - 2026-06-13: internal_task_created | pm_agent | Connect Autonomous Agents to Codex Wrapper (Impact: PM Agent created internal task INTERNAL-067: Connect autonomous agent execution to codex_agent_run.sh so agents can use Codex CLI through the tracked usage ledger and budget guard.)
@@ -101,10 +106,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-13: internal_task_created | pm_agent | Add Codex CLI Usage Ledger and Budget Guard (Impact: PM Agent created internal task INTERNAL-066: Add a safe Codex CLI usage ledger and internal budget guard so autonomous agents can track token usage before deeper Codex integration.)
 - 2026-06-13: internal_task_created | pm_agent | Add Codex CLI Usage Ledger and Budget Guard (Impact: PM Agent created internal task INTERNAL-066: Add a safe Codex CLI usage ledger and internal budget guard so autonomous agents can track token usage before deeper Codex integration.)
 - 2026-06-13: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-066: Add Codex CLI Usage Ledger and Budget Guard)
-- 2026-06-13: internal_task_created | pm_agent | Add Codex CLI Usage Ledger and Budget Guard (Impact: PM Agent created internal task INTERNAL-066: Add a safe Codex CLI usage ledger and internal budget guard so autonomous agents can track token usage before deeper Codex integration.)
-- 2026-06-12: devops_completed | devops_agent | Stale internal task recovery guard completed (Impact: Added report-only stale internal task guard.)
-- 2026-06-12: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-065: Add Stale Internal Task Recovery Guard)
-- 2026-06-12: internal_task_created | pm_agent | Add Stale Internal Task Recovery Guard (Impact: PM Agent created internal task INTERNAL-065: Add a safe guard that detects stale internal IN_PROGRESS tasks and reports them for owner or agent follow-up.)
 
 ## QA Status
 

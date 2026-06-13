@@ -1179,3 +1179,31 @@ Safety:
 - no direct raw codex exec
 - no credential access
 - no client finalization without Owner approval
+
+## INTERNAL-068 Handover
+
+Added safe autonomous Codex dispatcher hook.
+
+Commands:
+
+    ./runners/autonomous_codex_dispatcher_hook.sh AGENT_KEY TASK_KEY --dry-run
+    AI_COMPANY_ENABLE_CODEX_DISPATCHER=1 ./runners/autonomous_codex_dispatcher_hook.sh AGENT_KEY TASK_KEY --plan
+
+Flow:
+
+    claimed internal task -> dispatcher eligibility check -> codex_task_plan.sh -> codex_agent_run.sh -> usage ledger -> plan report
+
+Verification:
+
+- engineer_agent generated a Codex dispatcher plan for INTERNAL-068
+- usage report recorded 2634 tokens
+- event logged: codex_plan_generated
+
+Safety:
+
+- internal tasks only
+- assigned agent only
+- skips when Owner attention exists
+- skips when active client work exists
+- explicit enable flag required
+- plan/read-only only
