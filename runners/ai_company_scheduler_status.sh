@@ -5,12 +5,18 @@ cd "$(dirname "$0")/.."
 
 FORMAT="${1:-text}"
 CONFIG="company/config/ai_company_scheduler.env"
+OS_CONFIG="company/config/ai_company_os.env"
 STATE_DIR="company/runtime/ai-company-scheduler"
 STATE_FILE="$STATE_DIR/state.env"
 ROLE_DIR="$STATE_DIR/roles"
 LOCK_DIR="company/runtime/locks"
 
 mkdir -p "$STATE_DIR" "$ROLE_DIR" "$LOCK_DIR"
+
+if [ -f "$OS_CONFIG" ]; then
+  # shellcheck disable=SC1091
+  source "$OS_CONFIG"
+fi
 
 if [ -f "$CONFIG" ]; then
   # shellcheck disable=SC1091
@@ -25,10 +31,30 @@ fi
 : "${AI_COMPANY_SCHEDULER_ENABLED:=1}"
 : "${AI_COMPANY_SCHEDULER_STATE:=UNKNOWN}"
 : "${AI_COMPANY_SCHEDULER_MODE:=unknown}"
+: "${AI_COMPANY_SCHEDULER_WORK_HOURS_MODE:=unknown}"
+: "${AI_COMPANY_SCHEDULER_OVERTIME_INFO:=}"
 : "${AI_COMPANY_SCHEDULER_ACTIVE_AGENTS:=}"
 : "${AI_COMPANY_SCHEDULER_LATEST_EVENT:=}"
 : "${AI_COMPANY_SCHEDULER_UPDATED_AT:=}"
 : "${AI_COMPANY_MAX_PARALLEL_AGENTS:=2}"
+: "${AI_COMPANY_OVERTIME_ALLOW_NEW_DISCOVERY:=0}"
+: "${AI_COMPANY_OVERTIME_ALLOW_INTERNAL_IMPROVEMENT:=0}"
+: "${AI_COMPANY_OVERTIME_ALLOW_QA:=1}"
+: "${AI_COMPANY_OVERTIME_ALLOW_REPORTING:=1}"
+
+set +e
+work_output="$(./runners/ai_company_work_hours_gate.sh 2>&1)"
+set -e
+current_work_hours_mode="$(printf "%s\n" "$work_output" | awk -F= '$1=="WORK_HOURS_MODE"{print $2}' | tail -1)"
+current_work_hours_mode="${current_work_hours_mode:-unknown}"
+
+if [ "$AI_COMPANY_SCHEDULER_WORK_HOURS_MODE" = "unknown" ] || [ -z "$AI_COMPANY_SCHEDULER_WORK_HOURS_MODE" ]; then
+  AI_COMPANY_SCHEDULER_WORK_HOURS_MODE="$current_work_hours_mode"
+fi
+
+if [ -z "$AI_COMPANY_SCHEDULER_OVERTIME_INFO" ] && [ "$AI_COMPANY_SCHEDULER_WORK_HOURS_MODE" = "OVERTIME" ]; then
+  AI_COMPANY_SCHEDULER_OVERTIME_INFO="allow_new_discovery=$AI_COMPANY_OVERTIME_ALLOW_NEW_DISCOVERY allow_internal_improvement=$AI_COMPANY_OVERTIME_ALLOW_INTERNAL_IMPROVEMENT allow_qa=$AI_COMPANY_OVERTIME_ALLOW_QA allow_reporting=$AI_COMPANY_OVERTIME_ALLOW_REPORTING"
+fi
 
 lock_state() {
   local name="$1"
@@ -85,11 +111,12 @@ if [ "$FORMAT" = "--json" ] || [ "$FORMAT" = "json" ]; then
   python3 - "$AI_COMPANY_SCHEDULER_ENABLED" "$AI_COMPANY_SCHEDULER_STATE" \
     "$AI_COMPANY_SCHEDULER_MODE" "$AI_COMPANY_SCHEDULER_ACTIVE_AGENTS" \
     "$AI_COMPANY_SCHEDULER_LATEST_EVENT" "$AI_COMPANY_SCHEDULER_UPDATED_AT" \
-    "$AI_COMPANY_MAX_PARALLEL_AGENTS" "$roles_text" "$locks_text" <<'PY'
+    "$AI_COMPANY_MAX_PARALLEL_AGENTS" "$AI_COMPANY_SCHEDULER_WORK_HOURS_MODE" \
+    "$AI_COMPANY_SCHEDULER_OVERTIME_INFO" "$roles_text" "$locks_text" <<'PY'
 import json
 import sys
 
-enabled, state, mode, active_agents, latest_event, updated_at, max_parallel, roles_text, locks_text = sys.argv[1:]
+enabled, state, mode, active_agents, latest_event, updated_at, max_parallel, work_hours_mode, overtime_info, roles_text, locks_text = sys.argv[1:]
 
 roles = []
 for line in roles_text.splitlines():
@@ -112,6 +139,8 @@ print(json.dumps({
     "enabled": enabled == "1",
     "state": state,
     "mode": mode,
+    "work_hours_mode": work_hours_mode,
+    "overtime_info": overtime_info,
     "active_agents": [item for item in active_agents.split(",") if item],
     "latest_event": latest_event,
     "updated_at": updated_at,
@@ -127,6 +156,8 @@ echo "# AI Company Scheduler Status"
 echo "- enabled: $AI_COMPANY_SCHEDULER_ENABLED"
 echo "- state: $AI_COMPANY_SCHEDULER_STATE"
 echo "- mode: $AI_COMPANY_SCHEDULER_MODE"
+echo "- work_hours_mode: $AI_COMPANY_SCHEDULER_WORK_HOURS_MODE"
+echo "- overtime_info: ${AI_COMPANY_SCHEDULER_OVERTIME_INFO:-none}"
 echo "- active_agents: ${AI_COMPANY_SCHEDULER_ACTIVE_AGENTS:-none}"
 echo "- max_parallel_agents: $AI_COMPANY_MAX_PARALLEL_AGENTS"
 echo "- latest_event: ${AI_COMPANY_SCHEDULER_LATEST_EVENT:-none}"

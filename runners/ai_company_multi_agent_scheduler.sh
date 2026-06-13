@@ -41,6 +41,10 @@ fi
 : "${AI_COMPANY_ENABLE_ENGINEER_PARALLEL:=1}"
 : "${AI_COMPANY_ENABLE_QA_PARALLEL:=1}"
 : "${AI_COMPANY_ENABLE_DEVOPS_PARALLEL:=1}"
+: "${AI_COMPANY_OVERTIME_ALLOW_NEW_DISCOVERY:=0}"
+: "${AI_COMPANY_OVERTIME_ALLOW_INTERNAL_IMPROVEMENT:=0}"
+: "${AI_COMPANY_OVERTIME_ALLOW_QA:=1}"
+: "${AI_COMPANY_OVERTIME_ALLOW_REPORTING:=1}"
 
 if ! [[ "$AI_COMPANY_MAX_PARALLEL_AGENTS" =~ ^[0-9]+$ ]] || [ "$AI_COMPANY_MAX_PARALLEL_AGENTS" -lt 1 ]; then
   AI_COMPANY_MAX_PARALLEL_AGENTS=1
@@ -55,11 +59,15 @@ write_scheduler_state() {
   local mode="${2:-unknown}"
   local active_agents="${3:-}"
   local event="${4:-}"
+  local work_hours_mode="${5:-${WORK_HOURS_MODE:-unknown}}"
+  local overtime_info="${6:-}"
   local tmp_file
   tmp_file="${STATE_FILE}.$$.$RANDOM.tmp"
   {
     printf "AI_COMPANY_SCHEDULER_STATE=%s\n" "$(shell_quote "$state")"
     printf "AI_COMPANY_SCHEDULER_MODE=%s\n" "$(shell_quote "$mode")"
+    printf "AI_COMPANY_SCHEDULER_WORK_HOURS_MODE=%s\n" "$(shell_quote "$work_hours_mode")"
+    printf "AI_COMPANY_SCHEDULER_OVERTIME_INFO=%s\n" "$(shell_quote "$overtime_info")"
     printf "AI_COMPANY_SCHEDULER_ACTIVE_AGENTS=%s\n" "$(shell_quote "$active_agents")"
     printf "AI_COMPANY_SCHEDULER_LATEST_EVENT=%s\n" "$(shell_quote "$event")"
     printf "AI_COMPANY_SCHEDULER_UPDATED_AT=%s\n" "$(shell_quote "$(date -Iseconds)")"
@@ -186,6 +194,12 @@ run_iteration() {
     cat /tmp/ai-company-scheduler-work-hours.out
     return 0
   fi
+  WORK_HOURS_MODE="$(awk -F= '$1=="WORK_HOURS_MODE"{print $2}' /tmp/ai-company-scheduler-work-hours.out | tail -1)"
+  WORK_HOURS_MODE="${WORK_HOURS_MODE:-NORMAL_WORK}"
+  overtime_info="normal"
+  if [ "$WORK_HOURS_MODE" = "OVERTIME" ]; then
+    overtime_info="allow_new_discovery=$AI_COMPANY_OVERTIME_ALLOW_NEW_DISCOVERY allow_internal_improvement=$AI_COMPANY_OVERTIME_ALLOW_INTERNAL_IMPROVEMENT allow_qa=$AI_COMPANY_OVERTIME_ALLOW_QA allow_reporting=$AI_COMPANY_OVERTIME_ALLOW_REPORTING"
+  fi
 
   set +e
   ./runners/ai_company_budget_gate.sh >/tmp/ai-company-scheduler-budget.out 2>&1
@@ -225,18 +239,18 @@ run_iteration() {
   fi
 
   if [ "${#roles[@]}" -eq 0 ]; then
-    write_scheduler_state "idle" "$mode" "" "No enabled roles selected"
+    write_scheduler_state "idle" "$mode" "" "No enabled roles selected" "$WORK_HOURS_MODE" "$overtime_info"
     echo "No enabled roles selected."
     return 0
   fi
 
   active_agents="$(IFS=','; printf "%s" "${roles[*]}")"
-  write_scheduler_state "running" "$mode" "$active_agents" "Starting ${#roles[@]} role cycle(s)"
-  log_scheduler_event "RUNNING" "Scheduler cycle started" "Mode=$mode roles=$active_agents client_pending=$client_pending."
+  write_scheduler_state "running" "$mode" "$active_agents" "Starting ${#roles[@]} role cycle(s)" "$WORK_HOURS_MODE" "$overtime_info"
+  log_scheduler_event "RUNNING" "Scheduler cycle started" "Mode=$mode work_hours_mode=$WORK_HOURS_MODE roles=$active_agents client_pending=$client_pending."
 
   pids=()
   for role in "${roles[@]}"; do
-    ./runners/ai_company_role_cycle.sh "$role" "$mode" &
+    AI_COMPANY_WORK_HOURS_MODE="$WORK_HOURS_MODE" ./runners/ai_company_role_cycle.sh "$role" "$mode" &
     pids+=("$!")
   done
 
@@ -248,13 +262,13 @@ run_iteration() {
   done
 
   if [ "$failed" -ne 0 ]; then
-    write_scheduler_state "error" "$mode" "" "One or more role cycles failed"
+    write_scheduler_state "error" "$mode" "" "One or more role cycles failed" "$WORK_HOURS_MODE" "$overtime_info"
     log_scheduler_event "ERROR" "Scheduler cycle failed" "One or more $mode role cycles failed."
     return 1
   fi
 
-  write_scheduler_state "idle" "$mode" "" "Scheduler cycle complete"
-  log_scheduler_event "DONE" "Scheduler cycle complete" "Mode=$mode roles=$active_agents completed."
+  write_scheduler_state "idle" "$mode" "" "Scheduler cycle complete" "$WORK_HOURS_MODE" "$overtime_info"
+  log_scheduler_event "DONE" "Scheduler cycle complete" "Mode=$mode work_hours_mode=$WORK_HOURS_MODE roles=$active_agents completed."
 }
 
 iteration=0

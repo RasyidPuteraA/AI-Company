@@ -46,10 +46,13 @@ budget_status=$?
 set -e
 
 work_state="$(printf "%s\n" "$work_output" | awk -F= '$1=="WORK_HOURS_STATE"{print $2}' | tail -1)"
+work_mode="$(printf "%s\n" "$work_output" | awk -F= '$1=="WORK_HOURS_MODE"{print $2}' | tail -1)"
+work_reason="$(printf "%s\n" "$work_output" | awk -F= '$1=="WORK_HOURS_REASON"{print $2}' | tail -1)"
 budget_state="$(printf "%s\n" "$budget_output" | awk -F= '$1=="BUDGET_STATE"{print $2}' | tail -1)"
 budget_note="$(printf "%s\n" "$budget_output" | awk -F= '$1=="BUDGET_NOTE"{print $2}' | tail -1)"
 
 : "${work_state:=UNKNOWN}"
+: "${work_mode:=unknown}"
 : "${budget_state:=UNKNOWN}"
 
 effective_mode="$AI_COMPANY_OS_MODE"
@@ -92,7 +95,7 @@ fi
 
 if [ "$FORMAT" = "--json" ] || [ "$FORMAT" = "json" ]; then
   python3 - "$AI_COMPANY_OS_OWNER_SWITCH" "$effective_mode" "$effective_active_agent" \
-    "$work_state" "$budget_state" "$budget_note" "$latest_event" \
+    "$work_state" "$work_mode" "$work_reason" "$budget_state" "$budget_note" "$latest_event" \
     "$AI_COMPANY_OS_STATUS_NOTE" "$AI_COMPANY_OS_LATEST_DISCOVERY_REPORT" "$AI_COMPANY_OS_UPDATED_AT" \
     "$AI_COMPANY_AUTOSOLVE_ENABLED" "$AI_COMPANY_CLIENT_PRIORITY" \
     "$AI_COMPANY_INTERNAL_IDLE_WORK_ENABLED" "$AI_COMPANY_MAX_AUTONOMOUS_ITERATIONS" \
@@ -105,6 +108,8 @@ keys = [
     "mode",
     "active_agent",
     "work_hours_state",
+    "work_hours_mode",
+    "work_hours_reason",
     "budget_state",
     "budget_note",
     "latest_event",
@@ -134,6 +139,8 @@ echo "- owner_switch: $AI_COMPANY_OS_OWNER_SWITCH"
 echo "- mode: $effective_mode"
 echo "- active_agent: ${effective_active_agent:-none}"
 echo "- work_hours_state: $work_state"
+echo "- work_hours_mode: $work_mode"
+echo "- work_hours_reason: ${work_reason:-none}"
 echo "- budget_state: $budget_state"
 echo "- budget_note: ${budget_note:-Internal AI Company budget estimate.}"
 echo "- latest_event: ${latest_event:-none}"

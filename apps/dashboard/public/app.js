@@ -81,7 +81,8 @@ async function loadAiCompanyOsStatus() {
     setText("aiCompanyOsMode", status.mode);
     setText("aiCompanyOsAgent", status.active_agent || "none");
     setText("aiCompanyOsBudget", status.budget_state);
-    setText("aiCompanyOsWorkHours", status.work_hours_state);
+    const workHoursMode = status.work_hours_mode || "unknown";
+    setText("aiCompanyOsWorkHours", `${status.work_hours_state || "unknown"} (${workHoursMode})`);
     setText("aiCompanyOsLatestEvent", status.latest_event || "No autonomous event yet.");
     setText("aiCompanyOsLatestReport", status.latest_discovery_report || "No discovery report yet.");
     setText("aiCompanyOsBudgetNote", status.budget_note || "Internal AI Company budget estimate, not official OpenAI remaining quota.");
@@ -96,7 +97,8 @@ async function loadAiCompanyOsStatus() {
       .map((lock) => `${lock.name}:${String(lock.state || "").split(":")[0]}`)
       .join(" · ");
 
-    setText("aiCompanySchedulerState", scheduler.state ? `${scheduler.state} (${scheduler.mode || "unknown"})` : "unknown");
+    const schedulerWorkMode = scheduler.work_hours_mode || workHoursMode;
+    setText("aiCompanySchedulerState", scheduler.state ? `${scheduler.state} (${scheduler.mode || "unknown"} / ${schedulerWorkMode})` : "unknown");
     setText("aiCompanySchedulerRoles", roleSummary || "none");
     setText("aiCompanySchedulerLocks", lockSummary || "none");
   } catch (error) {

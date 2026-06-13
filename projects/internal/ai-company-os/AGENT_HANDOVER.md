@@ -1530,3 +1530,49 @@ Safety:
 - DevOps/service checks use `company/runtime/locks/devops.lock`
 - QA role checks use `company/runtime/locks/qa.lock`
 - dashboard now surfaces scheduler state, role status, and lock state through AI Company OS status
+
+## INTERNAL-081 Handover
+
+Added overtime-aware work-hours policy.
+
+Updated:
+
+    company/config/ai_company_os.env
+    company/config/ai_company_scheduler.env
+    runners/ai_company_work_hours_gate.sh
+    runners/ai_company_autonomous_orchestrator.sh
+    runners/ai_company_multi_agent_scheduler.sh
+    runners/ai_company_role_cycle.sh
+    runners/ai_company_scheduler_status.sh
+    runners/ai_company_os_status.sh
+    apps/dashboard/public/app.js
+
+Docs:
+
+    projects/internal/ai-company-os/INTERNAL-081.md
+
+Policy:
+
+- normal work: 07:00 <= hour < 17:00 Asia/Jakarta
+- overtime: 17:00 <= hour < 19:00
+- paused: hour < 07:00 or hour >= 19:00
+- no workday/day-of-week filter
+
+Overtime defaults:
+
+- `AI_COMPANY_OVERTIME_ALLOW_NEW_DISCOVERY=0`
+- `AI_COMPANY_OVERTIME_ALLOW_INTERNAL_IMPROVEMENT=0`
+- `AI_COMPANY_OVERTIME_ALLOW_QA=1`
+- `AI_COMPANY_OVERTIME_ALLOW_REPORTING=1`
+
+Status:
+
+    ./runners/ai_company_work_hours_gate.sh
+    ./runners/ai_company_scheduler_status.sh
+    ./runners/ai_company_os_status.sh
+
+Safety:
+
+- owner ON/OFF, budget gate, emergency stop, and locks remain in place
+- after 19:00 the work-hours gate returns `PAUSED_OUTSIDE_WORK_HOURS` and scheduler role work is skipped
+- overtime avoids new broad autonomous discovery and new internal improvement work unless explicitly enabled

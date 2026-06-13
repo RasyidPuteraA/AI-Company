@@ -33,6 +33,7 @@ fi
 : "${AI_COMPANY_MAX_AUTONOMOUS_ITERATIONS:=1}"
 : "${AI_COMPANY_DISCOVERY_ONLY_AFTER_RESOLUTION:=1}"
 : "${AI_COMPANY_OS_STATUS_NOTE:=}"
+: "${AI_COMPANY_OVERTIME_ALLOW_NEW_DISCOVERY:=0}"
 
 shell_quote() {
   printf "'%s'" "$(printf "%s" "$1" | sed "s/'/'\\\\''/g")"
@@ -112,6 +113,8 @@ if ! ./runners/ai_company_work_hours_gate.sh >/tmp/ai-company-work-hours-gate.ou
   cat /tmp/ai-company-work-hours-gate.out
   exit 0
 fi
+WORK_HOURS_MODE="$(awk -F= '$1=="WORK_HOURS_MODE"{print $2}' /tmp/ai-company-work-hours-gate.out | tail -1)"
+WORK_HOURS_MODE="${WORK_HOURS_MODE:-NORMAL_WORK}"
 
 set +e
 ./runners/ai_company_budget_gate.sh >/tmp/ai-company-budget-gate.out 2>&1
@@ -148,6 +151,13 @@ if [ "$AI_COMPANY_INTERNAL_IDLE_WORK_ENABLED" != "1" ]; then
   write_state "RUNNING" "" "Internal idle work disabled" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "No client work pending, but internal idle autonomous work is disabled."
   log_event_safe "RUNNING" "Internal idle work disabled" "No client work pending, but internal idle autonomous work is disabled."
   echo "Internal idle work disabled."
+  exit 0
+fi
+
+if [ "$WORK_HOURS_MODE" = "OVERTIME" ] && [ "$AI_COMPANY_OVERTIME_ALLOW_NEW_DISCOVERY" != "1" ]; then
+  write_state "OVERTIME" "" "Overtime safe mode" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "Overtime window active; new autonomous discovery is disabled by default."
+  log_event_safe "OVERTIME" "Overtime safe mode" "New autonomous discovery skipped during overtime by policy."
+  echo "Overtime window active. New autonomous discovery skipped by policy."
   exit 0
 fi
 

@@ -5,13 +5,8 @@ company:
   main_workspace: "/opt/ai-company"
 
 work_hours:
-  work_days:
-    - monday
-    - tuesday
-    - wednesday
-    - thursday
-    - friday
-  start: "08:00"
+  applies_every_day: true
+  start: "07:00"
   break_start: "12:00"
   break_end: "13:00"
   end: "17:00"
