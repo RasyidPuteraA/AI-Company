@@ -1207,3 +1207,30 @@ Safety:
 - skips when active client work exists
 - explicit enable flag required
 - plan/read-only only
+
+## INTERNAL-069 Handover
+
+Added Codex-enabled agent worker loop wrappers.
+
+Commands:
+
+    ./runners/agent_worker_once_with_codex.sh AGENT_KEY
+    ./runners/agent_worker_loop_with_codex.sh AGENT_KEY --once
+    ./runners/agent_worker_loop_with_codex.sh AGENT_KEY --loop --interval 5 --max-iterations 3
+
+Enable Codex dispatcher:
+
+    AI_COMPANY_ENABLE_CODEX_DISPATCHER=1
+
+Verification:
+
+- devops_agent generated a Codex dispatcher plan for INTERNAL-069
+- usage report recorded 2607 tokens
+
+Safety:
+
+- disabled by default
+- bounded loop only
+- plan/read-only dispatcher path
+- usage tracked through Codex ledger
+- no auto-edit, no auto-commit, no client finalization
