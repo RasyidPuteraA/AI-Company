@@ -585,3 +585,94 @@ body.wireframe-dashboard .pixel-office.tilemap-office-v1,
   height: auto !important;
   image-rendering: pixelated !important;
 }
+
+/* INTERNAL-073: Better production map fit and visual polish */
+#tilemapOffice.production-floorplan-mode .tilemap-stage,
+#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px !important;
+  overflow: hidden !important;
+}
+
+#tilemapOffice.production-floorplan-mode #officeCanvas,
+#tilemapOffice.canvas-floorplan-mode #officeCanvas {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  image-rendering: pixelated !important;
+}
+
+/* INTERNAL-073B: height-driven fit so wide production map fills the office frame better */
+#tilemapOffice.production-floorplan-mode,
+#tilemapOffice.canvas-floorplan-mode {
+  height: 100% !important;
+}
+
+#tilemapOffice.production-floorplan-mode .tilemap-stage,
+#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#tilemapOffice.production-floorplan-mode #officeCanvas,
+#tilemapOffice.canvas-floorplan-mode #officeCanvas {
+  width: auto !important;
+  height: calc(100% - 18px) !important;
+  max-width: calc(100% - 18px) !important;
+  max-height: calc(100% - 18px) !important;
+  margin: auto !important;
+  image-rendering: pixelated !important;
+}
+
+/* INTERNAL-073C: keep office map clear from summary/cards row below */
+body.wireframe-dashboard .office-stage {
+  margin-bottom: 22px !important;
+}
+
+body.wireframe-dashboard .office-main-card {
+  overflow: hidden !important;
+}
+
+#tilemapOffice.production-floorplan-mode,
+#tilemapOffice.canvas-floorplan-mode {
+  max-height: clamp(420px, 56vh, 620px) !important;
+}
+
+#tilemapOffice.production-floorplan-mode .tilemap-stage,
+#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
+  height: clamp(410px, 54vh, 600px) !important;
+  max-height: clamp(410px, 54vh, 600px) !important;
+  padding: 10px !important;
+}
+
+#tilemapOffice.production-floorplan-mode #officeCanvas,
+#tilemapOffice.canvas-floorplan-mode #officeCanvas {
+  height: calc(100% - 20px) !important;
+  max-height: calc(100% - 20px) !important;
+}
+
+/* INTERNAL-073D: balanced office map size, larger than 073C but still clear from summary row */
+#tilemapOffice.production-floorplan-mode,
+#tilemapOffice.canvas-floorplan-mode {
+  max-height: clamp(500px, 64vh, 760px) !important;
+}
+
+#tilemapOffice.production-floorplan-mode .tilemap-stage,
+#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
+  height: clamp(490px, 62vh, 735px) !important;
+  max-height: clamp(490px, 62vh, 735px) !important;
+  padding: 10px !important;
+}
+
+#tilemapOffice.production-floorplan-mode #officeCanvas,
+#tilemapOffice.canvas-floorplan-mode #officeCanvas {
+  height: calc(100% - 18px) !important;
+  max-height: calc(100% - 18px) !important;
+  width: auto !important;
+  max-width: calc(100% - 18px) !important;
+}

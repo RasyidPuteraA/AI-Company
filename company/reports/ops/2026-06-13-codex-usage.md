@@ -1,6 +1,6 @@
 # AI Company OS Codex CLI Usage Report
 
-Generated at: 2026-06-13 13:27:27
+Generated at: 2026-06-13 14:03:56
 
 > Internal Codex CLI budget estimate, not official OpenAI remaining quota.
 
@@ -8,15 +8,15 @@ Generated at: 2026-06-13 13:27:27
 
 | Window | Used Tokens | Internal Limit | State |
 | --- | --- | --- | --- |
-| Today | 16501 | soft 300000 / hard 500000 | OK |
-| This Week | 16501 | 2000000 | OK |
-| This Month | 16501 | 8000000 | OK |
+| Today | 20611 | soft 300000 / hard 500000 | OK |
+| This Week | 20611 | 2000000 | OK |
+| This Month | 20611 | 8000000 | OK |
 
 ## Usage By Agent
 
 | Agent | Tokens Used |
 | --- | --- |
-| engineer_agent | 12572 |
+| engineer_agent | 16682 |
 | devops_agent | 2607 |
 | pm_agent | 1322 |
 
@@ -24,6 +24,7 @@ Generated at: 2026-06-13 13:27:27
 
 | Created At | Agent | Task | Mode | Tokens | Exit | Seconds | Output |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-06-13T13:49:15 | engineer_agent | INTERNAL-073 | plan | 4110 | 0 | 54 | company/runtime/codex_runs/2026-06-13/20260613134821-engineer_agent-INTERNAL-073-plan.out |
 | 2026-06-13T13:21:36 | engineer_agent | INTERNAL-072 | plan | 2642 | 0 | 192 | company/runtime/codex_runs/2026-06-13/20260613131824-engineer_agent-INTERNAL-072-plan.out |
 | 2026-06-13T12:55:59 | engineer_agent | INTERNAL-071 | plan | 4272 | 0 | 52 | company/runtime/codex_runs/2026-06-13/20260613125507-engineer_agent-INTERNAL-071-plan.out |
 | 2026-06-13T08:55:33 | devops_agent | INTERNAL-069 | plan | 2607 | 0 | 70 | company/runtime/codex_runs/2026-06-13/20260613085423-devops_agent-INTERNAL-069-plan.out |

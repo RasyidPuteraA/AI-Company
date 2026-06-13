@@ -1292,3 +1292,21 @@ Notes:
 - renderer uses synthetic production-style Canvas drawing
 - old map background flicker is disabled in canvas mode
 - custom PNG assets can be integrated later via tile mapping
+
+## INTERNAL-073 Handover
+
+Polished Pixel Office map fit and labels.
+
+Files:
+
+    apps/dashboard/public/office-canvas.js
+    apps/dashboard/public/office.css
+    apps/dashboard/public/index.html
+
+Notes:
+
+- map is widened to 36 columns
+- room labels are rendered inside canvas
+- agent positions are more spread out
+- canvas height is balanced to avoid covering summary cards
+- cache-busted dashboard office assets to v=076

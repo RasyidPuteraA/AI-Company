@@ -6,50 +6,63 @@
    - no old background-map flicker
 */
 (() => {
-  const COLS = 20;
+  const COLS = 36;
   const ROWS = 14;
   const TS = 48;
   const W = COLS * TS;
   const H = ROWS * TS;
 
   const GROUND = [
-    "WWWWWWWWWWWWWWWWWWWW",
-    "WFFFFFFFFFFFFFFFFFSW",
-    "WFFFFFFFFFFFFFFFFFSW",
-    "WFFFFFFFFFFFFFFFFFSW",
-    "WFFFFFFFFFFFFFFFFFSW",
-    "WFFFFFFFFFFFFFFFFFSW",
-    "WFFFFFFFFFFFFFFFFFSW",
-    "WFFFFFFFFFFFFFFFFFSW",
-    "WFFFFFFFFFFFFFFFFFSW",
-    "WFFFFFFFFFFFFFFFFFSW",
-    "WWWWWWWWWWWWWWWWWWWW",
-    "..WWBBBBBBB W.BBBBW.",
-    "..WBBBBBBBB W.BBBBW.",
-    "..WBBBBBBBB W.BBBBW."
-  ].map((row) => row.replaceAll(" ", ".").split(""));
+    "W".repeat(36),
+    "W" + "F".repeat(28) + "S".repeat(6) + "W",
+    "W" + "F".repeat(28) + "S".repeat(6) + "W",
+    "W" + "F".repeat(28) + "S".repeat(6) + "W",
+    "W" + "F".repeat(28) + "S".repeat(6) + "W",
+    "W" + "F".repeat(28) + "S".repeat(6) + "W",
+    "W" + "F".repeat(28) + "S".repeat(6) + "W",
+    "W" + "F".repeat(28) + "S".repeat(6) + "W",
+    "W" + "F".repeat(28) + "S".repeat(6) + "W",
+    "W" + "F".repeat(28) + "S".repeat(6) + "W",
+    "W".repeat(36),
+    "..WW" + "B".repeat(13) + "WW" + "B".repeat(6) + "W" + "B".repeat(9) + "W",
+    "..WW" + "B".repeat(13) + "WW" + "B".repeat(6) + "W" + "B".repeat(9) + "W",
+    "..WW" + "B".repeat(13) + "WW" + "B".repeat(6) + "W" + "B".repeat(9) + "W"
+  ].map((row) => row.split(""));
 
   const furniture = [
-    ["desk", 2, 2], ["desk", 6, 2], ["desk", 10, 2],
-    ["desk", 2, 6], ["desk", 6, 6], ["desk", 10, 6],
-    ["managerDesk", 14, 3],
-    ["monitor", 3, 2], ["monitor", 7, 2], ["monitor", 11, 2],
-    ["monitor", 3, 6], ["monitor", 7, 6], ["monitor", 11, 6],
-    ["monitor", 15, 3],
-    ["server", 18, 2], ["server", 18, 3], ["server", 18, 4],
-    ["bookshelf", 14, 1], ["bookshelf", 15, 1], ["bookshelf", 16, 1],
-    ["plant", 1, 8], ["plant", 13, 8], ["plant", 17, 1], ["plant", 18, 8],
-    ["sofa", 5, 12], ["table", 7, 12], ["cooler", 9, 11],
-    ["meeting", 14, 12], ["meeting", 15, 12], ["plant", 17, 13],
-    ["whiteboard", 8, 1]
+    ["desk", 2, 2], ["desk", 6, 2], ["desk", 10, 2], ["desk", 14, 2], ["desk", 18, 2], ["desk", 22, 2],
+    ["desk", 2, 6], ["desk", 6, 6], ["desk", 10, 6], ["desk", 14, 6], ["desk", 18, 6], ["desk", 22, 6],
+
+    ["monitor", 3, 2], ["monitor", 7, 2], ["monitor", 11, 2], ["monitor", 15, 2], ["monitor", 19, 2], ["monitor", 23, 2],
+    ["monitor", 3, 6], ["monitor", 7, 6], ["monitor", 11, 6], ["monitor", 15, 6], ["monitor", 19, 6], ["monitor", 23, 6],
+
+    ["managerDesk", 27, 3], ["monitor", 28, 3],
+    ["server", 31, 2], ["server", 31, 3], ["server", 31, 4], ["server", 34, 2], ["server", 34, 3], ["server", 34, 4],
+
+    ["bookshelf", 25, 1], ["bookshelf", 26, 1], ["bookshelf", 27, 1],
+    ["plant", 1, 8], ["plant", 13, 8], ["plant", 24, 8], ["plant", 29, 1], ["plant", 34, 8],
+
+    ["sofa", 6, 12], ["table", 10, 12], ["cooler", 14, 11],
+    ["meeting", 20, 12], ["meeting", 21, 12], ["whiteboard", 21, 11],
+    ["managerDesk", 28, 12], ["monitor", 29, 12], ["plant", 34, 13]
   ];
 
   const agents = [
     { agent_key: "pm_agent", label: "PM", x: 2.35, y: 3.35, shirt: "#3b82f6", hair: "#5c3317", skin: "#e8b88a", phase: 0.0 },
-    { agent_key: "engineer_agent", label: "ENG", x: 6.35, y: 3.35, shirt: "#22c55e", hair: "#111827", skin: "#ffd5a8", phase: 0.25 },
-    { agent_key: "qa_agent", label: "QA", x: 10.35, y: 3.35, shirt: "#a855f7", hair: "#422006", skin: "#c06820", phase: 0.5 },
-    { agent_key: "devops_agent", label: "DEVOPS", x: 14.35, y: 4.35, shirt: "#f59e0b", hair: "#1f2937", skin: "#d6a36a", phase: 0.75 },
-    { agent_key: "owner", label: "OWNER", x: 14.6, y: 12.55, shirt: "#38bdf8", hair: "#111827", skin: "#ffd5a8", phase: 0.35 }
+    { agent_key: "engineer_agent", label: "ENG", x: 10.35, y: 3.35, shirt: "#22c55e", hair: "#111827", skin: "#ffd5a8", phase: 0.25 },
+    { agent_key: "qa_agent", label: "QA", x: 18.35, y: 3.35, shirt: "#a855f7", hair: "#422006", skin: "#c06820", phase: 0.5 },
+    { agent_key: "devops_agent", label: "DEVOPS", x: 27.35, y: 4.35, shirt: "#f59e0b", hair: "#1f2937", skin: "#d6a36a", phase: 0.75 },
+    { agent_key: "owner", label: "OWNER", x: 29.6, y: 12.55, shirt: "#38bdf8", hair: "#111827", skin: "#ffd5a8", phase: 0.35 }
+  ];
+
+  const roomLabels = [
+    { label: "PM", x: 2, y: 1 },
+    { label: "ENGINEERING", x: 9, y: 1 },
+    { label: "QA", x: 18, y: 1 },
+    { label: "DEVOPS", x: 27, y: 1 },
+    { label: "BREAK ROOM", x: 5, y: 11 },
+    { label: "MEETING", x: 20, y: 11 },
+    { label: "OWNER", x: 28, y: 11 }
   ];
 
   let runtimeByAgent = {};
@@ -249,6 +262,21 @@
     }
   }
 
+  function drawRoomLabels() {
+    for (const room of roomLabels) {
+      const x = room.x * TS;
+      const y = room.y * TS;
+      const width = Math.max(42, room.label.length * 8 + 16);
+
+      pr(x, y, width, 18, "rgba(15,23,42,0.72)");
+      pr(x, y + 16, width, 2, "rgba(56,189,248,0.55)");
+
+      ctx.fillStyle = "#67e8f9";
+      ctx.font = "bold 10px monospace";
+      ctx.fillText(room.label, x + 8, y + 12);
+    }
+  }
+
   function drawAgent(agent, time) {
     const runtime = runtimeByAgent[agent.agent_key] || {};
     const status = runtime.runtime_status || "idle";
@@ -310,6 +338,7 @@
 
     drawGround();
     drawFurniture(time);
+    drawRoomLabels();
 
     for (const agent of [...agents].sort((a, b) => a.y - b.y)) {
       drawAgent(agent, time);
