@@ -44,3 +44,7 @@ apps/dashboard/public/assets/office/characters/*.png
 apps/dashboard/public/assets/office/characters/*.jpg
 apps/dashboard/public/assets/office/characters/*.jpeg
 apps/dashboard/public/assets/office/characters/*.webp
+
+# AI Company OS runtime discovery reports
+/company/reports/autonomous-discovery/
+/company/runtime/autonomous-discovery/
