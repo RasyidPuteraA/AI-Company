@@ -1,423 +1,344 @@
-/* INTERNAL-050: Canvas Pixel Office Renderer
-   Adapted from uploaded pixel-office.html prototype into dashboard mode.
-   It renders a live office scene inside #tilemapOffice .tilemap-stage. */
-
-(function () {
-  const TILE = 16;
-  const SCALE = 3;
-  const TS = TILE * SCALE;
+/* INTERNAL-072: Production-style Pixel Office Renderer
+   Uses uploaded pixel-office-production concepts:
+   - layered ground map
+   - furniture object list
+   - animated agent characters
+   - no old background-map flicker
+*/
+(() => {
   const COLS = 20;
   const ROWS = 14;
-
-  const canvasWidth = COLS * TS;
-  const canvasHeight = ROWS * TS;
-
-  const ROOMS = {
-    pm_agent: { label: "PM", x: 2.3, y: 3.3, sprite: "/assets/jik/metrocity-characters/pm.png" },
-    engineer_agent: { label: "ENG", x: 6.3, y: 3.3, sprite: "/assets/jik/metrocity-characters/engineer.png" },
-    qa_agent: { label: "QA", x: 10.3, y: 3.3, sprite: "/assets/jik/metrocity-characters/qa.png" },
-    devops_agent: { label: "OPS", x: 14.3, y: 4.3, sprite: "/assets/jik/metrocity-characters/devops.png" },
-    owner: { label: "OWNER", x: 14.6, y: 12.0, sprite: "/assets/jik/metrocity-characters/owner.png" },
-  };
-
-  const SPRITES = {};
-
-/* INTERNAL-051: optional LimeZu object sprites.
-   These files exist on the VPS but raw LimeZu folders are gitignored.
-   If the files are unavailable in another environment, renderer falls back to procedural furniture. */
-const LIMEZU_OBJECTS = {};
-const LIMEZU_OBJECT_SOURCES = {
-  8: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_38.png",
-  9: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_174.png",
-  10: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_284.png",
-  11: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_286.png",
-  12: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_240.png",
-  15: "/assets/limezu/modern-office/4_Modern_Office_singles/32x32/Modern_Office_Singles_32x32_240.png"
-};
-
-function loadOptionalLimeZuObjects() {
-  Object.entries(LIMEZU_OBJECT_SOURCES).forEach(([key, src]) => {
-    const img = new Image();
-    img.src = src;
-    LIMEZU_OBJECTS[key] = img;
-  });
-}
-
-  const runtime = {
-    pm_agent: { status: "idle", task_key: "" },
-    engineer_agent: { status: "idle", task_key: "" },
-    qa_agent: { status: "idle", task_key: "" },
-    devops_agent: { status: "idle", task_key: "" },
-    owner: { status: "idle", task_key: "" },
-  };
-
-  const _ = 0;
-  const FL = 1;
-  const FL2 = 2;
-  const WL = 3;
-
-  const DL = 4;
-  const DR = 5;
-  const MON = 6;
-  const CH = 7;
-  const PL = 8;
-  const SH = 9;
-  const SRV = 10;
-  const COL = 11;
-  const AC = 12;
-  const SOF = 13;
-  const TBL = 14;
-  const WC = 15;
+  const TS = 48;
+  const W = COLS * TS;
+  const H = ROWS * TS;
 
   const GROUND = [
-    [ WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL ],
-    [ WL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, WL ],
-    [ WL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, WL ],
-    [ WL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, WL ],
-    [ WL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, WL ],
-    [ WL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, WL ],
-    [ WL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, WL ],
-    [ WL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, WL ],
-    [ WL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, WL ],
-    [ WL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, FL, WL ],
-    [ WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL, WL ],
-    [ _, _, WL, WL, FL2, FL2, FL2, FL2, FL2, FL2, FL2, WL, _, WL, FL2, FL2, FL2, FL2, WL, _ ],
-    [ _, _, WL, FL2, FL2, FL2, FL2, FL2, FL2, FL2, FL2, WL, _, WL, FL2, FL2, FL2, FL2, WL, _ ],
-    [ _, _, WL, FL2, FL2, FL2, FL2, FL2, FL2, FL2, FL2, WL, _, WL, FL2, FL2, FL2, FL2, WL, _ ],
-  ];
+    "WWWWWWWWWWWWWWWWWWWW",
+    "WFFFFFFFFFFFFFFFFFSW",
+    "WFFFFFFFFFFFFFFFFFSW",
+    "WFFFFFFFFFFFFFFFFFSW",
+    "WFFFFFFFFFFFFFFFFFSW",
+    "WFFFFFFFFFFFFFFFFFSW",
+    "WFFFFFFFFFFFFFFFFFSW",
+    "WFFFFFFFFFFFFFFFFFSW",
+    "WFFFFFFFFFFFFFFFFFSW",
+    "WFFFFFFFFFFFFFFFFFSW",
+    "WWWWWWWWWWWWWWWWWWWW",
+    "..WWBBBBBBB W.BBBBW.",
+    "..WBBBBBBBB W.BBBBW.",
+    "..WBBBBBBBB W.BBBBW."
+  ].map((row) => row.replaceAll(" ", ".").split(""));
 
   const furniture = [
-    { t: AC, x: 1, y: 1 },
-
-    { t: DL, x: 2, y: 2 }, { t: DR, x: 3, y: 2 }, { t: MON, x: 3, y: 2 }, { t: CH, x: 2, y: 3 },
-    { t: DL, x: 6, y: 2 }, { t: DR, x: 7, y: 2 }, { t: MON, x: 7, y: 2 }, { t: CH, x: 6, y: 3 },
-    { t: DL, x: 10, y: 2 }, { t: DR, x: 11, y: 2 }, { t: MON, x: 11, y: 2 }, { t: CH, x: 10, y: 3 },
-
-    { t: DL, x: 2, y: 6 }, { t: DR, x: 3, y: 6 }, { t: MON, x: 3, y: 6 }, { t: CH, x: 2, y: 7 },
-    { t: DL, x: 6, y: 6 }, { t: DR, x: 7, y: 6 }, { t: MON, x: 7, y: 6 }, { t: CH, x: 6, y: 7 },
-    { t: DL, x: 10, y: 6 }, { t: DR, x: 11, y: 6 }, { t: MON, x: 11, y: 6 }, { t: CH, x: 10, y: 7 },
-
-    { t: SH, x: 14, y: 1 }, { t: SH, x: 15, y: 1 }, { t: SH, x: 16, y: 1 },
-    { t: DL, x: 14, y: 3 }, { t: DR, x: 15, y: 3 }, { t: MON, x: 15, y: 3 }, { t: CH, x: 14, y: 4 },
-    { t: WC, x: 17, y: 3 },
-
-    { t: SRV, x: 18, y: 2 }, { t: SRV, x: 18, y: 3 }, { t: SRV, x: 18, y: 4 },
-
-    { t: PL, x: 1, y: 8 }, { t: PL, x: 17, y: 1 }, { t: PL, x: 18, y: 8 }, { t: PL, x: 13, y: 8 },
-
-    { t: COL, x: 9, y: 11 },
-    { t: PL, x: 4, y: 12 }, { t: PL, x: 5, y: 13 }, { t: SOF, x: 5, y: 12 }, { t: TBL, x: 7, y: 12 },
-
-    { t: DL, x: 14, y: 12 }, { t: DR, x: 15, y: 12 }, { t: CH, x: 14, y: 13 }, { t: CH, x: 15, y: 13 },
-    { t: PL, x: 17, y: 13 },
+    ["desk", 2, 2], ["desk", 6, 2], ["desk", 10, 2],
+    ["desk", 2, 6], ["desk", 6, 6], ["desk", 10, 6],
+    ["managerDesk", 14, 3],
+    ["monitor", 3, 2], ["monitor", 7, 2], ["monitor", 11, 2],
+    ["monitor", 3, 6], ["monitor", 7, 6], ["monitor", 11, 6],
+    ["monitor", 15, 3],
+    ["server", 18, 2], ["server", 18, 3], ["server", 18, 4],
+    ["bookshelf", 14, 1], ["bookshelf", 15, 1], ["bookshelf", 16, 1],
+    ["plant", 1, 8], ["plant", 13, 8], ["plant", 17, 1], ["plant", 18, 8],
+    ["sofa", 5, 12], ["table", 7, 12], ["cooler", 9, 11],
+    ["meeting", 14, 12], ["meeting", 15, 12], ["plant", 17, 13],
+    ["whiteboard", 8, 1]
   ];
 
-  function loadSprite(key, src) {
-    const img = new Image();
-    img.src = src;
-    SPRITES[key] = img;
+  const agents = [
+    { agent_key: "pm_agent", label: "PM", x: 2.35, y: 3.35, shirt: "#3b82f6", hair: "#5c3317", skin: "#e8b88a", phase: 0.0 },
+    { agent_key: "engineer_agent", label: "ENG", x: 6.35, y: 3.35, shirt: "#22c55e", hair: "#111827", skin: "#ffd5a8", phase: 0.25 },
+    { agent_key: "qa_agent", label: "QA", x: 10.35, y: 3.35, shirt: "#a855f7", hair: "#422006", skin: "#c06820", phase: 0.5 },
+    { agent_key: "devops_agent", label: "DEVOPS", x: 14.35, y: 4.35, shirt: "#f59e0b", hair: "#1f2937", skin: "#d6a36a", phase: 0.75 },
+    { agent_key: "owner", label: "OWNER", x: 14.6, y: 12.55, shirt: "#38bdf8", hair: "#111827", skin: "#ffd5a8", phase: 0.35 }
+  ];
+
+  let runtimeByAgent = {};
+  let canvas = null;
+  let ctx = null;
+  let mounted = false;
+
+  function pr(x, y, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
   }
 
-  Object.entries(ROOMS).forEach(([key, cfg]) => loadSprite(key, cfg.sprite));
-  loadOptionalLimeZuObjects();
+  function hideLegacyDom(stage) {
+    stage.querySelectorAll(".tilemap-grid, .office-grid, .office-room, .office-hallway, .office-sim-bg, .clean-office-floor, .room-zone, .map-prop, .tile-agent, .office-agent").forEach((el) => {
+      el.style.display = "none";
+    });
+  }
 
-  function normalizeStatus(s) {
-    return String(s || "idle").toLowerCase();
+  function mount() {
+    if (mounted && canvas && document.body.contains(canvas)) return true;
+
+    const office = document.querySelector("#tilemapOffice");
+    const stage = document.querySelector("#tilemapOffice .tilemap-stage");
+
+    if (!office || !stage) return false;
+
+    office.classList.add("canvas-floorplan-mode", "production-floorplan-mode");
+    hideLegacyDom(stage);
+
+    canvas = stage.querySelector("#officeCanvas");
+
+    if (!canvas) {
+      canvas = document.createElement("canvas");
+      canvas.id = "officeCanvas";
+      canvas.setAttribute("aria-label", "Production Pixel Office Map");
+      stage.appendChild(canvas);
+    }
+
+    canvas.width = W;
+    canvas.height = H;
+    canvas.style.width = "100%";
+    canvas.style.height = "auto";
+    canvas.style.display = "block";
+    canvas.style.imageRendering = "pixelated";
+
+    ctx = canvas.getContext("2d", { alpha: false });
+    ctx.imageSmoothingEnabled = false;
+
+    mounted = true;
+    return true;
+  }
+
+  function drawGround() {
+    for (let y = 0; y < ROWS; y += 1) {
+      for (let x = 0; x < COLS; x += 1) {
+        const tile = GROUND[y][x];
+        const px = x * TS;
+        const py = y * TS;
+
+        if (tile === ".") {
+          pr(px, py, TS, TS, "#070b18");
+        }
+
+        if (tile === "F") {
+          pr(px, py, TS, TS, "#b8bac8");
+          pr(px, py, TS, 2, "#d8dae8");
+          pr(px, py, 2, TS, "#9ca0b3");
+          pr(px, py + TS - 2, TS, 2, "#9699aa");
+        }
+
+        if (tile === "B") {
+          pr(px, py, TS, TS, "#c4b894");
+          pr(px, py, TS, 2, "#ded0a5");
+          pr(px, py, 2, TS, "#a89b7d");
+        }
+
+        if (tile === "S") {
+          pr(px, py, TS, TS, "#31384a");
+          pr(px + 4, py + 4, TS - 8, TS - 8, "#22293a");
+        }
+
+        if (tile === "W") {
+          pr(px, py, TS, TS, "#6d7088");
+          pr(px, py, TS, 8, "#8d91aa");
+          pr(px, py + TS - 6, TS, 6, "#4c506a");
+          pr(px + TS - 5, py, 5, TS, "#555a74");
+        }
+      }
+    }
+  }
+
+  function drawDesk(x, y, wide = 2) {
+    const px = x * TS;
+    const py = y * TS;
+    pr(px, py + 18, TS * wide, 26, "#c99855");
+    pr(px, py + 18, TS * wide, 7, "#e2b66e");
+    pr(px + 4, py + 31, TS * wide - 8, 8, "#9a6d32");
+    pr(px + 6, py + 40, 8, 8, "#6e4c20");
+    pr(px + TS * wide - 14, py + 40, 8, 8, "#6e4c20");
+  }
+
+  function drawMonitor(x, y, time) {
+    const px = x * TS;
+    const py = y * TS;
+    const on = Math.floor(time / 4500) % 10 !== 0;
+
+    pr(px + 6, py - 25, 36, 26, "#111827");
+    pr(px + 10, py - 21, 28, 18, on ? "#1d4ed8" : "#0f172a");
+
+    if (on) {
+      pr(px + 14, py - 17, 15, 2, "#93c5fd");
+      pr(px + 14, py - 11, 22, 2, "#60a5fa");
+      pr(px + 14, py - 5, 12, 2, "#60a5fa");
+    }
+
+    pr(px + 20, py + 2, 8, 12, "#1f2937");
+    pr(px + 13, py + 13, 22, 5, "#111827");
+  }
+
+  function drawPlant(x, y, time) {
+    const px = x * TS;
+    const py = y * TS;
+    const sway = Math.sin(time / 900 + x) * 3;
+
+    pr(px + 15, py + 28, 20, 20, "#8b4a33");
+    pr(px + 18, py + 31, 14, 5, "#5b2f22");
+    pr(px + 12 + sway, py + 8, 12, 22, "#2f7d32");
+    pr(px + 25 + sway, py + 10, 14, 18, "#3fa447");
+    pr(px + 18 + sway, py - 2, 16, 26, "#4ade80");
+  }
+
+  function drawServer(x, y, time) {
+    const px = x * TS;
+    const py = y * TS;
+    const blink = Math.floor(time / 600) % 2;
+
+    pr(px + 5, py + 3, 36, 42, "#1f2937");
+    pr(px + 8, py + 7, 30, 7, "#374151");
+    pr(px + 8, py + 20, 30, 7, "#374151");
+    pr(px + 8, py + 33, 30, 7, "#374151");
+    pr(px + 33, py + 9, 4, 4, blink ? "#22c55e" : "#14532d");
+    pr(px + 33, py + 22, 4, 4, "#f59e0b");
+  }
+
+  function drawFurniture(time) {
+    for (const [type, x, y] of furniture) {
+      if (type === "desk") drawDesk(x, y, 2);
+      if (type === "managerDesk") drawDesk(x, y, 2);
+      if (type === "monitor") drawMonitor(x, y, time);
+      if (type === "plant") drawPlant(x, y, time);
+      if (type === "server") drawServer(x, y, time);
+
+      if (type === "bookshelf") {
+        const px = x * TS;
+        const py = y * TS;
+        pr(px + 2, py + 2, 44, 40, "#7a5530");
+        pr(px + 4, py + 8, 8, 14, "#ef4444");
+        pr(px + 15, py + 8, 8, 14, "#3b82f6");
+        pr(px + 26, py + 8, 8, 14, "#22c55e");
+        pr(px + 4, py + 27, 32, 4, "#a16b3d");
+      }
+
+      if (type === "sofa") {
+        const px = x * TS;
+        const py = y * TS;
+        pr(px + 2, py + 15, 42, 25, "#4f66a3");
+        pr(px + 5, py + 5, 36, 18, "#344d86");
+      }
+
+      if (type === "table") {
+        const px = x * TS;
+        const py = y * TS;
+        pr(px + 5, py + 18, 38, 16, "#c99855");
+        pr(px + 9, py + 32, 7, 15, "#7a542c");
+        pr(px + 32, py + 32, 7, 15, "#7a542c");
+      }
+
+      if (type === "cooler") {
+        const px = x * TS;
+        const py = y * TS;
+        pr(px + 14, py + 4, 20, 38, "#93c5fd");
+        pr(px + 17, py + 7, 14, 14, "#dbeafe");
+        pr(px + 17, py + 27, 14, 8, "#2563eb");
+      }
+
+      if (type === "meeting") {
+        drawDesk(x, y, 1);
+      }
+
+      if (type === "whiteboard") {
+        const px = x * TS;
+        const py = y * TS;
+        pr(px + 5, py + 7, 38, 22, "#e5e7eb");
+        pr(px + 8, py + 12, 25, 2, "#2563eb");
+        pr(px + 8, py + 18, 18, 2, "#2563eb");
+      }
+    }
+  }
+
+  function drawAgent(agent, time) {
+    const runtime = runtimeByAgent[agent.agent_key] || {};
+    const status = runtime.runtime_status || "idle";
+    const task = runtime.current_task_key || "";
+
+    const x = agent.x * TS;
+    const y = agent.y * TS + Math.sin(time / 1000 + agent.phase * 10) * 2;
+
+    pr(x - 6, y + 39, 36, 7, "rgba(0,0,0,0.25)");
+    pr(x + 2, y + 26, 8, 18, "#334155");
+    pr(x + 15, y + 26, 8, 18, "#334155");
+    pr(x, y + 14, 25, 20, agent.shirt);
+    pr(x + 5, y + 2, 15, 15, agent.skin);
+    pr(x + 4, y - 1, 17, 8, agent.hair);
+    pr(x + 8, y + 9, 3, 2, "#111827");
+    pr(x + 15, y + 9, 3, 2, "#111827");
+
+    const labelW = Math.max(38, agent.label.length * 8 + 14);
+    pr(x - 6, y - 30, labelW, 18, "rgba(15,23,42,0.9)");
+    pr(x - 3, y - 26, 7, 7, status === "done" ? "#22c55e" : status === "idle" ? "#64748b" : "#38bdf8");
+
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "bold 10px monospace";
+    ctx.fillText(agent.label, x + 8, y - 18);
+
+    if (task) {
+      pr(x - 6, y - 12, Math.max(38, task.length * 6 + 12), 14, "rgba(30,41,59,0.85)");
+      ctx.fillStyle = "#93c5fd";
+      ctx.font = "9px monospace";
+      ctx.fillText(task, x, y - 2);
+    }
   }
 
   async function refreshRuntime() {
     try {
-      const res = await fetch("/api/agents/runtime", { cache: "no-store" });
-      if (!res.ok) return;
-      const data = await res.json();
-      const rows = Array.isArray(data) ? data : (data.agents || data.rows || data.runtime || []);
+      const response = await fetch("/api/agents/runtime", { cache: "no-store" });
+      if (!response.ok) return;
+
+      const data = await response.json();
+      const rows = Array.isArray(data) ? data : (data.agents || data.rows || []);
+      runtimeByAgent = {};
 
       for (const row of rows) {
-        const key = row.agent_key || row.agent || row.name || row.id;
-        if (!key || !runtime[key]) continue;
-        runtime[key] = {
-          status: normalizeStatus(row.status || row.state || row.runtime_status),
-          task_key: row.task_key || row.current_task_key || row.task || "",
-          room: row.room || row.location || "",
-        };
+        runtimeByAgent[row.agent_key] = row;
       }
-    } catch (_) {
-      // Keep last known state.
+    } catch {
+      runtimeByAgent = runtimeByAgent || {};
     }
   }
 
-  function install() {
-    const stage = document.querySelector("#tilemapOffice .tilemap-stage");
-    const office = document.querySelector("#tilemapOffice");
-    if (!stage || !office) return false;
-
-    if (stage.querySelector("#officeCanvas")) return true;
-
-    office.classList.add("canvas-floorplan-mode");
-
-    const canvas = document.createElement("canvas");
-    canvas.id = "officeCanvas";
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    canvas.setAttribute("aria-label", "Canvas Pixel Office");
-    stage.appendChild(canvas);
-
-    const ctx = canvas.getContext("2d");
-    ctx.imageSmoothingEnabled = false;
-
-    function pr(x, y, w, h, col) {
-      ctx.fillStyle = col;
-      ctx.fillRect(x * SCALE, y * SCALE, w * SCALE, h * SCALE);
+  function render(time) {
+    if (!mount()) {
+      requestAnimationFrame(render);
+      return;
     }
 
-    function drawFloor(id, tx, ty) {
-      if (id === _) return;
-      ctx.save();
-      ctx.translate(tx * TS, ty * TS);
+    ctx.fillStyle = "#070b18";
+    ctx.fillRect(0, 0, W, H);
 
-      if (id === FL) {
-        pr(0, 0, TILE, TILE, "#c0c0ce");
-        pr(0, 0, TILE, 1, "#a8a8ba");
-        pr(0, 0, 1, TILE, "#a8a8ba");
-      } else if (id === FL2) {
-        pr(0, 0, TILE, TILE, "#c4b898");
-        pr(0, 0, TILE, 1, "#aa9e82");
-        pr(0, 0, 1, TILE, "#aa9e82");
-      } else if (id === WL) {
-        pr(0, 0, TILE, TILE, "#787898");
-        pr(0, 0, TILE, 3, "#9898b8");
-        pr(0, TILE - 2, TILE, 2, "#505070");
-        pr(TILE - 2, 0, 2, TILE, "#606080");
-      }
+    drawGround();
+    drawFurniture(time);
 
-      ctx.restore();
+    for (const agent of [...agents].sort((a, b) => a.y - b.y)) {
+      drawAgent(agent, time);
     }
 
-    function drawOptionalLimeZuFurniture(obj) {
-      const img = LIMEZU_OBJECTS[String(obj.t)];
-      if (!img || !img.complete || img.naturalWidth <= 0) return false;
+    const gradient = ctx.createRadialGradient(W / 2, H / 2, H * 0.25, W / 2, H / 2, H * 0.9);
+    gradient.addColorStop(0, "rgba(0,0,0,0)");
+    gradient.addColorStop(1, "rgba(0,0,20,0.45)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, W, H);
 
-      ctx.drawImage(img, 0, 0, TS, TS);
-      return true;
-    }
-
-    function drawFurniture(obj, time) {
-      ctx.save();
-      ctx.translate(obj.x * TS, obj.y * TS);
-
-      switch (obj.t) {
-        case DL:
-          pr(0, 5, TILE, 11, "#c89858");
-          pr(0, 5, TILE, 3, "#e8b870");
-          pr(0, TILE - 2, TILE, 2, "#906830");
-          pr(1, 9, 12, 4, "#a07838");
-          pr(5, 10, 4, 2, "#c09050");
-          pr(1, TILE - 3, 2, 3, "#705020");
-          break;
-        case DR:
-          pr(0, 5, TILE, 11, "#c89858");
-          pr(0, 5, TILE, 3, "#e8b870");
-          pr(0, TILE - 2, TILE, 2, "#906830");
-          pr(TILE - 3, TILE - 3, 2, 3, "#705020");
-          break;
-        case MON: {
-          const screenOn = Math.floor(time / 4500) % 12 !== 0;
-          const blink = Math.floor(time / 600) % 2;
-          pr(6, 5, 4, 5, "#2e2e44");
-          pr(4, 9, 8, 2, "#2e2e44");
-          pr(1, -9, 14, 10, "#1e1e2e");
-          pr(2, -8, 12, 8, screenOn ? "#1a33aa" : "#0d1530");
-          if (screenOn) {
-            pr(3, -7, 6, 1, "#7799ee");
-            pr(3, -5, 9, 1, "#5577cc");
-            pr(3, -3, 7, 1, "#5577cc");
-            if (blink) pr(10, -7, 1, 1, "#ffffff");
-          }
-          break;
-        }
-        case CH:
-          pr(3, -1, 10, 7, "#334a56");
-          pr(3, -1, 10, 2, "#45606e");
-          pr(2, 5, 12, 7, "#445566");
-          pr(2, 5, 12, 2, "#556677");
-          pr(1, 10, 3, 2, "#223344");
-          pr(12, 10, 3, 2, "#223344");
-          break;
-        case PL: {
-          const sway = Math.sin(time / 2000 + obj.x) * 0.4;
-          ctx.save();
-          ctx.translate((TILE / 2) * SCALE, 9 * SCALE);
-          ctx.rotate((sway * Math.PI) / 60);
-          ctx.translate((-TILE / 2) * SCALE, -9 * SCALE);
-          pr(4, 9, 8, 7, "#884433");
-          pr(2, 0, 4, 7, "#337733");
-          pr(9, 2, 5, 5, "#337733");
-          pr(5, -3, 6, 9, "#337733");
-          pr(6, -2, 4, 6, "#55bb55");
-          ctx.restore();
-          break;
-        }
-        case SH:
-          pr(0, 0, TILE, 14, "#7a5530");
-          pr(0, 0, TILE, 2, "#9a7550");
-          pr(0, 7, TILE, 2, "#9a7550");
-          ["#cc4444", "#4466cc", "#44aa44", "#ddaa22", "#aa44cc", "#cc7733"].forEach((c, i) => {
-            pr(1 + i * 2.3, 2, 2, 5, c);
-            pr(1 + i * 2.3, 9, 2, 4, c);
-          });
-          break;
-        case SRV: {
-          const blink = Math.floor(time / 800) % 2;
-          pr(0, 0, TILE, 14, "#2a3a4a");
-          pr(0, 0, TILE, 2, "#3a4a5a");
-          pr(1, 2, 9, 3, "#1a2a3a");
-          pr(1, 8, 9, 3, "#1a2a3a");
-          pr(12, 3, 2, 2, blink ? "#00ee66" : "#007733");
-          pr(12, 9, 2, 2, "#ffaa00");
-          break;
-        }
-        case COL:
-          pr(4, 0, 8, 14, "#99ccee");
-          pr(5, 0, 6, 7, "#88bbdd");
-          pr(6, 1, 4, 2, "#cceeff");
-          pr(3, 12, 10, 3, "#778899");
-          break;
-        case AC:
-          pr(0, 2, TILE, 10, "#d0d0e2");
-          pr(0, 2, TILE, 3, "#e2e2f4");
-          for (let i = 0; i < 4; i++) pr(2, 6 + i * 2, 12, 1, "#b0b0cc");
-          pr(13, 3, 1, 1, "#00dd44");
-          break;
-        case SOF:
-          pr(0, 4, TILE, 10, "#5a6a99");
-          pr(0, 4, TILE, 3, "#6a7aaa");
-          pr(1, 0, TILE - 2, 5, "#48588a");
-          pr(0, 0, 3, 14, "#48588a");
-          pr(13, 0, 3, 14, "#48588a");
-          break;
-        case TBL:
-          pr(1, 5, 14, 5, "#c89858");
-          pr(1, 5, 14, 2, "#e8b870");
-          pr(2, 9, 2, 6, "#906830");
-          pr(12, 9, 2, 6, "#906830");
-          break;
-        case WC:
-          pr(0, 0, TILE, 12, "#e8e8f0");
-          pr(0, 0, TILE, 2, "#c8c8e0");
-          pr(0, 10, TILE, 2, "#a0a0c0");
-          pr(4, 4, 3, 1, "#4466cc");
-          pr(4, 6, 5, 1, "#4466cc");
-          break;
-      }
-
-      ctx.restore();
-    }
-
-    function drawAgent(key, cfg, time) {
-      const status = runtime[key]?.status || "idle";
-      const isWorking = status.includes("working") || status.includes("busy") || status.includes("running");
-      const isBlocked = status.includes("blocked") || status.includes("failed") || status.includes("error");
-      const bob = Math.sin(time / 500 + cfg.x) * (isWorking ? 2 : 0.8);
-
-      const x = Math.round(cfg.x * TS);
-      const y = Math.round(cfg.y * TS + bob);
-
-      ctx.save();
-      ctx.translate(x, y);
-
-      ctx.globalAlpha = 0.25;
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(-10, 34, 32, 7);
-      ctx.globalAlpha = 1;
-
-      const img = SPRITES[key];
-      if (img && img.complete && img.naturalWidth > 0) {
-        ctx.drawImage(img, -6, -16, 48, 48);
-      } else {
-        // fallback mini character
-        ctx.fillStyle = "#ffd5a8";
-        ctx.fillRect(4, -10, 18, 18);
-        ctx.fillStyle = "#334455";
-        ctx.fillRect(5, 8, 16, 20);
-      }
-
-      ctx.font = "bold 10px monospace";
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#eef6ff";
-      ctx.fillText(cfg.label, 10, 50);
-
-      if (isWorking || isBlocked) {
-        ctx.fillStyle = isBlocked ? "rgba(127, 29, 29, 0.92)" : "rgba(15, 23, 42, 0.92)";
-        ctx.fillRect(-20, -34, 62, 16);
-        ctx.fillStyle = isBlocked ? "#fecaca" : "#bae6fd";
-        ctx.font = "bold 8px monospace";
-        ctx.fillText(isBlocked ? "BLOCKED" : "WORKING", 11, -22);
-      }
-
-      ctx.restore();
-    }
-
-    function drawLabels() {
-      ctx.save();
-      ctx.font = "bold 11px monospace";
-      ctx.fillStyle = "rgba(15, 23, 42, 0.78)";
-      ctx.fillRect(52 * SCALE, 18 * SCALE, 38 * SCALE, 12 * SCALE);
-      ctx.fillRect(150 * SCALE, 18 * SCALE, 72 * SCALE, 12 * SCALE);
-      ctx.fillRect(242 * SCALE, 18 * SCALE, 36 * SCALE, 12 * SCALE);
-
-      ctx.fillStyle = "#e0f2fe";
-      ctx.fillText("PM", 56 * SCALE, 27 * SCALE);
-      ctx.fillText("ENGINEER", 154 * SCALE, 27 * SCALE);
-      ctx.fillText("QA", 246 * SCALE, 27 * SCALE);
-      ctx.restore();
-    }
-
-    function render(time) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0a0a15";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) drawFloor(GROUND[r][c], c, r);
-      }
-
-      [...furniture].sort((a, b) => a.y - b.y || a.x - b.x).forEach((obj) => drawFurniture(obj, time));
-      drawLabels();
-
-      Object.entries(ROOMS)
-        .sort((a, b) => a[1].y - b[1].y)
-        .forEach(([key, cfg]) => drawAgent(key, cfg, time));
-
-      const vg = ctx.createRadialGradient(
-        canvas.width / 2, canvas.height / 2, canvas.height * 0.28,
-        canvas.width / 2, canvas.height / 2, canvas.height * 0.88
-      );
-      vg.addColorStop(0, "rgba(0,0,0,0)");
-      vg.addColorStop(1, "rgba(0,0,20,0.38)");
-      ctx.fillStyle = vg;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function loop(ts) {
-      render(ts || 0);
-      requestAnimationFrame(loop);
-    }
-
-    refreshRuntime();
-    setInterval(refreshRuntime, 5000);
-    requestAnimationFrame(loop);
-
-    return true;
+    requestAnimationFrame(render);
   }
 
   function boot() {
-    if (install()) return;
+    refreshRuntime();
+    setInterval(refreshRuntime, 5000);
 
-    const timer = setInterval(() => {
-      if (install()) clearInterval(timer);
-    }, 500);
+    const observer = new MutationObserver(() => {
+      if (mounted) return;
+      mount();
+    });
 
-    setTimeout(() => clearInterval(timer), 15000);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    requestAnimationFrame(render);
   }
 
   if (document.readyState === "loading") {

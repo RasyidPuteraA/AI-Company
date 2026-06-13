@@ -23,6 +23,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-072 - Upgrade Pixel Office Map Renderer from Production Package** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-071 - Add Codex Usage Dashboard Panel** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-070 - Enable Codex Agent Loop in Managed Services** (Owner: devops_agent; Status: DONE)
 - **INTERNAL-069 - Wire Autonomous Codex Hook Into Agent Loop** (Owner: devops_agent; Status: DONE)
@@ -97,6 +98,11 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-13: engineering_completed | engineer_agent | Pixel Office production renderer completed (Impact: Upgraded office-canvas renderer and disabled old map flicker.)
+- 2026-06-13: internal_task_created | pm_agent | Upgrade Pixel Office Map Renderer from Production Package (Impact: PM Agent created internal task INTERNAL-072: Upgrade dashboard Pixel Office map using the uploaded production renderer concept: layered ground map, furniture objects, animated agents, and loading-safe replacement of the old office canvas.)
+- 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-072-plan.md)
+- 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-072: Upgrade Pixel Office Map Renderer from Production Package)
+- 2026-06-13: internal_task_created | pm_agent | Upgrade Pixel Office Map Renderer from Production Package (Impact: PM Agent created internal task INTERNAL-072: Upgrade the dashboard Pixel Office map using the uploaded production pixel-office renderer concepts: layered ground map, furniture objects, animated characters, loading-safe rendering, and no old-map flicker.)
 - 2026-06-13: engineering_completed | engineer_agent | Codex usage dashboard panel completed (Impact: Added /api/codex/usage and dashboard Codex usage panel.)
 - 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-071-plan.md)
 - 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-071: Add Codex Usage Dashboard Panel)
@@ -104,11 +110,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-13: devops_completed | devops_agent | Codex-enabled managed services completed (Impact: Installed systemd drop-in for Codex-enabled agent loop.)
 - 2026-06-13: devops_completed | devops_agent | Codex-enabled agent loop completed (Impact: Marked INTERNAL-069 done after Codex-enabled loop commit.)
 - 2026-06-13: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-070: Enable Codex Agent Loop in Managed Services)
-- 2026-06-13: internal_task_created | pm_agent | Enable Codex Agent Loop in Managed Services (Impact: PM Agent created internal task INTERNAL-070: Enable managed agent services to use the Codex-enabled worker loop with explicit safety flags and bounded execution.)
-- 2026-06-13: codex_plan_generated | devops_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-069-plan.md)
-- 2026-06-13: task_claimed | devops_agent | Task claimed by devops_agent (Impact: devops_agent claimed INTERNAL-069: Wire Autonomous Codex Hook Into Agent Loop)
-- 2026-06-13: internal_task_created | pm_agent | Wire Autonomous Codex Hook Into Agent Loop (Impact: PM Agent created internal task INTERNAL-069: Wire the safe autonomous Codex dispatcher hook into the agent loop so eligible internal tasks can automatically receive Codex planning through the tracked wrapper.)
-- 2026-06-13: engineering_completed | engineer_agent | Autonomous Codex dispatcher hook completed (Impact: Added plan-only dispatcher hook for eligible internal tasks.)
 
 ## QA Status
 

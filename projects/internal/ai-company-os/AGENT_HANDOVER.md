@@ -1276,3 +1276,19 @@ Safety:
 - does not read Codex auth files
 - exposes internal budget estimate only
 - read-only panel
+
+## INTERNAL-072 Handover
+
+Upgraded Pixel Office dashboard renderer using production package concepts.
+
+Files:
+
+    apps/dashboard/public/office-canvas.js
+    apps/dashboard/public/office.css
+    apps/dashboard/public/index.html
+
+Notes:
+
+- renderer uses synthetic production-style Canvas drawing
+- old map background flicker is disabled in canvas mode
+- custom PNG assets can be integrated later via tile mapping

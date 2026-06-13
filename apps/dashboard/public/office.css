@@ -557,3 +557,31 @@ body.wireframe-dashboard .pixel-office.tilemap-office-v1,
   align-items: center !important;
   justify-content: center !important;
 }
+
+/* INTERNAL-072: Production canvas map should own the office stage.
+   This prevents older CSS background maps from flashing before canvas render. */
+#tilemapOffice.production-floorplan-mode .tilemap-stage,
+#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
+  background-image: none !important;
+  background: #070b18 !important;
+}
+
+#tilemapOffice.production-floorplan-mode .tilemap-grid,
+#tilemapOffice.production-floorplan-mode .office-grid,
+#tilemapOffice.production-floorplan-mode .office-room,
+#tilemapOffice.production-floorplan-mode .office-hallway,
+#tilemapOffice.production-floorplan-mode .office-sim-bg,
+#tilemapOffice.production-floorplan-mode .clean-office-floor,
+#tilemapOffice.production-floorplan-mode .room-zone,
+#tilemapOffice.production-floorplan-mode .map-prop,
+#tilemapOffice.production-floorplan-mode .tile-agent,
+#tilemapOffice.production-floorplan-mode .office-agent {
+  display: none !important;
+}
+
+#tilemapOffice.production-floorplan-mode #officeCanvas {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  image-rendering: pixelated !important;
+}
