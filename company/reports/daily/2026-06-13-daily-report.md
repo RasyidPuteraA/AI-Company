@@ -23,6 +23,7 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Internal Tasks
 
+- **INTERNAL-077 - Add Autonomous Issue Discovery and Self-Directed Fix Loop** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-076 - Add Controlled Auto-Edit and Auto-Commit Developer Worker** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-075 - Connect Pixel Office Renderer to Optional Asset Config** (Owner: engineer_agent; Status: DONE)
 - **INTERNAL-074 - Prepare Pixel Office Custom Asset Mapping** (Owner: engineer_agent; Status: DONE)
@@ -102,6 +103,10 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 
 ## Recent Events
 
+- 2026-06-13: engineering_completed | engineer_agent | Self-directed autonomous issue discovery completed (Impact: Agents can now discover issues, create AUTO tasks, and optionally auto-solve through guarded auto-development.)
+- 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-077-plan.md)
+- 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-077: Add Autonomous Issue Discovery and Self-Directed Fix Loop)
+- 2026-06-13: internal_task_created | pm_agent | Add Autonomous Issue Discovery and Self-Directed Fix Loop (Impact: PM Agent created internal task INTERNAL-077: Add a self-directed loop where AI agents discover repo, dashboard, service, and infrastructure problems by themselves, create internal AUTO tasks, solve them through guarded auto-development, and report outcomes.)
 - 2026-06-13: engineering_completed | engineer_agent | Controlled auto-edit worker completed (Impact: Added autonomous code context, guard, and dev runner.)
 - 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-076-plan.md)
 - 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-076: Add Controlled Auto-Edit and Auto-Commit Developer Worker)
@@ -110,10 +115,6 @@ Daily snapshot generated from PostgreSQL tasks, events, QA activity, and interna
 - 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-075-plan.md)
 - 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-075: Connect Pixel Office Renderer to Optional Asset Config)
 - 2026-06-13: internal_task_created | pm_agent | Connect Pixel Office Renderer to Optional Asset Config (Impact: PM Agent created internal task INTERNAL-075: Connect dashboard Pixel Office renderer to the optional assets/office/config.json mapping so future custom tileset PNGs can be loaded without committing raw assets.)
-- 2026-06-13: engineering_completed | engineer_agent | Pixel Office asset mapping foundation completed (Impact: Added asset folders, config template, gitignore rules, and validation runner.)
-- 2026-06-13: codex_plan_generated | engineer_agent | Codex dispatcher plan generated (Impact: Plan written to company/reports/ops/codex-dispatcher/2026-06-13-INTERNAL-074-plan.md)
-- 2026-06-13: task_claimed | engineer_agent | Task claimed by engineer_agent (Impact: engineer_agent claimed INTERNAL-074: Prepare Pixel Office Custom Asset Mapping)
-- 2026-06-13: internal_task_created | pm_agent | Prepare Pixel Office Custom Asset Mapping (Impact: PM Agent created internal task INTERNAL-074: Prepare dashboard Pixel Office custom asset folders, config template, gitignore rules, and validation runner for future tileset and character PNG integration without committing raw assets.)
 
 ## QA Status
 

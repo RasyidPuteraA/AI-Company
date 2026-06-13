@@ -1382,3 +1382,33 @@ Safety:
 - working tree must be clean before auto-edit starts
 - code is committed to an autodev branch, not directly to master
 - pre_commit_check must pass before auto-commit
+
+## INTERNAL-077 Handover
+
+Added self-directed autonomous issue discovery and fix loop.
+
+New files:
+
+    company/config/autonomous_discovery.env
+    runners/autonomous_issue_discovery.sh
+    runners/autonomous_self_directed_loop.sh
+
+Updated:
+
+    runners/autonomous_code_dev.sh
+
+Main workflow:
+
+    discover issue -> create AUTO task -> write task note -> optionally auto-solve via autonomous_code_dev.sh
+
+Safe dry-run:
+
+    ./runners/autonomous_self_directed_loop.sh engineer_agent --dry-run
+
+Task creation:
+
+    AI_COMPANY_SELF_DIRECTED_CREATE_TASKS=1 ./runners/autonomous_self_directed_loop.sh engineer_agent --once
+
+Auto-solve:
+
+    AI_COMPANY_SELF_DIRECTED_CREATE_TASKS=1 AI_COMPANY_SELF_DIRECTED_AUTO_SOLVE=1 AI_COMPANY_ENABLE_AUTO_EDIT=1 AI_COMPANY_ENABLE_AUTO_COMMIT=1 ./runners/autonomous_self_directed_loop.sh engineer_agent --once

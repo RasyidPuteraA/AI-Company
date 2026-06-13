@@ -47,6 +47,11 @@ echo
 context_file="$(./runners/autonomous_code_context.sh)"
 echo "- Context file: $context_file"
 
+task_note_file="company/runtime/autodev/task_notes/${TASK_KEY}.md"
+if [ -f "$task_note_file" ]; then
+  echo "- Task note file: $task_note_file"
+fi
+
 cat > "$prompt_file" << EOF_PROMPT
 You are $AGENT in AI Company OS.
 
@@ -65,6 +70,9 @@ Mission:
 
 Repository context file:
 $context_file
+
+Autonomous task note, if available:
+$(if [ -f "$task_note_file" ]; then cat "$task_note_file"; else echo "No autonomous task note file found."; fi)
 EOF_PROMPT
 
 if [ "$MODE" = "--dry-run" ]; then
