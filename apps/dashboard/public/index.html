@@ -188,6 +188,9 @@
     </section>
 
 
+    <div class="panel-updated-row">
+      <small id="summaryUpdatedAt">Summary waiting...</small>
+    </div>
     <section class="workflow-summary-strip" id="summaryCards"></section>
 
     <section class="ai-company-os-panel panel">
@@ -195,6 +198,7 @@
         <div>
           <p class="eyebrow">Master Autonomous Mode</p>
           <h2>AI Company OS</h2>
+          <small id="aiCompanyOsUpdatedAt" class="panel-updated">Waiting status...</small>
         </div>
         <button id="aiCompanyOsToggle" class="ai-company-os-toggle" type="button">Loading</button>
       </div>
@@ -266,6 +270,7 @@
       <div class="panel task-card">
         <div class="section-heading compact">
           <h2>Last Tasks</h2>
+          <small id="tasksUpdatedAt" class="panel-updated">Waiting tasks...</small>
         </div>
         <div id="tasks"></div>
       </div>
@@ -273,6 +278,7 @@
       <div class="panel event-card">
         <div class="section-heading compact">
           <h2>Latest Events <span id="liveStatus" class="live-status">connecting...</span></h2>
+          <small id="eventsUpdatedAt" class="panel-updated">Waiting events...</small>
         </div>
         <div id="events"></div>
       </div>
@@ -280,6 +286,7 @@
       <div class="panel agent-status-card">
         <div class="section-heading compact">
           <h2>Agent Status</h2>
+          <small id="agentRuntimeUpdatedAt" class="panel-updated">Waiting agents...</small>
         </div>
         <div id="agentRuntimeList" class="agent-runtime-list">
           <div class="muted">Loading agent runtime status...</div>

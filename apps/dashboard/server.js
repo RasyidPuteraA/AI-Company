@@ -210,11 +210,20 @@ function startOfMonth(now) {
   return d;
 }
 
+function codexTokensUsed(item) {
+  return Number(
+    item.tokens_used
+    || item.estimated_total_tokens
+    || item.estimated_tokens_used
+    || 0
+  );
+}
+
 function tokensSince(items, startDate) {
   return items.reduce((sum, item) => {
     const created = new Date(item.created_at || 0);
     if (Number.isNaN(created.getTime())) return sum;
-    if (created >= startDate) return sum + Number(item.tokens_used || 0);
+    if (created >= startDate) return sum + codexTokensUsed(item);
     return sum;
   }, 0);
 }
@@ -238,10 +247,15 @@ function getCodexUsageDashboardSummary() {
   const monthlyState = monthUsed >= monthlySoft ? "WARN" : "OK";
 
   const byAgentMap = new Map();
+  const sourceBreakdownMap = new Map();
 
   for (const item of items) {
     const agent = item.agent_key || "unknown";
-    byAgentMap.set(agent, (byAgentMap.get(agent) || 0) + Number(item.tokens_used || 0));
+    const tokens = codexTokensUsed(item);
+    const source = item.mode === "direct_danger_logged" ? "direct_danger_logged" : "wrapper";
+
+    byAgentMap.set(agent, (byAgentMap.get(agent) || 0) + tokens);
+    sourceBreakdownMap.set(source, (sourceBreakdownMap.get(source) || 0) + tokens);
   }
 
   const byAgent = Array.from(byAgentMap.entries())
@@ -257,17 +271,21 @@ function getCodexUsageDashboardSummary() {
       task_key: item.task_key || "",
       mode: item.mode || "",
       sandbox: item.sandbox || "",
-      tokens_used: Number(item.tokens_used || 0),
+      command: item.command || "",
+      tokens_used: codexTokensUsed(item),
+      token_source: item.token_source || (item.mode === "direct_danger_logged" ? "estimate_chars_div_4" : "codex_cli_output"),
       exit_status: Number(item.exit_status || 0),
       run_seconds: Number(item.run_seconds || 0)
     }));
 
   return {
     generated_at: now.toISOString(),
-    note: "Internal Codex CLI budget estimate, not official OpenAI remaining quota.",
+    note: "Internal AI Company Codex CLI budget estimate, not official OpenAI remaining quota.",
+    estimates: true,
     source: {
       ledger_exists: fs.existsSync(CODEX_LEDGER_FILE),
-      budget_file_exists: fs.existsSync(CODEX_BUDGET_FILE)
+      budget_file_exists: fs.existsSync(CODEX_BUDGET_FILE),
+      ledger_path: path.relative(ROOT_DIR, CODEX_LEDGER_FILE)
     },
     budget: {
       today: {
@@ -288,6 +306,11 @@ function getCodexUsageDashboardSummary() {
       }
     },
     by_agent: byAgent,
+    source_breakdown: {
+      wrapper: sourceBreakdownMap.get("wrapper") || 0,
+      direct_danger_logged: sourceBreakdownMap.get("direct_danger_logged") || 0,
+      estimated_reconciled: 0
+    },
     recent_runs: recentRuns
   };
 }
@@ -439,7 +462,21 @@ function getAgentRuntimeStatus() {
     "location",
     "status_note",
     "updated_at"
-  ]);
+  ]).map((agent) => {
+    const status = String(agent.runtime_status || "").toLowerCase();
+    const taskKey = String(agent.current_task_key || "");
+    const completedStates = new Set(["done", "completed", "idle", "failed"]);
+
+    if (completedStates.has(status)) {
+      return {
+        ...agent,
+        current_task_key: "",
+        stale_current_task_cleared: Boolean(taskKey)
+      };
+    }
+
+    return agent;
+  });
 }
 
 
@@ -915,35 +952,48 @@ if (pathname === "/api/owner/commands" && req.method === "POST") {
 if (pathname === "/api/summary") {
       const text = runSql(`
         SELECT
-          COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%') AS client_tasks,
+          COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%' AND task_key NOT LIKE 'AUTO-%') AS client_tasks,
           COUNT(*) FILTER (WHERE task_key LIKE 'INTERNAL-%') AS internal_tasks,
+          COUNT(*) FILTER (WHERE task_key LIKE 'AUTO-%') AS autonomous_tasks,
           COUNT(*) FILTER (WHERE status = 'WAITING_OWNER_ACCEPTANCE') AS waiting_owner,
           COUNT(*) FILTER (WHERE status = 'ACCEPTED') AS accepted,
           COUNT(*) FILTER (WHERE status IN ('QA_FAILED','NEEDS_REVISION','BLOCKED')) AS needs_attention
         FROM tasks;
       `);
 
-      const [client_tasks, internal_tasks, waiting_owner, accepted, needs_attention] =
+      const [client_tasks, internal_tasks, autonomous_tasks, waiting_owner, accepted, needs_attention] =
         text.split("|").map((value) => Number(value || 0));
 
       return json(res, {
         client_tasks,
         internal_tasks,
+        autonomous_tasks,
         waiting_owner,
         accepted,
-        needs_attention
+        needs_attention,
+        generated_at: new Date().toISOString()
       });
     }
 
     if (pathname === "/api/tasks") {
       const text = runSql(`
-        SELECT task_key, title, status, COALESCE(assigned_agent_key, '')
+        SELECT
+          task_key,
+          title,
+          status,
+          COALESCE(assigned_agent_key, ''),
+          CASE
+            WHEN task_key LIKE 'INTERNAL-%' THEN 'internal'
+            WHEN task_key LIKE 'AUTO-%' THEN 'autonomous'
+            ELSE 'client'
+          END AS task_category,
+          updated_at
         FROM tasks
-        ORDER BY id DESC
+        ORDER BY updated_at DESC, id DESC
         LIMIT 20;
       `);
 
-      return json(res, parseRows(text, ["task_key", "title", "status", "agent"]));
+      return json(res, parseRows(text, ["task_key", "title", "status", "agent", "task_category", "updated_at"]));
     }
 
     if (pathname === "/api/events") {

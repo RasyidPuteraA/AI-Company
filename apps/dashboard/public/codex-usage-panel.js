@@ -100,6 +100,16 @@
           <div style="margin-top:7px;font-size:10px;color:#94a3b8;line-height:1.35;">
             Week ${formatNumber(week.used_tokens)} · Month ${formatNumber(month.used_tokens)}
           </div>
+          <div style="margin-top:5px;font-size:10px;color:#94a3b8;line-height:1.35;">
+            Wrapper ${formatNumber(data.source_breakdown?.wrapper || 0)}
+            · Dangerous logged ${formatNumber(data.source_breakdown?.direct_danger_logged || 0)}
+          </div>
+          <div style="margin-top:5px;font-size:9px;color:#94a3b8;line-height:1.35;">
+            ${data.note || "Internal AI Company Codex CLI budget estimate, not official OpenAI remaining quota."}
+          </div>
+          <div style="margin-top:5px;font-size:9px;color:#64748b;">
+            Updated ${new Date(data.generated_at || Date.now()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+          </div>
         </div>
 
         <div style="display:flex;align-items:center;gap:6px;font-size:10px;font-weight:800;color:${stateColor(today.state)};">
@@ -163,7 +173,7 @@
   function boot() {
     startObserver();
     scheduleRefresh(0);
-    setInterval(() => scheduleRefresh(0), 15000);
+    setInterval(() => scheduleRefresh(0), 30000);
   }
 
   if (document.readyState === "loading") {

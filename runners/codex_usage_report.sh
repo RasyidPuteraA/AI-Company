@@ -51,16 +51,23 @@ def date_of(item):
     except Exception:
         return None
 
+def item_tokens(item):
+    return int(item.get("tokens_used") or item.get("estimated_total_tokens") or 0)
+
 def total_since(start):
-    return sum(int(i.get("tokens_used") or 0) for i in items if date_of(i) and date_of(i) >= start)
+    return sum(item_tokens(i) for i in items if date_of(i) and date_of(i) >= start)
 
 today_total = total_since(today)
 week_total = total_since(week_start)
 month_total = total_since(month_start)
 
 by_agent = defaultdict(int)
+by_source = defaultdict(int)
 for item in items:
-    by_agent[item.get("agent_key", "unknown")] += int(item.get("tokens_used") or 0)
+    tokens = item_tokens(item)
+    by_agent[item.get("agent_key", "unknown")] += tokens
+    source = "direct_danger_logged" if item.get("mode") == "direct_danger_logged" or item.get("dangerously_bypass_approvals_and_sandbox") is True else "wrapper"
+    by_source[source] += tokens
 
 if today_total >= daily_hard:
     state = "STOP"
@@ -104,6 +111,16 @@ lines.append("## Usage By Agent")
 lines.append("")
 lines.append(table(["Agent", "Tokens Used"], sorted(by_agent.items(), key=lambda x: x[1], reverse=True)))
 lines.append("")
+lines.append("## Source Breakdown")
+lines.append("")
+lines.append(table(
+    ["Source", "Estimated Tokens"],
+    [
+        ["wrapper", by_source.get("wrapper", 0)],
+        ["direct_danger_logged", by_source.get("direct_danger_logged", 0)],
+    ],
+))
+lines.append("")
 lines.append("## Recent Codex Runs")
 lines.append("")
 lines.append(table(
@@ -113,7 +130,7 @@ lines.append(table(
         i.get("agent_key", ""),
         i.get("task_key", ""),
         i.get("mode", ""),
-        i.get("tokens_used", 0),
+        item_tokens(i),
         i.get("exit_status", ""),
         i.get("run_seconds", ""),
         i.get("output_path", ""),
@@ -123,6 +140,7 @@ lines.append("")
 lines.append("## Policy")
 lines.append("")
 lines.append("- Agents should use `./runners/codex_agent_run.sh`, not raw `codex exec`.")
+lines.append("- Owner-approved dangerous bypass runs should use `./runners/codex_exec_danger_logged.sh` so broad access is preserved and usage is visible.")
 lines.append("- Client work has priority over idle internal improvement.")
 lines.append("- If budget state is `STOP`, non-client Codex work should pause unless Owner overrides.")
 lines.append("- Codex credentials must never be logged, committed, pasted, or shown in dashboard.")

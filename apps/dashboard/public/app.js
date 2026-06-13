@@ -8,12 +8,23 @@ function card(label, value) {
   return `<div class="card"><span>${label}</span><strong>${value}</strong></div>`;
 }
 
+function formatUpdatedAt(date = new Date()) {
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
+function setUpdated(id) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = `Updated ${formatUpdatedAt()}`;
+}
+
 function renderTasks(tasks) {
   return tasks.map(task => `
     <div class="item">
       <strong>${task.task_key}</strong> — ${task.title}<br>
       <span class="badge">${task.status}</span>
+      <span class="badge subtle">${task.task_category || "task"}</span>
       <span>${task.agent}</span>
+      <br><small>${task.updated_at || ""}</small>
     </div>
   `).join("");
 }
@@ -29,30 +40,48 @@ function renderEvents(events) {
   `).join("");
 }
 
-async function main() {
-  const [summary, tasks, events] = await Promise.all([
-    loadJson("/api/summary"),
-    loadJson("/api/tasks"),
-    loadJson("/api/events")
-  ]);
-
+async function loadSummaryCards() {
+  const summary = await loadJson("/api/summary");
   document.getElementById("summaryCards").innerHTML = [
     card("Client Tasks", summary.client_tasks),
     card("Internal Tasks", summary.internal_tasks),
+    card("Autonomous Tasks", summary.autonomous_tasks || 0),
     card("Waiting Owner", summary.waiting_owner),
     card("Accepted", summary.accepted),
     card("Needs Attention", summary.needs_attention),
     `<div class="card ai-usage-summary-card" id="aiUsageSummaryCard">
       <span>AI API Tokens</span>
       <strong>0</strong>
-      <small>ChatGPT/Codex quota external</small>
+      <small>Internal estimates, quota external</small>
     </div>`
   ].join("");
 
+  setUpdated("summaryUpdatedAt");
   loadAiUsageSummary().catch(console.error);
+}
 
+async function loadLatestTasks() {
+  const tasks = await loadJson("/api/tasks");
   document.getElementById("tasks").innerHTML = renderTasks(tasks);
+  setUpdated("tasksUpdatedAt");
+}
+
+async function loadLatestEvents() {
+  const events = await loadJson("/api/events");
   document.getElementById("events").innerHTML = renderEvents(events);
+  setUpdated("eventsUpdatedAt");
+}
+
+async function refreshDashboardCore() {
+  await Promise.all([
+    loadSummaryCards(),
+    loadLatestTasks(),
+    loadLatestEvents()
+  ]);
+}
+
+async function main() {
+  await refreshDashboardCore();
 }
 
 main().catch(error => {
@@ -102,6 +131,7 @@ async function loadAiCompanyOsStatus() {
     setText("aiCompanySchedulerState", scheduler.state ? `${scheduler.state} (${scheduler.mode || "unknown"} / ${schedulerWorkMode})` : "unknown");
     setText("aiCompanySchedulerRoles", roleSummary || "none");
     setText("aiCompanySchedulerLocks", lockSummary || "none");
+    setUpdated("aiCompanyOsUpdatedAt");
   } catch (error) {
     toggle.disabled = true;
     toggle.textContent = "Unavailable";
@@ -193,6 +223,9 @@ function startEventStream() {
 }
 
 startEventStream();
+setInterval(loadSummaryCards, 5000);
+setInterval(loadLatestTasks, 10000);
+setInterval(loadLatestEvents, 10000);
 
 const agentRoomMap = {
   pm_agent: "pm",
@@ -309,6 +342,7 @@ async function loadAgentRuntimeStatus() {
         </div>
       `;
     }).join("");
+    setUpdated("agentRuntimeUpdatedAt");
   } catch (error) {
     container.innerHTML = `<div class="muted">Failed to load agent runtime status.</div>`;
     console.error(error);

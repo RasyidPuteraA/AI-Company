@@ -1,5 +1,57 @@
 # AGENT_HANDOVER
 
+## INTERNAL-083 Handover
+
+Fixed dashboard realtime refresh and added logged tracking for owner-approved dangerous Codex exec runs.
+
+Dashboard behavior:
+
+- summary cards refresh every 5 seconds
+- AI Company OS, scheduler, learning, and agent runtime panels refresh every 5 seconds
+- latest tasks/events refresh every 10 seconds
+- existing SSE event stream remains enabled
+- Codex usage card refreshes every 30 seconds
+- visible last-updated timestamps were added where practical
+- client task counts now exclude both `INTERNAL-*` and `AUTO-*`
+- `AUTO-*` tasks are counted separately as autonomous tasks
+- completed/idle/failed agent runtime rows no longer show stale task keys as active work
+
+New dangerous Codex logged runner:
+
+    ./runners/codex_exec_danger_logged.sh \
+      --agent-key engineer_agent \
+      --task-key INTERNAL-083 \
+      --prompt-file /tmp/ai-company-internal-083-codex-prompt.md
+
+Important: this preserves the owner's requested broad access mode. It internally calls:
+
+    codex exec --dangerously-bypass-approvals-and-sandbox "$PROMPT"
+
+Usage tracking:
+
+- output files: `company/runtime/codex_runs/YYYY-MM-DD/`
+- ledger: `company/runtime/codex_usage.jsonl`
+- mode default: `direct_danger_logged`
+- token values are chars/4 internal estimates, not official OpenAI billing usage or remaining quota
+- the dashboard Codex card now shows wrapper usage plus `direct_danger_logged` usage
+
+New reconciliation command:
+
+    ./runners/codex_usage_reconcile.sh
+
+Reports are written under:
+
+    company/reports/codex-usage/
+
+Historical limitation:
+
+- old raw `codex exec --dangerously-bypass-approvals-and-sandbox ...` runs that bypassed the ledger may not be exactly recoverable
+- future dangerous direct Codex runs should use `codex_exec_danger_logged.sh` so the same broad access remains visible in reports and dashboard
+
+Docs:
+
+    projects/internal/ai-company-os/INTERNAL-083.md
+
 ## INTERNAL-082 Handover
 
 Added the safe operational self-learning memory layer.
