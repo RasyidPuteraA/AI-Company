@@ -148,6 +148,7 @@ async function loadAiCompanyOsStatus() {
     setText("aiCompanySchedulerState", scheduler.state ? `${scheduler.state} (${scheduler.mode || "unknown"} / ${schedulerWorkMode})` : "unknown");
     setText("aiCompanySchedulerRoles", roleSummary || "none");
     setText("aiCompanySchedulerLocks", lockSummary || "none");
+    loadPostUpdateSummary().catch(console.error);
     setUpdated("aiCompanyOsUpdatedAt");
   } catch (error) {
     toggle.disabled = true;
@@ -155,6 +156,13 @@ async function loadAiCompanyOsStatus() {
     setText("aiCompanyOsMode", "ERROR");
     console.error(error);
   }
+}
+
+async function loadPostUpdateSummary() {
+  const summary = await loadJson("/api/post-update/summary");
+  const status = summary.latest_status || "none";
+  const report = summary.latest_report || "No post-update report yet.";
+  setText("aiCompanyPostUpdateStatus", `${status} · ${report}`);
 }
 
 async function loadLearningSummary() {

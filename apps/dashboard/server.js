@@ -15,6 +15,7 @@ const LEARNING_LESSONS_DIR = path.join(ROOT_DIR, "company", "learning", "lessons
 const LEARNING_PATTERNS_DIR = path.join(ROOT_DIR, "company", "learning", "patterns");
 const LEARNING_CONTEXT_FILE = path.join(ROOT_DIR, "company", "learning", "context", "latest-learning-context.md");
 const LEARNING_REPORTS_DIR = path.join(ROOT_DIR, "company", "reports", "learning");
+const POST_UPDATE_REPORTS_DIR = path.join(ROOT_DIR, "company", "reports", "post-update");
 const AI_COMPANY_OS_STATUS_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_os_status.sh");
 const AI_COMPANY_OS_CONTROL_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_os_control.sh");
 
@@ -378,6 +379,33 @@ function getLearningDashboardSummary() {
     latest_report: reports.length > 0 ? path.relative(ROOT_DIR, reports[0]) : "",
     top_pattern: topPattern,
     latest_context_path: fs.existsSync(LEARNING_CONTEXT_FILE) ? path.relative(ROOT_DIR, LEARNING_CONTEXT_FILE) : ""
+  };
+}
+
+function readReportStatus(text) {
+  return readDashField(text, "status") || readDashField(text, "mode") || "";
+}
+
+function getPostUpdateDashboardSummary() {
+  const reports = listMarkdownFiles(POST_UPDATE_REPORTS_DIR);
+  if (reports.length === 0) {
+    return {
+      latest_report: "",
+      latest_status: "none",
+      latest_title: "",
+      generated_at: ""
+    };
+  }
+
+  const latest = reports[0];
+  const text = fs.readFileSync(latest, "utf8");
+  const title = (text.match(/^# (.+)$/m) || [])[1] || path.basename(latest);
+
+  return {
+    latest_report: path.relative(ROOT_DIR, latest),
+    latest_status: readReportStatus(text) || "unknown",
+    latest_title: title,
+    generated_at: readDashField(text, "generated_at")
   };
 }
 
@@ -800,6 +828,11 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === "/api/learning/summary" && req.method === "GET") {
       json(res, getLearningDashboardSummary());
+      return;
+    }
+
+    if (pathname === "/api/post-update/summary" && req.method === "GET") {
+      json(res, getPostUpdateDashboardSummary());
       return;
     }
 

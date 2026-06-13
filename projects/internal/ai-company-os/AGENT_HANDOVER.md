@@ -1697,3 +1697,44 @@ Safety:
 - owner ON/OFF, budget gate, emergency stop, and locks remain in place
 - after 19:00 the work-hours gate returns `PAUSED_OUTSIDE_WORK_HOURS` and scheduler role work is skipped
 - overtime avoids new broad autonomous discovery and new internal improvement work unless explicitly enabled
+
+## INTERNAL-085 Handover
+
+Added autonomous post-update service restart planning and health recovery.
+
+Updated:
+
+    company/config/ai_company_scheduler.env
+    runners/ai_company_multi_agent_scheduler.sh
+    runners/post_update_service_plan.sh
+    runners/post_update_service_restart.sh
+    runners/post_update_health_recovery.sh
+    apps/dashboard/server.js
+    apps/dashboard/public/app.js
+    apps/dashboard/public/index.html
+
+Docs:
+
+    projects/internal/ai-company-os/INTERNAL-085.md
+
+Defaults:
+
+    AI_COMPANY_AUTO_RESTART_SERVICES=0
+    AI_COMPANY_AUTO_RESTART_DASHBOARD=1
+    AI_COMPANY_AUTO_RESTART_SCHEDULER=1
+    AI_COMPANY_AUTO_RESTART_AGENT_SERVICES=0
+
+Manual commands:
+
+    ./runners/post_update_service_plan.sh
+    ./runners/post_update_service_restart.sh --dry-run
+    ./runners/post_update_service_restart.sh --apply
+    ./runners/post_update_health_recovery.sh
+
+Safety:
+
+- scheduler integration is report-only unless `AI_COMPANY_AUTO_RESTART_SERVICES=1`
+- restart apply re-checks owner switch, emergency stop, work-hours gate, budget STOP, and pre-commit safety
+- service mapping is limited to dashboard, multi-agent scheduler, and known agent worker services
+- database services and containers are never restarted by the new runners
+- failed health recovery writes an owner-visible note under `company/reports/post-update/`

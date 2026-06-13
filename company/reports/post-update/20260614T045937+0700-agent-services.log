@@ -1,0 +1,52 @@
+# Agent Services Health Check
+
+## Script syntax checks
+
+## Emergency stop
+Emergency stop is not active in current shell.
+
+## Service status
+- ai-company-agent@pm_agent.service: healthy auto-restart after successful bounded loop
+- ai-company-agent@engineer_agent.service: healthy auto-restart after successful bounded loop
+- ai-company-agent@qa_agent.service: healthy auto-restart after successful bounded loop
+- ai-company-agent@devops_agent.service: healthy auto-restart after successful bounded loop
+
+## Runtime status
+
+## Queue readability
+
+### Queue: pm_agent
+# Agent Queue: pm_agent
+
+Generated at: Sun Jun 14 04:59:40 AM WIB 2026
+
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+
+### Queue: engineer_agent
+# Agent Queue: engineer_agent
+
+Generated at: Sun Jun 14 04:59:40 AM WIB 2026
+
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+
+### Queue: qa_agent
+# Agent Queue: qa_agent
+
+Generated at: Sun Jun 14 04:59:40 AM WIB 2026
+
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+
+### Queue: devops_agent
+# Agent Queue: devops_agent
+
+Generated at: Sun Jun 14 04:59:40 AM WIB 2026
+
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+
+## Recent crash indicators
+- ai-company-agent@pm_agent.service: no recent crash indicators
+- ai-company-agent@engineer_agent.service: no recent crash indicators
+- ai-company-agent@qa_agent.service: no recent crash indicators
+- ai-company-agent@devops_agent.service: no recent crash indicators
+
+Agent services health check FAILED.

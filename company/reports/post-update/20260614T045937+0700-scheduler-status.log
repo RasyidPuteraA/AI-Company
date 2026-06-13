@@ -1,0 +1,23 @@
+# AI Company Scheduler Status
+- enabled: 1
+- state: paused_outside_work_hours
+- mode: paused
+- work_hours_mode: PAUSED
+- overtime_info: none
+- active_agents: none
+- max_parallel_agents: 5
+- latest_event: Outside work hours
+- updated_at: 2026-06-14T04:43:26+07:00
+
+## Roles
+- pm: never_run task=none event=none updated_at=unknown
+- engineer: never_run task=none event=none updated_at=unknown
+- qa: never_run task=none event=none updated_at=unknown
+- devops: never_run task=none event=none updated_at=unknown
+
+## Locks
+- repo_write: free
+- dashboard: free
+- devops: free
+- database: free
+- qa: free

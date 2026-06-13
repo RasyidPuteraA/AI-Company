@@ -46,6 +46,7 @@ fi
 : "${AI_COMPANY_OVERTIME_ALLOW_QA:=1}"
 : "${AI_COMPANY_OVERTIME_ALLOW_REPORTING:=1}"
 : "${AI_COMPANY_LEARNING_ENABLED:=1}"
+: "${AI_COMPANY_AUTO_RESTART_SERVICES:=0}"
 
 if ! [[ "$AI_COMPANY_MAX_PARALLEL_AGENTS" =~ ^[0-9]+$ ]] || [ "$AI_COMPANY_MAX_PARALLEL_AGENTS" -lt 1 ]; then
   AI_COMPANY_MAX_PARALLEL_AGENTS=1
@@ -110,6 +111,37 @@ run_learning_review_if_allowed() {
     log_scheduler_event "DONE" "Learning daily review complete" "Learning daily review completed without blocking scheduler."
   else
     log_scheduler_event "WARN" "Learning daily review warning" "Learning daily review failed; scheduler continued. See $output_file."
+  fi
+}
+
+run_post_update_restart_plan_if_allowed() {
+  if [ ! -x ./runners/post_update_service_plan.sh ]; then
+    return 0
+  fi
+
+  local output_file
+  output_file="/tmp/ai-company-post-update-service-plan.out"
+  if ./runners/post_update_service_plan.sh >"$output_file" 2>&1; then
+    log_scheduler_event "DONE" "Post-update restart plan complete" "Post-update service plan completed in report-only mode."
+  else
+    log_scheduler_event "WARN" "Post-update restart plan warning" "Post-update service plan failed; scheduler continued. See $output_file."
+    return 0
+  fi
+
+  if [ "${AI_COMPANY_AUTO_RESTART_SERVICES:-0}" != "1" ]; then
+    return 0
+  fi
+
+  if [ ! -x ./runners/post_update_service_restart.sh ]; then
+    log_scheduler_event "WARN" "Post-update restart unavailable" "Auto-restart is enabled but restart runner is missing."
+    return 0
+  fi
+
+  output_file="/tmp/ai-company-post-update-service-restart.out"
+  if ./runners/post_update_service_restart.sh --apply >"$output_file" 2>&1; then
+    log_scheduler_event "DONE" "Post-update restart complete" "Auto-restart completed. See $output_file."
+  else
+    log_scheduler_event "WARN" "Post-update restart warning" "Auto-restart failed or health recovery warned. See $output_file."
   fi
 }
 
@@ -293,6 +325,7 @@ run_iteration() {
   write_scheduler_state "idle" "$mode" "" "Scheduler cycle complete" "$WORK_HOURS_MODE" "$overtime_info"
   log_scheduler_event "DONE" "Scheduler cycle complete" "Mode=$mode work_hours_mode=$WORK_HOURS_MODE roles=$active_agents completed."
   run_learning_review_if_allowed
+  run_post_update_restart_plan_if_allowed
 }
 
 iteration=0
