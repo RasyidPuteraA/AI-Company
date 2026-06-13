@@ -1,6 +1,6 @@
 # AI Company OS Codex Usage Reconciliation
 
-Generated at: 2026-06-14 01:42:31
+Generated at: 2026-06-14 01:58:40
 Ledger: `company/runtime/codex_usage.jsonl`
 
 > Internal AI Company Codex CLI budget estimate, not official OpenAI billing usage or remaining quota.
@@ -10,14 +10,14 @@ Ledger: `company/runtime/codex_usage.jsonl`
 | Source | Estimated Tokens |
 | --- | --- |
 | wrapper | 37860 |
-| direct_danger_logged | 0 |
-| estimated/reconciled total | 37860 |
+| direct_danger_logged | 133230 |
+| estimated/reconciled total | 171090 |
 
 ## Usage By Agent
 
 | Agent | Estimated Tokens |
 | --- | --- |
-| engineer_agent | 33931 |
+| engineer_agent | 167161 |
 | devops_agent | 2607 |
 | pm_agent | 1322 |
 
@@ -25,6 +25,7 @@ Ledger: `company/runtime/codex_usage.jsonl`
 
 | Mode | Estimated Tokens |
 | --- | --- |
+| direct_danger_logged | 133230 |
 | plan | 32962 |
 | engineering | 4898 |
 
@@ -32,6 +33,7 @@ Ledger: `company/runtime/codex_usage.jsonl`
 
 | Created At | Agent | Task | Mode | Source | Estimated Tokens | Exit | Output |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-06-14T01:35:06 | engineer_agent | INTERNAL-084 | direct_danger_logged | direct_danger_logged | 133230 | 0 | company/runtime/codex_runs/2026-06-14/20260614013506-engineer_agent-INTERNAL-084-direct_danger_logged.out |
 | 2026-06-13T19:12:34 | engineer_agent | INTERNAL-078 | engineering | wrapper | 4898 | 0 | company/runtime/codex_runs/2026-06-13/20260613191126-engineer_agent-INTERNAL-078-engineering.out |
 | 2026-06-13T18:21:35 | engineer_agent | INTERNAL-077 | plan | wrapper | 2716 | 0 | company/runtime/codex_runs/2026-06-13/20260613182044-engineer_agent-INTERNAL-077-plan.out |
 | 2026-06-13T16:45:53 | engineer_agent | INTERNAL-076 | plan | wrapper | 2676 | 0 | company/runtime/codex_runs/2026-06-13/20260613164501-engineer_agent-INTERNAL-076-plan.out |

@@ -1,6 +1,6 @@
 # AI Company OS Codex CLI Usage Report
 
-Generated at: 2026-06-14 01:42:31
+Generated at: 2026-06-14 01:58:40
 
 > Internal Codex CLI budget estimate, not official OpenAI remaining quota.
 
@@ -8,15 +8,15 @@ Generated at: 2026-06-14 01:42:31
 
 | Window | Used Tokens | Internal Limit | State |
 | --- | --- | --- | --- |
-| Today | 0 | soft 300000 / hard 500000 | OK |
-| This Week | 37860 | 2000000 | OK |
-| This Month | 37860 | 8000000 | OK |
+| Today | 133230 | soft 300000 / hard 500000 | OK |
+| This Week | 171090 | 2000000 | OK |
+| This Month | 171090 | 8000000 | OK |
 
 ## Usage By Agent
 
 | Agent | Tokens Used |
 | --- | --- |
-| engineer_agent | 33931 |
+| engineer_agent | 167161 |
 | devops_agent | 2607 |
 | pm_agent | 1322 |
 
@@ -25,12 +25,13 @@ Generated at: 2026-06-14 01:42:31
 | Source | Estimated Tokens |
 | --- | --- |
 | wrapper | 37860 |
-| direct_danger_logged | 0 |
+| direct_danger_logged | 133230 |
 
 ## Recent Codex Runs
 
 | Created At | Agent | Task | Mode | Tokens | Exit | Seconds | Output |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-06-14T01:35:06 | engineer_agent | INTERNAL-084 | direct_danger_logged | 133230 | 0 | 549 | company/runtime/codex_runs/2026-06-14/20260614013506-engineer_agent-INTERNAL-084-direct_danger_logged.out |
 | 2026-06-13T19:12:34 | engineer_agent | INTERNAL-078 | engineering | 4898 | 0 | 67 | company/runtime/codex_runs/2026-06-13/20260613191126-engineer_agent-INTERNAL-078-engineering.out |
 | 2026-06-13T18:21:35 | engineer_agent | INTERNAL-077 | plan | 2716 | 0 | 51 | company/runtime/codex_runs/2026-06-13/20260613182044-engineer_agent-INTERNAL-077-plan.out |
 | 2026-06-13T16:45:53 | engineer_agent | INTERNAL-076 | plan | 2676 | 0 | 51 | company/runtime/codex_runs/2026-06-13/20260613164501-engineer_agent-INTERNAL-076-plan.out |
