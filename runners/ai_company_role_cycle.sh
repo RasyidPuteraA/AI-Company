@@ -114,7 +114,33 @@ psql_rows() {
     -A \
     -F "|" \
     -v ON_ERROR_STOP=1 \
-    -c "$1" 2>/dev/null || true
+    -c "$1" 2>/dev/null \
+    | grep -Ev '^(UPDATE|INSERT|DELETE|SELECT) [0-9]+$' \
+    || true
+}
+
+is_valid_task_key() {
+  case "${1:-}" in
+    TASK-*|CLIENT-*|INTERNAL-*|AUTO-*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+clean_task_key_output() {
+  local raw="${1:-}"
+  local line
+  while IFS= read -r line; do
+    line="$(printf "%s" "$line" | xargs)"
+    [ -z "$line" ] && continue
+    case "$line" in
+      UPDATE\ *|INSERT\ *|DELETE\ *|SELECT\ *) continue ;;
+    esac
+    if is_valid_task_key "$line"; then
+      printf "%s\n" "$line"
+      return 0
+    fi
+  done <<< "$raw"
+  return 0
 }
 
 task_project() {
@@ -155,7 +181,7 @@ WHERE assigned_agent_key = '$AGENT_KEY'
 ORDER BY priority DESC NULLS LAST, updated_at ASC, id ASC
 LIMIT 1;
 ")"
-      output="$(printf "%s\n" "$output" | sed '/^[[:space:]]*$/d' | head -1)"
+      output="$(clean_task_key_output "$output")"
       if [ -n "$output" ]; then
         printf "%s\n" "$output"
         return 0
@@ -185,7 +211,7 @@ FROM candidate
 WHERE tasks.id = candidate.id
 RETURNING task_key;
 ")"
-    output="$(printf "%s\n" "$output" | sed '/^[[:space:]]*$/d' | head -1)"
+    output="$(clean_task_key_output "$output")"
     if [ -n "$output" ]; then
       ./runners/update_agent_runtime_status.sh "$AGENT_KEY" claimed "$output" "autonomous_scheduler" "$AGENT_KEY claimed $output via multi-agent scheduler." >/dev/null 2>&1 || true
     fi
@@ -201,7 +227,7 @@ WHERE assigned_agent_key = '$AGENT_KEY'
 ORDER BY priority DESC NULLS LAST, updated_at ASC, id ASC
 LIMIT 1;
 ")"
-      output="$(printf "%s\n" "$output" | sed '/^[[:space:]]*$/d' | head -1)"
+      output="$(clean_task_key_output "$output")"
       if [ -n "$output" ]; then
         printf "%s\n" "$output"
         return 0
@@ -230,7 +256,7 @@ FROM candidate
 WHERE tasks.id = candidate.id
 RETURNING task_key;
 ")"
-    output="$(printf "%s\n" "$output" | sed '/^[[:space:]]*$/d' | head -1)"
+    output="$(clean_task_key_output "$output")"
     if [ -n "$output" ]; then
       ./runners/update_agent_runtime_status.sh "$AGENT_KEY" claimed "$output" "autonomous_scheduler" "$AGENT_KEY claimed $output via multi-agent scheduler." >/dev/null 2>&1 || true
     fi
