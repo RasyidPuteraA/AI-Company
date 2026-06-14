@@ -1,6 +1,6 @@
 # Proposed Internal Learning Tasks
 
-- generated_at: 2026-06-14T12:17:48+07:00
+- generated_at: 2026-06-14T12:52:01+07:00
 - source_report: company/reports/learning/2026-06-14-daily-learning-review.md
 - auto_apply: 0
 

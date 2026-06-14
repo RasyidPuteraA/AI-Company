@@ -1,6 +1,6 @@
 # Learning Agent Scorecard Review
 
-- generated_at: 2026-06-14T12:17:50+07:00
+- generated_at: 2026-06-14T12:52:03+07:00
 - scorecards_written: 6
 
 ## Scorecards
