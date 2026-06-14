@@ -61,9 +61,9 @@ async function loadSummaryCards() {
       </div>
     `).join("") + `
       <div class="card ai-usage-summary-card" id="aiUsageSummaryCard">
-        <span>Codex Tokens</span>
+        <span>Codex Limits</span>
         <strong>--</strong>
-        <small>Internal estimates, not official OpenAI quota</small>
+        <small>Internal estimates separate from real /status snapshot</small>
       </div>
     `;
     summaryCards.dataset.mounted = "true";
@@ -126,12 +126,22 @@ async function loadAiCompanyOsStatus() {
     setText("aiCompanyOsState", enabled ? "ON" : "OFF");
     setText("aiCompanyOsMode", status.mode);
     setText("aiCompanyOsAgent", status.active_agent || "none");
-    setText("aiCompanyOsBudget", status.budget_state);
+    const budgetParts = [
+      status.budget_state || "unknown",
+      `internal ${status.internal_budget_state || "unknown"}`,
+      `real ${status.real_codex_limit_state || "unknown"}`
+    ];
+    setText("aiCompanyOsBudget", budgetParts.join(" · "));
     const workHoursMode = status.work_hours_mode || "unknown";
     setText("aiCompanyOsWorkHours", `${status.work_hours_state || "unknown"} (${workHoursMode})`);
     setText("aiCompanyOsLatestEvent", status.latest_event || "No autonomous event yet.");
     setText("aiCompanyOsLatestReport", status.latest_discovery_report || "No discovery report yet.");
-    setText("aiCompanyOsBudgetNote", status.budget_note || "Internal AI Company budget estimate, not official OpenAI remaining quota.");
+    const limitParts = [
+      status.codex_5h_left_percent ? `5h ${status.codex_5h_left_percent}% left reset ${status.codex_5h_reset_at || "unknown"}` : "5h snapshot unavailable",
+      status.codex_weekly_left_percent ? `weekly ${status.codex_weekly_left_percent}% left reset ${status.codex_weekly_reset_at || "unknown"}` : "weekly snapshot unavailable",
+      status.budget_note || "Internal token estimate is not official Codex quota."
+    ];
+    setText("aiCompanyOsBudgetNote", limitParts.join(" · "));
     loadLearningSummary().catch(console.error);
 
     const scheduler = status.scheduler || {};

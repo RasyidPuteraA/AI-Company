@@ -121,8 +121,8 @@ set +e
 budget_status=$?
 set -e
 if [ "$budget_status" -eq 2 ]; then
-  write_state "PAUSED_BUDGET_LIMIT" "" "Paused by internal budget STOP" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "Internal Codex budget gate returned STOP; autonomous work skipped this cycle."
-  log_event_safe "PAUSED_BUDGET_LIMIT" "Budget STOP" "Internal Codex budget gate returned STOP; autonomous work paused."
+  write_state "PAUSED_BUDGET_LIMIT" "" "Paused by Codex budget gate STOP" "${AI_COMPANY_OS_LATEST_DISCOVERY_REPORT:-}" "Codex budget gate returned STOP; autonomous work skipped this cycle."
+  log_event_safe "PAUSED_BUDGET_LIMIT" "Budget STOP" "Codex budget gate returned STOP; autonomous work paused."
   cat /tmp/ai-company-budget-gate.out
   exit 0
 fi

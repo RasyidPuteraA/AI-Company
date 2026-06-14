@@ -1,22 +1,44 @@
 # AI Company OS Codex CLI Usage Report
 
-Generated at: 2026-06-14 01:58:40
+Generated at: 2026-06-14 09:16:22
 
-> Internal Codex CLI budget estimate, not official OpenAI remaining quota.
+> Internal Codex CLI token usage is an audit estimate. It is not official remaining quota unless values are captured from Codex CLI `/status` by the owner.
 
-## Budget Summary
+## Internal Estimated Token Usage
 
-| Window | Used Tokens | Internal Limit | State |
+| Window | Used Tokens | Internal Soft Estimate | State |
 | --- | --- | --- | --- |
-| Today | 133230 | soft 300000 / hard 500000 | OK |
-| This Week | 171090 | 2000000 | OK |
-| This Month | 171090 | 8000000 | OK |
+| Today | 1036228 | soft 300000 / hard 500000 | STOP |
+| This Week | 1074088 | 2000000 | OK |
+| This Month | 1074088 | 8000000 | OK |
+
+## Codex Real Limit Snapshot
+
+| Field | Value |
+| --- | --- |
+| source | manual_cli_status |
+| observed_at | 2026-06-14 09:16:21 |
+| stale | no |
+| recommended_state | OK |
+| 5h left percent | 8 |
+| 5h reset | 2026-06-14 10:12 |
+| weekly left percent | 84 |
+| weekly reset | 2026-06-18 15:13 |
+| note | Captured from owner Codex CLI /status screenshot |
+
+## Budget Enforcement
+
+| Setting | Value |
+| --- | --- |
+| CODEX_INTERNAL_BUDGET_ENFORCEMENT | warn |
+| Internal note | Internal estimate only, not official Codex limit |
+| Official quota note | Not official remaining quota unless captured from Codex CLI /status by owner. |
 
 ## Usage By Agent
 
 | Agent | Tokens Used |
 | --- | --- |
-| engineer_agent | 167161 |
+| engineer_agent | 1070159 |
 | devops_agent | 2607 |
 | pm_agent | 1322 |
 
@@ -25,12 +47,15 @@ Generated at: 2026-06-14 01:58:40
 | Source | Estimated Tokens |
 | --- | --- |
 | wrapper | 37860 |
-| direct_danger_logged | 133230 |
+| direct_danger_logged | 1036228 |
 
 ## Recent Codex Runs
 
 | Created At | Agent | Task | Mode | Tokens | Exit | Seconds | Output |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-06-14T08:15:24 | engineer_agent | INTERNAL-087 | direct_danger_logged | 367421 | 0 | 873 | company/runtime/codex_runs/2026-06-14/20260614081524-engineer_agent-INTERNAL-087-direct_danger_logged.out |
+| 2026-06-14T05:09:55 | engineer_agent | INTERNAL-086 | direct_danger_logged | 372471 | 0 | 1009 | company/runtime/codex_runs/2026-06-14/20260614050955-engineer_agent-INTERNAL-086-direct_danger_logged.out |
+| 2026-06-14T04:44:07 | engineer_agent | INTERNAL-085 | direct_danger_logged | 163106 | 0 | 592 | company/runtime/codex_runs/2026-06-14/20260614044407-engineer_agent-INTERNAL-085-direct_danger_logged.out |
 | 2026-06-14T01:35:06 | engineer_agent | INTERNAL-084 | direct_danger_logged | 133230 | 0 | 549 | company/runtime/codex_runs/2026-06-14/20260614013506-engineer_agent-INTERNAL-084-direct_danger_logged.out |
 | 2026-06-13T19:12:34 | engineer_agent | INTERNAL-078 | engineering | 4898 | 0 | 67 | company/runtime/codex_runs/2026-06-13/20260613191126-engineer_agent-INTERNAL-078-engineering.out |
 | 2026-06-13T18:21:35 | engineer_agent | INTERNAL-077 | plan | 2716 | 0 | 51 | company/runtime/codex_runs/2026-06-13/20260613182044-engineer_agent-INTERNAL-077-plan.out |
@@ -50,5 +75,6 @@ Generated at: 2026-06-14 01:58:40
 - Agents should use `./runners/codex_agent_run.sh`, not raw `codex exec`.
 - Owner-approved dangerous bypass runs should use `./runners/codex_exec_danger_logged.sh` so broad access is preserved and usage is visible.
 - Client work has priority over idle internal improvement.
-- If budget state is `STOP`, non-client Codex work should pause unless Owner overrides.
+- Internal 500k/day is a soft estimate by default; set `CODEX_INTERNAL_BUDGET_ENFORCEMENT=stop` only when intentionally enforcing it.
+- If budget state is `STOP`, it should come from a fresh real Codex limit snapshot unless internal enforcement is explicitly set to `stop`.
 - Codex credentials must never be logged, committed, pasted, or shown in dashboard.

@@ -49,11 +49,19 @@ work_state="$(printf "%s\n" "$work_output" | awk -F= '$1=="WORK_HOURS_STATE"{pri
 work_mode="$(printf "%s\n" "$work_output" | awk -F= '$1=="WORK_HOURS_MODE"{print $2}' | tail -1)"
 work_reason="$(printf "%s\n" "$work_output" | awk -F= '$1=="WORK_HOURS_REASON"{print $2}' | tail -1)"
 budget_state="$(printf "%s\n" "$budget_output" | awk -F= '$1=="BUDGET_STATE"{print $2}' | tail -1)"
+internal_budget_state="$(printf "%s\n" "$budget_output" | awk -F= '$1=="BUDGET_INTERNAL_STATE"{print $2}' | tail -1)"
+real_codex_limit_state="$(printf "%s\n" "$budget_output" | awk -F= '$1=="BUDGET_REAL_LIMIT_STATE"{print $2}' | tail -1)"
 budget_note="$(printf "%s\n" "$budget_output" | awk -F= '$1=="BUDGET_NOTE"{print $2}' | tail -1)"
+codex_5h_left_percent="$(printf "%s\n" "$budget_output" | awk -F= '$1=="CODEX_5H_LEFT_PERCENT"{print $2}' | tail -1)"
+codex_5h_reset_at="$(printf "%s\n" "$budget_output" | awk -F= '$1=="CODEX_5H_RESET_AT"{print $2}' | tail -1)"
+codex_weekly_left_percent="$(printf "%s\n" "$budget_output" | awk -F= '$1=="CODEX_WEEKLY_LEFT_PERCENT"{print $2}' | tail -1)"
+codex_weekly_reset_at="$(printf "%s\n" "$budget_output" | awk -F= '$1=="CODEX_WEEKLY_RESET_AT"{print $2}' | tail -1)"
 
 : "${work_state:=UNKNOWN}"
 : "${work_mode:=unknown}"
 : "${budget_state:=UNKNOWN}"
+: "${internal_budget_state:=UNKNOWN}"
+: "${real_codex_limit_state:=UNKNOWN}"
 
 effective_mode="$AI_COMPANY_OS_MODE"
 effective_active_agent="$AI_COMPANY_OS_ACTIVE_AGENT"
@@ -95,7 +103,9 @@ fi
 
 if [ "$FORMAT" = "--json" ] || [ "$FORMAT" = "json" ]; then
   python3 - "$AI_COMPANY_OS_OWNER_SWITCH" "$effective_mode" "$effective_active_agent" \
-    "$work_state" "$work_mode" "$work_reason" "$budget_state" "$budget_note" "$latest_event" \
+    "$work_state" "$work_mode" "$work_reason" "$budget_state" "$internal_budget_state" "$real_codex_limit_state" \
+    "$codex_5h_left_percent" "$codex_5h_reset_at" "$codex_weekly_left_percent" "$codex_weekly_reset_at" \
+    "$budget_note" "$latest_event" \
     "$AI_COMPANY_OS_STATUS_NOTE" "$AI_COMPANY_OS_LATEST_DISCOVERY_REPORT" "$AI_COMPANY_OS_UPDATED_AT" \
     "$AI_COMPANY_AUTOSOLVE_ENABLED" "$AI_COMPANY_CLIENT_PRIORITY" \
     "$AI_COMPANY_INTERNAL_IDLE_WORK_ENABLED" "$AI_COMPANY_MAX_AUTONOMOUS_ITERATIONS" \
@@ -111,6 +121,12 @@ keys = [
     "work_hours_mode",
     "work_hours_reason",
     "budget_state",
+    "internal_budget_state",
+    "real_codex_limit_state",
+    "codex_5h_left_percent",
+    "codex_5h_reset_at",
+    "codex_weekly_left_percent",
+    "codex_weekly_reset_at",
     "budget_note",
     "latest_event",
     "status_note",
@@ -142,6 +158,12 @@ echo "- work_hours_state: $work_state"
 echo "- work_hours_mode: $work_mode"
 echo "- work_hours_reason: ${work_reason:-none}"
 echo "- budget_state: $budget_state"
+echo "- internal_budget_state: $internal_budget_state"
+echo "- real_codex_limit_state: $real_codex_limit_state"
+echo "- codex_5h_left_percent: ${codex_5h_left_percent:-unknown}"
+echo "- codex_5h_reset_at: ${codex_5h_reset_at:-unknown}"
+echo "- codex_weekly_left_percent: ${codex_weekly_left_percent:-unknown}"
+echo "- codex_weekly_reset_at: ${codex_weekly_reset_at:-unknown}"
 echo "- budget_note: ${budget_note:-Internal AI Company budget estimate.}"
 echo "- latest_event: ${latest_event:-none}"
 echo "- status_note: ${AI_COMPANY_OS_STATUS_NOTE:-none}"

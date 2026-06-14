@@ -26,6 +26,7 @@ fi
 
 CODEX_DAILY_HARD_LIMIT_TOKENS="${CODEX_DAILY_HARD_LIMIT_TOKENS:-500000}"
 CODEX_RUN_TIMEOUT_SECONDS="${CODEX_RUN_TIMEOUT_SECONDS:-240}"
+CODEX_INTERNAL_BUDGET_ENFORCEMENT="${CODEX_INTERNAL_BUDGET_ENFORCEMENT:-warn}"
 
 if ! command -v codex >/dev/null 2>&1; then
   echo "FAIL: codex CLI not found"
@@ -59,10 +60,15 @@ echo "- Agent: $AGENT_KEY"
 echo "- Task: $TASK_KEY"
 echo "- Mode: $MODE"
 echo "- Today used before run: $TODAY_USED / $CODEX_DAILY_HARD_LIMIT_TOKENS"
+echo "- Internal budget enforcement: $CODEX_INTERNAL_BUDGET_ENFORCEMENT"
 
-if [ "$TODAY_USED" -ge "$CODEX_DAILY_HARD_LIMIT_TOKENS" ] && [ "${AI_COMPANY_CODEX_ALLOW_OVER_BUDGET:-0}" != "1" ]; then
+if [ "$TODAY_USED" -ge "$CODEX_DAILY_HARD_LIMIT_TOKENS" ] && [ "${AI_COMPANY_CODEX_ALLOW_OVER_BUDGET:-0}" != "1" ] && [ "$CODEX_INTERNAL_BUDGET_ENFORCEMENT" = "stop" ]; then
   echo "FAIL: Codex internal daily hard limit reached."
   exit 2
+fi
+
+if [ "$TODAY_USED" -ge "$CODEX_DAILY_HARD_LIMIT_TOKENS" ] && [ "${AI_COMPANY_CODEX_ALLOW_OVER_BUDGET:-0}" != "1" ] && [ "$CODEX_INTERNAL_BUDGET_ENFORCEMENT" = "warn" ]; then
+  echo "WARN: Codex internal daily estimate reached $CODEX_DAILY_HARD_LIMIT_TOKENS, but enforcement=warn; continuing."
 fi
 
 case "$MODE" in

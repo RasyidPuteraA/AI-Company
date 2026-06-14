@@ -10,6 +10,8 @@ const PUBLIC_DIR = path.join(__dirname, "public");
 const ROOT_DIR = path.join(__dirname, "..", "..");
 const CODEX_BUDGET_FILE = path.join(ROOT_DIR, "company", "config", "codex_budget.env");
 const CODEX_LEDGER_FILE = path.join(ROOT_DIR, "company", "runtime", "codex_usage.jsonl");
+const CODEX_LIMIT_STATUS_RUNNER = path.join(ROOT_DIR, "runners", "codex_limit_status.sh");
+const CODEX_BUDGET_GATE_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_budget_gate.sh");
 const LEARNING_CONFIG_FILE = path.join(ROOT_DIR, "company", "config", "ai_company_scheduler.env");
 const LEARNING_LESSONS_DIR = path.join(ROOT_DIR, "company", "learning", "lessons");
 const LEARNING_PATTERNS_DIR = path.join(ROOT_DIR, "company", "learning", "patterns");
@@ -177,6 +179,31 @@ function readEnvConfig(filePath) {
   return result;
 }
 
+function parseKeyValueOutput(text) {
+  const result = {};
+  String(text || "").split(/\r?\n/).forEach((line) => {
+    if (!line || !line.includes("=")) return;
+    const index = line.indexOf("=");
+    result[line.slice(0, index)] = line.slice(index + 1);
+  });
+  return result;
+}
+
+function runKeyValueRunner(runnerPath) {
+  try {
+    const output = execFileSync(runnerPath, {
+      cwd: ROOT_DIR,
+      encoding: "utf8",
+      timeout: 30000,
+      maxBuffer: 1024 * 1024
+    });
+    return parseKeyValueOutput(output);
+  } catch (error) {
+    const output = error.stdout || error.stderr || "";
+    return parseKeyValueOutput(output);
+  }
+}
+
 function readJsonl(filePath) {
   if (!fs.existsSync(filePath)) return [];
 
@@ -233,12 +260,15 @@ function tokensSince(items, startDate) {
 function getCodexUsageDashboardSummary() {
   const config = readEnvConfig(CODEX_BUDGET_FILE);
   const items = readJsonl(CODEX_LEDGER_FILE);
+  const realLimit = runKeyValueRunner(CODEX_LIMIT_STATUS_RUNNER);
+  const budgetGate = runKeyValueRunner(CODEX_BUDGET_GATE_RUNNER);
 
   const now = new Date();
   const dailySoft = Number(config.CODEX_DAILY_SOFT_LIMIT_TOKENS || 300000);
   const dailyHard = Number(config.CODEX_DAILY_HARD_LIMIT_TOKENS || 500000);
   const weeklySoft = Number(config.CODEX_WEEKLY_SOFT_LIMIT_TOKENS || 2000000);
   const monthlySoft = Number(config.CODEX_MONTHLY_SOFT_LIMIT_TOKENS || 8000000);
+  const enforcement = String(config.CODEX_INTERNAL_BUDGET_ENFORCEMENT || "warn");
 
   const todayUsed = tokensSince(items, startOfToday(now));
   const weekUsed = tokensSince(items, startOfWeek(now));
@@ -247,6 +277,11 @@ function getCodexUsageDashboardSummary() {
   const dailyState = todayUsed >= dailyHard ? "STOP" : todayUsed >= dailySoft ? "WARN" : "OK";
   const weeklyState = weekUsed >= weeklySoft ? "WARN" : "OK";
   const monthlyState = monthUsed >= monthlySoft ? "WARN" : "OK";
+  const internalState = enforcement === "off"
+    ? "OK"
+    : enforcement === "warn" && dailyState === "STOP"
+      ? "WARN"
+      : dailyState;
 
   const byAgentMap = new Map();
   const sourceBreakdownMap = new Map();
@@ -287,27 +322,45 @@ function getCodexUsageDashboardSummary() {
   return {
     generated_at: now.toISOString(),
     last_updated: now.toISOString(),
-    note: "Internal AI Company Codex CLI budget estimate, not official OpenAI remaining quota.",
+    note: "Internal token estimate is not official Codex quota. Real limit values come from Codex CLI /status snapshot or owner-provided usage dashboard data.",
     estimates: true,
     is_estimate: true,
     limit_tokens: dailyHard,
+    internal_soft_estimate_tokens: dailyHard,
     week_total_tokens: weekUsed,
     month_total_tokens: monthUsed,
     wrapper_total_tokens: wrapperTotal,
     danger_logged_total_tokens: dangerLoggedTotal,
     total_estimated_tokens: totalEstimated,
-    status: dailyState,
+    status: budgetGate.BUDGET_STATE || internalState,
+    budget_gate_state: budgetGate.BUDGET_STATE || internalState,
+    internal_budget_state: budgetGate.BUDGET_INTERNAL_STATE || internalState,
+    real_codex_limit_state: budgetGate.BUDGET_REAL_LIMIT_STATE || realLimit.recommended_state || "WARN",
+    internal_budget_enforcement: budgetGate.BUDGET_ENFORCEMENT || enforcement,
     source: {
       ledger_exists: fs.existsSync(CODEX_LEDGER_FILE),
       budget_file_exists: fs.existsSync(CODEX_BUDGET_FILE),
       ledger_path: path.relative(ROOT_DIR, CODEX_LEDGER_FILE)
+    },
+    real_limit: {
+      source: realLimit.source || "",
+      observed_at: realLimit.observed_at || "",
+      stale: realLimit.stale || "yes",
+      recommended_state: realLimit.recommended_state || "WARN",
+      five_hour_left_percent: realLimit.five_hour_left_percent || "",
+      five_hour_reset_at: realLimit.five_hour_reset_at || "",
+      weekly_left_percent: realLimit.weekly_left_percent || "",
+      weekly_reset_at: realLimit.weekly_reset_at || "",
+      note: realLimit.note || "Codex limit snapshot unavailable."
     },
     budget: {
       today: {
         used_tokens: todayUsed,
         soft_limit_tokens: dailySoft,
         hard_limit_tokens: dailyHard,
-        state: dailyState
+        state: internalState,
+        raw_state: dailyState,
+        enforcement
       },
       week: {
         used_tokens: weekUsed,
@@ -338,7 +391,7 @@ function getAiUsageSummary() {
     api_cost_today_usd: 0,
     codex_usage: "tracked_internal_estimate",
     chatgpt_plan_quota: "external_not_available",
-    note: "AI Company OS tracks Codex CLI usage through an internal ledger. Limits are internal estimates, not official OpenAI remaining quota."
+    note: "AI Company OS tracks Codex CLI usage through an internal ledger. Real Codex limits come from owner-provided Codex CLI /status snapshots."
   };
 }
 

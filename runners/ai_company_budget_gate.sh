@@ -15,8 +15,11 @@ fi
 : "${CODEX_DAILY_HARD_LIMIT_TOKENS:=500000}"
 : "${CODEX_WEEKLY_SOFT_LIMIT_TOKENS:=2000000}"
 : "${CODEX_MONTHLY_SOFT_LIMIT_TOKENS:=8000000}"
+: "${CODEX_INTERNAL_BUDGET_ENFORCEMENT:=warn}"
+: "${CODEX_INTERNAL_BUDGET_NOTE:=Internal estimate only, not official Codex limit}"
+: "${CODEX_HARD_STOP_ON_REAL_LIMIT:=1}"
 
-python3 - "$LEDGER" \
+internal_output="$(python3 - "$LEDGER" \
   "$CODEX_DAILY_SOFT_LIMIT_TOKENS" \
   "$CODEX_DAILY_HARD_LIMIT_TOKENS" \
   "$CODEX_WEEKLY_SOFT_LIMIT_TOKENS" \
@@ -65,7 +68,7 @@ elif today_used >= daily_soft or week_used >= weekly_soft or month_used >= month
 else:
     state = "OK"
 
-print(f"BUDGET_STATE={state}")
+print(f"BUDGET_INTERNAL_RAW_STATE={state}")
 print(f"BUDGET_TODAY_USED={today_used}")
 print(f"BUDGET_DAILY_SOFT_LIMIT={daily_soft}")
 print(f"BUDGET_DAILY_HARD_LIMIT={daily_hard}")
@@ -73,7 +76,64 @@ print(f"BUDGET_WEEK_USED={week_used}")
 print(f"BUDGET_WEEKLY_SOFT_LIMIT={weekly_soft}")
 print(f"BUDGET_MONTH_USED={month_used}")
 print(f"BUDGET_MONTHLY_SOFT_LIMIT={monthly_soft}")
-print("BUDGET_NOTE=Internal AI Company Codex CLI budget estimate, not official OpenAI remaining quota.")
-
-raise SystemExit(2 if state == "STOP" else 0)
 PY
+)"
+
+get_field() {
+  local text="$1"
+  local key="$2"
+  printf "%s\n" "$text" | awk -F= -v key="$key" '$1==key {print substr($0, length(key) + 2)}' | tail -1
+}
+
+internal_raw_state="$(get_field "$internal_output" "BUDGET_INTERNAL_RAW_STATE")"
+: "${internal_raw_state:=OK}"
+
+case "$CODEX_INTERNAL_BUDGET_ENFORCEMENT" in
+  stop)
+    internal_state="$internal_raw_state"
+    ;;
+  off)
+    internal_state="OK"
+    ;;
+  warn|*)
+    if [ "$internal_raw_state" = "STOP" ]; then
+      internal_state="WARN"
+    else
+      internal_state="$internal_raw_state"
+    fi
+    ;;
+esac
+
+real_output="$(./runners/codex_limit_status.sh 2>/dev/null || true)"
+real_state="$(get_field "$real_output" "recommended_state")"
+: "${real_state:=WARN}"
+
+five_hour_left_percent="$(get_field "$real_output" "five_hour_left_percent")"
+five_hour_reset_at="$(get_field "$real_output" "five_hour_reset_at")"
+weekly_left_percent="$(get_field "$real_output" "weekly_left_percent")"
+weekly_reset_at="$(get_field "$real_output" "weekly_reset_at")"
+real_note="$(get_field "$real_output" "note")"
+
+if [ "$real_state" = "STOP" ] && [ "$CODEX_HARD_STOP_ON_REAL_LIMIT" = "1" ]; then
+  final_state="STOP"
+elif [ "$internal_state" = "WARN" ] || [ "$real_state" = "WARN" ]; then
+  final_state="WARN"
+else
+  final_state="OK"
+fi
+
+printf 'BUDGET_STATE=%s\n' "$final_state"
+printf 'BUDGET_INTERNAL_STATE=%s\n' "$internal_state"
+printf 'BUDGET_INTERNAL_RAW_STATE=%s\n' "$internal_raw_state"
+printf 'BUDGET_REAL_LIMIT_STATE=%s\n' "$real_state"
+printf 'BUDGET_ENFORCEMENT=%s\n' "$CODEX_INTERNAL_BUDGET_ENFORCEMENT"
+printf '%s\n' "$internal_output" | grep -v '^BUDGET_INTERNAL_RAW_STATE='
+printf 'BUDGET_NOTE=%s; real_limit: %s\n' "$CODEX_INTERNAL_BUDGET_NOTE" "${real_note:-unknown}"
+printf 'CODEX_5H_LEFT_PERCENT=%s\n' "$five_hour_left_percent"
+printf 'CODEX_5H_RESET_AT=%s\n' "$five_hour_reset_at"
+printf 'CODEX_WEEKLY_LEFT_PERCENT=%s\n' "$weekly_left_percent"
+printf 'CODEX_WEEKLY_RESET_AT=%s\n' "$weekly_reset_at"
+
+if [ "$final_state" = "STOP" ]; then
+  exit 2
+fi

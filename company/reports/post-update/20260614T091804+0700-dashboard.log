@@ -1,0 +1,20 @@
+# Dashboard Health Check
+- Base URL: http://127.0.0.1:8787
+
+## Syntax checks
+
+## Source route checks
+Required dashboard routes exist in source.
+
+## Service status
+Dashboard service is active.
+
+## API smoke tests
+- /api/summary HTTP 200
+- /api/tasks attempt 1 HTTP 200
+
+## Optional POST validation smoke test
+- /api/owner/review/accept-finalize empty-body HTTP 000
+WARN: Owner endpoint POST validation did not complete during health check; source route check already passed.
+
+Dashboard health check passed.

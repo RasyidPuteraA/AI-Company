@@ -1,5 +1,53 @@
 # AGENT_HANDOVER
 
+## INTERNAL-087 Handover
+
+Aligned Codex budget gate and dashboard with real Codex CLI limit snapshots.
+
+New config in `company/config/codex_budget.env`:
+
+    CODEX_INTERNAL_BUDGET_ENFORCEMENT=warn
+    CODEX_INTERNAL_BUDGET_NOTE="Internal estimate only, not official Codex limit"
+    CODEX_LIMIT_SOURCE=manual_cli_status
+    CODEX_LIMIT_STALE_AFTER_MINUTES=90
+    CODEX_5H_MIN_LEFT_PERCENT=3
+    CODEX_WEEKLY_MIN_LEFT_PERCENT=3
+    CODEX_HARD_STOP_ON_REAL_LIMIT=1
+
+New snapshot commands:
+
+    ./runners/codex_limit_snapshot_update.sh \
+      --five-hour-left-percent 8 \
+      --five-hour-reset-at "2026-06-14 10:12" \
+      --weekly-left-percent 84 \
+      --weekly-reset-at "2026-06-18 15:13" \
+      --note "Captured from Codex CLI /status"
+
+    ./runners/codex_limit_status.sh
+
+Runtime snapshot:
+
+- `company/runtime/codex_limits/latest.env` is ignored through `company/runtime/`
+- tracked safe template: `company/config/codex_limit_snapshot.example.env`
+
+Budget behavior:
+
+- 500k/day remains an internal audit estimate, not official Codex quota
+- default internal enforcement is `warn`, so internal 500k no longer hard-stops AI Company OS
+- fresh real Codex snapshots can STOP when 5h or weekly percent is at or below configured threshold
+- missing or stale snapshots produce WARN, not STOP
+- owner over-budget override remains supported
+
+Dashboard/API:
+
+- `GET /api/codex/usage` exposes `real_limit`, `budget_gate_state`, `internal_budget_state`, `real_codex_limit_state`, and `internal_budget_enforcement`
+- Codex card shows internal estimated usage separately from 5h and weekly limit snapshot values
+- AI Company OS status panel shows final/internal/real budget states plus 5h and weekly reset details
+
+Docs:
+
+    projects/internal/ai-company-os/INTERNAL-087.md
+
 ## INTERNAL-086 Handover
 
 Added safe stale task recovery and autonomous queue cleanup.

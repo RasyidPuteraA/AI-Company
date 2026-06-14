@@ -15,11 +15,16 @@ if [ -f "$CONFIG" ]; then
   source "$CONFIG"
 fi
 
+limit_status="$(./runners/codex_limit_status.sh 2>/dev/null || true)"
+
 python3 - "$LEDGER" "$OUT" \
   "${CODEX_DAILY_SOFT_LIMIT_TOKENS:-300000}" \
   "${CODEX_DAILY_HARD_LIMIT_TOKENS:-500000}" \
   "${CODEX_WEEKLY_SOFT_LIMIT_TOKENS:-2000000}" \
-  "${CODEX_MONTHLY_SOFT_LIMIT_TOKENS:-8000000}" << 'PY'
+  "${CODEX_MONTHLY_SOFT_LIMIT_TOKENS:-8000000}" \
+  "${CODEX_INTERNAL_BUDGET_ENFORCEMENT:-warn}" \
+  "${CODEX_INTERNAL_BUDGET_NOTE:-Internal estimate only, not official Codex limit}" \
+  "$limit_status" << 'PY'
 import json, sys
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -31,6 +36,20 @@ daily_soft = int(sys.argv[3])
 daily_hard = int(sys.argv[4])
 weekly_soft = int(sys.argv[5])
 monthly_soft = int(sys.argv[6])
+internal_enforcement = sys.argv[7]
+internal_note = sys.argv[8]
+limit_status_text = sys.argv[9]
+
+def parse_kv(text):
+    result = {}
+    for line in text.splitlines():
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        result[key] = value
+    return result
+
+limit_status = parse_kv(limit_status_text)
 
 now = datetime.now()
 today = now.date()
@@ -94,16 +113,44 @@ lines.append("# AI Company OS Codex CLI Usage Report")
 lines.append("")
 lines.append(f"Generated at: {now.strftime('%Y-%m-%d %H:%M:%S')}")
 lines.append("")
-lines.append("> Internal Codex CLI budget estimate, not official OpenAI remaining quota.")
+lines.append("> Internal Codex CLI token usage is an audit estimate. It is not official remaining quota unless values are captured from Codex CLI `/status` by the owner.")
 lines.append("")
-lines.append("## Budget Summary")
+lines.append("## Internal Estimated Token Usage")
 lines.append("")
 lines.append(table(
-    ["Window", "Used Tokens", "Internal Limit", "State"],
+    ["Window", "Used Tokens", "Internal Soft Estimate", "State"],
     [
         ["Today", today_total, f"soft {daily_soft} / hard {daily_hard}", state],
         ["This Week", week_total, weekly_soft, "WARN" if week_total >= weekly_soft else "OK"],
         ["This Month", month_total, monthly_soft, "WARN" if month_total >= monthly_soft else "OK"],
+    ],
+))
+lines.append("")
+lines.append("## Codex Real Limit Snapshot")
+lines.append("")
+lines.append(table(
+    ["Field", "Value"],
+    [
+        ["source", limit_status.get("source", "")],
+        ["observed_at", limit_status.get("observed_at", "")],
+        ["stale", limit_status.get("stale", "")],
+        ["recommended_state", limit_status.get("recommended_state", "")],
+        ["5h left percent", limit_status.get("five_hour_left_percent", "")],
+        ["5h reset", limit_status.get("five_hour_reset_at", "")],
+        ["weekly left percent", limit_status.get("weekly_left_percent", "")],
+        ["weekly reset", limit_status.get("weekly_reset_at", "")],
+        ["note", limit_status.get("note", "")],
+    ],
+))
+lines.append("")
+lines.append("## Budget Enforcement")
+lines.append("")
+lines.append(table(
+    ["Setting", "Value"],
+    [
+        ["CODEX_INTERNAL_BUDGET_ENFORCEMENT", internal_enforcement],
+        ["Internal note", internal_note],
+        ["Official quota note", "Not official remaining quota unless captured from Codex CLI /status by owner."],
     ],
 ))
 lines.append("")
@@ -142,7 +189,8 @@ lines.append("")
 lines.append("- Agents should use `./runners/codex_agent_run.sh`, not raw `codex exec`.")
 lines.append("- Owner-approved dangerous bypass runs should use `./runners/codex_exec_danger_logged.sh` so broad access is preserved and usage is visible.")
 lines.append("- Client work has priority over idle internal improvement.")
-lines.append("- If budget state is `STOP`, non-client Codex work should pause unless Owner overrides.")
+lines.append("- Internal 500k/day is a soft estimate by default; set `CODEX_INTERNAL_BUDGET_ENFORCEMENT=stop` only when intentionally enforcing it.")
+lines.append("- If budget state is `STOP`, it should come from a fresh real Codex limit snapshot unless internal enforcement is explicitly set to `stop`.")
 lines.append("- Codex credentials must never be logged, committed, pasted, or shown in dashboard.")
 lines.append("")
 
