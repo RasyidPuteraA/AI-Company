@@ -13,6 +13,20 @@ fi
 
 fail=0
 
+generated_report_path() {
+  case "$1" in
+    company/learning/agent-scorecards/*.md) return 0 ;;
+    company/learning/context/latest-learning-context.md) return 0 ;;
+    company/learning/patterns/*.md) return 0 ;;
+    company/learning/lessons/LESSON-*.md) return 0 ;;
+    company/reports/learning/*.md) return 0 ;;
+    company/reports/stale-task-recovery/latest.md) return 0 ;;
+    company/reports/stale-task-recovery/*-stale-task-recovery-plan.md) return 0 ;;
+    company/reports/post-update/*-service-plan.md) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 changed_files="$(
   {
     git diff --name-only || true
@@ -22,13 +36,34 @@ changed_files="$(
 )"
 
 changed_count="$(printf '%s\n' "$changed_files" | sed '/^$/d' | wc -l | tr -d ' ')"
+source_changed_files=""
+generated_changed_count=0
+
+while IFS= read -r file; do
+  [ -z "$file" ] && continue
+  if generated_report_path "$file"; then
+    generated_changed_count=$((generated_changed_count + 1))
+  else
+    source_changed_files="${source_changed_files}${file}"$'\n'
+  fi
+done <<< "$changed_files"
+
+source_changed_count="$(printf '%s\n' "$source_changed_files" | sed '/^$/d' | wc -l | tr -d ' ')"
 
 echo "# Autonomous Code Guard"
 echo "- changed files: $changed_count"
+echo "- source/config changed files: $source_changed_count"
+echo "- generated report-only changed files: $generated_changed_count"
 echo "- max changed files: $AI_COMPANY_AUTO_MAX_CHANGED_FILES"
 echo
 
-if [ "$changed_count" -gt "$AI_COMPANY_AUTO_MAX_CHANGED_FILES" ]; then
+if [ "$source_changed_count" -eq 0 ] && [ "$generated_changed_count" -gt 0 ]; then
+  echo "WARN: dirty worktree contains only generated learning/recovery/post-update reports."
+  echo "Autonomous code guard passed in report-only mode."
+  exit 0
+fi
+
+if [ "$source_changed_count" -gt "$AI_COMPANY_AUTO_MAX_CHANGED_FILES" ]; then
   echo "FAIL: too many changed files."
   fail=1
 fi
@@ -72,13 +107,19 @@ while IFS= read -r file; do
     fail=1
   fi
 
-done <<< "$changed_files"
+done <<< "$source_changed_files"
 
-diff_lines="$(git diff --numstat 2>/dev/null | awk '{add+=$1; del+=$2} END {print add+del+0}')"
-cached_lines="$(git diff --cached --numstat 2>/dev/null | awk '{add+=$1; del+=$2} END {print add+del+0}')"
+if [ "$source_changed_count" -gt 0 ]; then
+  mapfile -t source_paths < <(printf '%s\n' "$source_changed_files" | sed '/^$/d')
+  diff_lines="$(git diff --numstat -- "${source_paths[@]}" 2>/dev/null | awk '{add+=$1; del+=$2} END {print add+del+0}')"
+  cached_lines="$(git diff --cached --numstat -- "${source_paths[@]}" 2>/dev/null | awk '{add+=$1; del+=$2} END {print add+del+0}')"
+else
+  diff_lines=0
+  cached_lines=0
+fi
 total_lines="$((diff_lines + cached_lines))"
 
-echo "- changed diff lines: $total_lines"
+echo "- source/config changed diff lines: $total_lines"
 echo "- max diff lines: $AI_COMPANY_AUTO_MAX_DIFF_LINES"
 
 if [ "$total_lines" -gt "$AI_COMPANY_AUTO_MAX_DIFF_LINES" ]; then

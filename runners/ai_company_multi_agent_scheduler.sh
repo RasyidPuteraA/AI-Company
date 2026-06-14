@@ -108,9 +108,14 @@ run_learning_review_if_allowed() {
     return 0
   fi
 
+  if ! ./runners/ai_company_cadence_gate.sh daily learning-daily-review >/dev/null 2>&1; then
+    return 0
+  fi
+
   local output_file
   output_file="/tmp/ai-company-learning-daily-review.out"
   if ./runners/learning_daily_review.sh >"$output_file" 2>&1; then
+    ./runners/ai_company_cadence_gate.sh mark-daily learning-daily-review >/dev/null 2>&1 || true
     log_scheduler_event "DONE" "Learning daily review complete" "Learning daily review completed without blocking scheduler."
   else
     log_scheduler_event "WARN" "Learning daily review warning" "Learning daily review failed; scheduler continued. See $output_file."
@@ -123,6 +128,13 @@ run_post_update_restart_plan_if_allowed() {
   fi
 
   local output_file
+  local post_update_state_dir
+  post_update_state_dir="company/runtime/post-update"
+
+  if ! ./runners/ai_company_cadence_gate.sh git-head-changed service-check "$post_update_state_dir" >/dev/null 2>&1; then
+    return 0
+  fi
+
   output_file="/tmp/ai-company-post-update-service-plan.out"
   if ./runners/post_update_service_plan.sh >"$output_file" 2>&1; then
     log_scheduler_event "DONE" "Post-update restart plan complete" "Post-update service plan completed in report-only mode."
@@ -132,6 +144,7 @@ run_post_update_restart_plan_if_allowed() {
   fi
 
   if [ "${AI_COMPANY_AUTO_RESTART_SERVICES:-0}" != "1" ]; then
+    ./runners/ai_company_cadence_gate.sh mark-git-head service-check "$post_update_state_dir" >/dev/null 2>&1 || true
     return 0
   fi
 
@@ -142,6 +155,7 @@ run_post_update_restart_plan_if_allowed() {
 
   output_file="/tmp/ai-company-post-update-service-restart.out"
   if ./runners/post_update_service_restart.sh --apply >"$output_file" 2>&1; then
+    ./runners/ai_company_cadence_gate.sh mark-git-head service-check "$post_update_state_dir" >/dev/null 2>&1 || true
     log_scheduler_event "DONE" "Post-update restart complete" "Auto-restart completed. See $output_file."
   else
     log_scheduler_event "WARN" "Post-update restart warning" "Auto-restart failed or health recovery warned. See $output_file."
@@ -157,9 +171,14 @@ run_stale_task_recovery_if_allowed() {
     return 0
   fi
 
+  if ! ./runners/ai_company_cadence_gate.sh interval stale-task-recovery-plan 60 >/dev/null 2>&1; then
+    return 0
+  fi
+
   local output_file
   output_file="/tmp/ai-company-stale-task-recovery-plan.out"
   if ./runners/stale_task_recovery_plan.sh >"$output_file" 2>&1; then
+    ./runners/ai_company_cadence_gate.sh mark-interval stale-task-recovery-plan >/dev/null 2>&1 || true
     log_scheduler_event "REPORT_ONLY" "Stale task recovery plan complete" "Stale task recovery planning completed in report-only mode."
   else
     log_scheduler_event "WARN" "Stale task recovery plan warning" "Stale task recovery planning failed; scheduler continued. See $output_file."

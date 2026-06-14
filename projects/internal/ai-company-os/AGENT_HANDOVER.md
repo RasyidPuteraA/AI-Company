@@ -1,5 +1,45 @@
 # AGENT_HANDOVER
 
+## INTERNAL-092 Handover
+
+Stabilized generated learning/recovery/post-update report cadence so healthy scheduler cycles do not dirty the repo every cycle.
+
+New reusable helper:
+
+    ./runners/ai_company_cadence_gate.sh
+
+Cadence rules:
+
+- Learning daily review is gated to once per local date during `NORMAL_WORK`.
+- Stale task recovery planning is gated to once every 60 minutes.
+- Post-update service planning/restart is gated on `git HEAD` changes.
+- Post-update successful check/restart state is stored in `company/runtime/post-update/service-check.head`.
+- Generic cadence state is stored under `company/runtime/cadence/`.
+
+Dirty worktree behavior:
+
+- Generated learning/recovery/post-update report-only changes are classified separately.
+- Autonomous issue discovery reports generated-only dirt as low-priority report-only churn.
+- Source, runner, dashboard, config, and project-doc dirt still produces the high-priority dirty-worktree candidate.
+- Autonomous code guard passes generated report-only dirt with a warning, but still blocks unsafe source/code/config dirty states using existing file-count, diff-size, deny-path, and binary guards.
+
+Files changed:
+
+- `runners/ai_company_cadence_gate.sh`
+- `runners/ai_company_multi_agent_scheduler.sh`
+- `runners/autonomous_issue_discovery.sh`
+- `runners/autonomous_code_guard.sh`
+- `projects/internal/ai-company-os/INTERNAL-092.md`
+- `projects/internal/ai-company-os/AGENT_HANDOVER.md`
+
+Verification commands:
+
+    bash -n runners/ai_company_cadence_gate.sh runners/ai_company_multi_agent_scheduler.sh runners/autonomous_issue_discovery.sh runners/autonomous_code_guard.sh
+    ./runners/dashboard_health_check.sh
+    ./runners/pre_commit_check.sh
+    git status --short
+    git diff --stat
+
 ## INTERNAL-090 Handover
 
 Added a floating owner-action notification widget to the web dashboard.

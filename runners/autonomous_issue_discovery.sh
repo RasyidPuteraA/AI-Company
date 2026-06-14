@@ -30,6 +30,29 @@ add_candidate() {
     "$description" >> "$CANDIDATES"
 }
 
+generated_report_path() {
+  case "$1" in
+    company/learning/agent-scorecards/*.md) return 0 ;;
+    company/learning/context/latest-learning-context.md) return 0 ;;
+    company/learning/patterns/*.md) return 0 ;;
+    company/learning/lessons/LESSON-*.md) return 0 ;;
+    company/reports/learning/*.md) return 0 ;;
+    company/reports/stale-task-recovery/latest.md) return 0 ;;
+    company/reports/stale-task-recovery/*-stale-task-recovery-plan.md) return 0 ;;
+    company/reports/post-update/*-service-plan.md) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+git_status_path() {
+  local line="$1"
+  local path="${line:3}"
+  case "$path" in
+    *" -> "*) printf "%s\n" "${path##* -> }" ;;
+    *) printf "%s\n" "$path" ;;
+  esac
+}
+
 run_check() {
   local name="$1"
   shift
@@ -62,13 +85,35 @@ run_check() {
 } > "$REPORT"
 
 # 1. Git cleanliness signal
-if [ -n "$(git status --porcelain)" ]; then
+dirty_total=0
+dirty_generated=0
+dirty_source=0
+while IFS= read -r status_line; do
+  [ -z "$status_line" ] && continue
+  dirty_total=$((dirty_total + 1))
+  status_path="$(git_status_path "$status_line")"
+  if generated_report_path "$status_path"; then
+    dirty_generated=$((dirty_generated + 1))
+  else
+    dirty_source=$((dirty_source + 1))
+  fi
+done < <(git status --porcelain=v1 2>/dev/null || true)
+
+if [ "$dirty_source" -gt 0 ]; then
   add_candidate \
     "git_dirty_worktree" \
     "Review dirty working tree" \
     "The repository has uncommitted changes. Review whether these are expected, commit them, or clean them before autonomous development continues." \
     "HIGH" \
     "engineer_agent" \
+    "repo_hygiene"
+elif [ "$dirty_generated" -gt 0 ]; then
+  add_candidate \
+    "generated_report_dirty_worktree" \
+    "Review generated report churn" \
+    "The repository has only generated learning/recovery/post-update report changes. Treat this as report-only churn unless source, runner, config, dashboard, or project docs also changed." \
+    "LOW" \
+    "pm_agent" \
     "repo_hygiene"
 fi
 
@@ -77,6 +122,14 @@ echo '```text' >> "$REPORT"
 git status --short >> "$REPORT" 2>&1 || true
 echo '```' >> "$REPORT"
 echo >> "$REPORT"
+{
+  echo "## Git Dirty Classification"
+  echo
+  echo "- dirty_total: $dirty_total"
+  echo "- generated_report_dirty: $dirty_generated"
+  echo "- source_or_config_dirty: $dirty_source"
+  echo
+} >> "$REPORT"
 
 # 2. Health checks
 if [ -x ./runners/dashboard_health_check.sh ]; then
