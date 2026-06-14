@@ -1,32 +1,32 @@
 # Latest Learning Context
 
-- generated_at: 2026-06-14T11:10:49+07:00
+- generated_at: 2026-06-14T12:15:14+07:00
 - purpose: Compact operational memory for future AI Company OS agents and Codex prompts.
 - safety: Operational self-learning only. Do not fine-tune models, expose secrets, or auto-apply risky changes.
 
 ## Top Recent Lessons
 
-- company/learning/lessons/LESSON-20260614111048-cff68af401.md: A shared-resource lock constrained or blocked work. (status=proposed)
-- company/learning/lessons/LESSON-20260614110912-3c5d8ea8b1.md: An agent or runner reported an error/failure. (status=proposed)
-- company/learning/lessons/LESSON-20260614110912-0b4953c5d0.md: An agent or runner reported an error/failure. (status=proposed)
-- company/learning/lessons/LESSON-20260614110912-89455831c1.md: An agent or runner reported an error/failure. (status=proposed)
-- company/learning/lessons/LESSON-20260614110912-097564d42e.md: An agent or runner reported an error/failure. (status=proposed)
-- company/learning/lessons/LESSON-20260614105026-59fd5fa6d3.md: A shared-resource lock constrained or blocked work. (status=proposed)
-- company/learning/lessons/LESSON-20260614104849-1e4e2ac970.md: An agent or runner reported an error/failure. (status=proposed)
-- company/learning/lessons/LESSON-20260614104849-91ade0fe06.md: An agent or runner reported an error/failure. (status=proposed)
-- company/learning/lessons/LESSON-20260614104849-1f4cb0e935.md: An agent or runner reported an error/failure. (status=proposed)
-- company/learning/lessons/LESSON-20260614104849-9a57bf8384.md: An agent or runner reported an error/failure. (status=proposed)
+- company/learning/lessons/LESSON-20260614121513-e93ce84126.md: A shared-resource lock constrained or blocked work. (status=proposed)
+- company/learning/lessons/LESSON-20260614121342-c3eb737f6b.md: An agent or runner reported an error/failure. (status=proposed)
+- company/learning/lessons/LESSON-20260614121342-ee3144a4eb.md: An agent or runner reported an error/failure. (status=proposed)
+- company/learning/lessons/LESSON-20260614121342-94462ec1d3.md: An agent or runner reported an error/failure. (status=proposed)
+- company/learning/lessons/LESSON-20260614121342-4d4b84fbad.md: An agent or runner reported an error/failure. (status=proposed)
+- company/learning/lessons/LESSON-20260614113741-ab69946d21.md: An agent or runner reported an error/failure. (status=proposed)
+- company/learning/lessons/LESSON-20260614113741-da12af4280.md: An agent or runner reported an error/failure. (status=proposed)
+- company/learning/lessons/LESSON-20260614113741-433b46d7e1.md: An agent or runner reported an error/failure. (status=proposed)
+- company/learning/lessons/LESSON-20260614113741-a8dcdef6c9.md: An agent or runner reported an error/failure. (status=proposed)
+- company/learning/lessons/LESSON-20260614112835-b034c0eb6d.md: An agent or runner reported an error/failure. (status=proposed)
 
 ## Repeated Failure Patterns
 
-- company/learning/patterns/PATTERN-dashboard-health.md: Dashboard health regressions (count=2)
-- company/learning/patterns/PATTERN-runner-errors.md: Runner or agent errors (count=10)
+- company/learning/patterns/PATTERN-dashboard-health.md: Dashboard health regressions (count=3)
+- company/learning/patterns/PATTERN-runner-errors.md: Runner or agent errors (count=21)
 
 ## Agent-Specific Notes
 
+- qa_agent: failed/error events=0, blocked tasks=0, stale in-progress tasks=0
 - owner: failed/error events=0, blocked tasks=0, stale in-progress tasks=0
 - pm_agent: failed/error events=3, blocked tasks=0, stale in-progress tasks=0
-- qa_agent: failed/error events=0, blocked tasks=0, stale in-progress tasks=0
 - engineer_agent: failed/error events=0, blocked tasks=0, stale in-progress tasks=5
 - devops_agent: failed/error events=0, blocked tasks=0, stale in-progress tasks=0
 - budget_manager: failed/error events=0, blocked tasks=0, stale in-progress tasks=0
