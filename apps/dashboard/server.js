@@ -618,6 +618,231 @@ function getAgentRuntimeStatus() {
   });
 }
 
+function safeTaskKey(value, fieldName = "task_key") {
+  const text = String(value || "").trim();
+  if (!/^[A-Z0-9-]+$/.test(text)) {
+    throw new Error(`Invalid ${fieldName}. Use uppercase letters, numbers, and dashes only.`);
+  }
+  return text;
+}
+
+function redactOwnerText(value) {
+  return String(value || "")
+    .replace(/(OPENAI_API_KEY|ANTHROPIC_API_KEY|CODEX_[A-Z0-9_]*TOKEN|GITHUB_TOKEN|AUTH_TOKEN|PASSWORD|SECRET)\s*=\s*[^\s]+/gi, "$1=[redacted]")
+    .replace(/(sk-[A-Za-z0-9_-]{12,})/g, "[redacted-api-key]")
+    .replace(/(ghp_[A-Za-z0-9_]{12,})/g, "[redacted-github-token]");
+}
+
+function ownerActionRecommendation(status, taskKey) {
+  if (status === "WAITING_OWNER_ACCEPTANCE") {
+    return taskKey.includes("REVIEW")
+      ? "Review the delivered project. Accept finalizes the project, Reject closes the review as rejected, or Request Revision sends it back for changes."
+      : "Review the completed task. Accept marks it accepted, Reject or Request Revision sends it back with your note.";
+  }
+
+  if (status === "NEEDS_REVISION") {
+    return "Owner or QA requested changes. Add a revision note if the current guidance is incomplete.";
+  }
+
+  if (status === "QA_FAILED") {
+    return "QA failed. Decide whether to request a targeted revision or reject the current delivery path.";
+  }
+
+  if (status === "BLOCKED") {
+    return "The agent is blocked. Provide an owner decision, missing context, or reject the blocked path.";
+  }
+
+  return "Review the request and choose Accept, Reject, or Request Revision.";
+}
+
+function getOwnerAttention() {
+  const raw = runSql(`
+    SELECT COALESCE(json_agg(row_to_json(attention))::text, '[]')
+    FROM (
+      SELECT
+        t.task_key,
+        t.title,
+        t.status,
+        COALESCE(t.assigned_agent_key, '') AS agent_key,
+        COALESCE(p.project_key, '') AS project_key,
+        COALESCE(p.name, '') AS project_name,
+        COALESCE(t.current_phase, p.phase, '') AS current_phase,
+        COALESCE(t.priority, '') AS priority,
+        COALESCE(t.handover_note, '') AS handover_note,
+        COALESCE(latest.event_text, '') AS latest_event,
+        COALESCE(latest.context_summary, '') AS context_summary,
+        t.created_at::text AS created_at,
+        t.updated_at::text AS updated_at
+      FROM tasks t
+      LEFT JOIN projects p ON p.id = t.project_id
+      LEFT JOIN LATERAL (
+        SELECT
+          concat_ws(' · ', e.event_type, e.state, e.topic) AS event_text,
+          COALESCE(e.summary, '') AS context_summary
+        FROM events e
+        WHERE e.task_id = t.id
+          OR (e.task_id IS NULL AND e.project_id = t.project_id)
+        ORDER BY e.created_at DESC, e.id DESC
+        LIMIT 1
+      ) latest ON true
+      WHERE
+        t.status IN ('WAITING_OWNER_ACCEPTANCE', 'NEEDS_REVISION', 'BLOCKED', 'QA_FAILED')
+        OR EXISTS (
+          SELECT 1
+          FROM approvals a
+          WHERE a.task_id = t.id
+            AND a.status = 'PENDING'
+        )
+        OR (
+          t.task_key LIKE 'AUTO-%'
+          AND EXISTS (
+            SELECT 1
+            FROM events e
+            WHERE e.task_id = t.id
+              AND (
+                e.state ILIKE '%FAIL%'
+                OR e.event_type ILIKE '%fail%'
+                OR e.event_type ILIKE '%blocked%'
+              )
+              AND e.created_at > now() - interval '48 hours'
+          )
+        )
+      ORDER BY
+        CASE t.status
+          WHEN 'WAITING_OWNER_ACCEPTANCE' THEN 0
+          WHEN 'BLOCKED' THEN 1
+          WHEN 'QA_FAILED' THEN 2
+          WHEN 'NEEDS_REVISION' THEN 3
+          ELSE 4
+        END,
+        CASE t.priority
+          WHEN 'HIGH' THEN 0
+          WHEN 'MEDIUM' THEN 1
+          WHEN 'LOW' THEN 2
+          ELSE 3
+        END,
+        t.updated_at DESC,
+        t.id DESC
+      LIMIT 30
+    ) attention;
+  `);
+
+  const parsed = JSON.parse(raw || "[]");
+  return {
+    items: parsed.map((item) => ({
+      task_key: item.task_key,
+      title: redactOwnerText(item.title),
+      status: item.status,
+      agent_key: item.agent_key,
+      project_key: item.project_key,
+      project_name: redactOwnerText(item.project_name),
+      current_phase: item.current_phase,
+      priority: item.priority,
+      handover_note: redactOwnerText(item.handover_note),
+      latest_event: redactOwnerText(item.latest_event),
+      context_summary: redactOwnerText(item.context_summary),
+      recommended_owner_action: ownerActionRecommendation(item.status, item.task_key),
+      created_at: item.created_at,
+      updated_at: item.updated_at
+    })),
+    generated_at: new Date().toISOString()
+  };
+}
+
+function runOwnerRunner(scriptName, args, timeout = 180000) {
+  const scriptPath = path.join(ROOT_DIR, "runners", scriptName);
+  if (!fs.existsSync(scriptPath)) {
+    throw new Error(`Runner not found: ${scriptName}`);
+  }
+
+  return execFileSync(scriptPath, args, {
+    cwd: ROOT_DIR,
+    encoding: "utf8",
+    timeout,
+    maxBuffer: 1024 * 1024
+  });
+}
+
+function getOwnerDecisionTask(taskKey) {
+  const taskKeySql = sqlFromBase64(sqlText(taskKey));
+  const raw = runSql(`
+    SELECT COALESCE(json_agg(row_to_json(task_row))::text, '[]')
+    FROM (
+      SELECT
+        t.task_key,
+        t.status,
+        COALESCE(t.assigned_agent_key, '') AS agent_key,
+        COALESCE(p.project_key, '') AS project_key
+      FROM tasks t
+      LEFT JOIN projects p ON p.id = t.project_id
+      WHERE t.task_key = ${taskKeySql}
+      LIMIT 1
+    ) task_row;
+  `);
+  const rows = JSON.parse(raw || "[]");
+  return rows[0] || null;
+}
+
+function applyOwnerDecision(payload) {
+  const taskKey = safeTaskKey(payload.task_key);
+  const decision = String(payload.decision || "").trim().toUpperCase();
+  const message = String(payload.message || "").trim();
+
+  if (!["ACCEPT", "REJECT", "REVISION"].includes(decision)) {
+    return { ok: false, error: "decision must be ACCEPT, REJECT, or REVISION" };
+  }
+
+  if ((decision === "REVISION" || decision === "REJECT") && !message) {
+    return { ok: false, error: `${decision} requires a non-empty message` };
+  }
+
+  if (message.length > 5000) {
+    return { ok: false, error: "message must be 5000 characters or fewer" };
+  }
+
+  const task = getOwnerDecisionTask(taskKey);
+  if (!task) {
+    return { ok: false, error: `Task not found: ${taskKey}` };
+  }
+
+  const isReviewAcceptanceTask = task.status === "WAITING_OWNER_ACCEPTANCE" && taskKey.includes("REVIEW");
+  const ownerNote = message || "Owner accepted from dashboard attention widget.";
+  let output = "";
+  let runner = "";
+
+  if (decision === "ACCEPT") {
+    if (isReviewAcceptanceTask) {
+      runner = "owner_accept_and_finalize.sh";
+      output = runOwnerRunner(runner, [taskKey, ownerNote]);
+    } else {
+      runner = "owner_review_task.sh";
+      output = runOwnerRunner(runner, [taskKey, "ACCEPT", ownerNote]);
+    }
+  } else if (isReviewAcceptanceTask) {
+    runner = "owner_review_decision.sh";
+    output = runOwnerRunner(runner, [
+      taskKey,
+      decision === "REVISION" ? "REVISE" : "REJECT",
+      message
+    ]);
+  } else {
+    runner = "owner_review_task.sh";
+    output = runOwnerRunner(runner, [
+      taskKey,
+      decision === "REVISION" ? "REVISION" : "REJECT",
+      decision === "REJECT" ? `Owner rejected: ${message}` : message
+    ]);
+  }
+
+  return {
+    ok: true,
+    task_key: taskKey,
+    decision,
+    runner,
+    output: redactOwnerText(output)
+  };
+}
+
 
 function sqlText(value) {
   return Buffer.from(String(value || ""), "utf8").toString("base64");
@@ -1185,6 +1410,29 @@ if (pathname === "/api/summary") {
       });
 
       return;
+    }
+
+    if (pathname === "/api/owner/attention" && req.method === "GET") {
+      return json(res, getOwnerAttention());
+    }
+
+    if (pathname === "/api/owner/decision" && req.method === "POST") {
+      let body = {};
+      try {
+        body = await readJson(req);
+      } catch (error) {
+        return json(res, { ok: false, error: "Invalid JSON body" }, 400);
+      }
+
+      try {
+        const result = applyOwnerDecision(body);
+        return json(res, result, result.ok ? 200 : 400);
+      } catch (error) {
+        return json(res, {
+          ok: false,
+          error: error.message
+        }, 500);
+      }
     }
 
 

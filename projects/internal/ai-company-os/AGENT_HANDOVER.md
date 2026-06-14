@@ -1,5 +1,35 @@
 # AGENT_HANDOVER
 
+## INTERNAL-090 Handover
+
+Added a floating owner-action notification widget to the web dashboard.
+
+Backend:
+
+- `GET /api/owner/attention` lists owner attention items from task statuses, pending approvals, projects, and latest events.
+- `POST /api/owner/decision` validates owner decisions and routes them through existing owner review runners.
+- Supported decisions are `ACCEPT`, `REJECT`, and `REVISION`.
+- Revision and reject decisions require a non-empty owner message.
+- Endpoint output redacts common secret/token patterns before returning task context.
+
+Frontend:
+
+- The dashboard now shows a fixed bottom-right "Owner Attention" widget with a badge count.
+- The widget expands to show task key, title, agent, project, status, priority, context summary/handover note, and recommended owner action.
+- Owner can Accept, Reject, or Request Revision from the widget.
+- Request Revision/Reject uses an inline textarea and client-side empty-message validation.
+- The widget polls every 7 seconds and keeps loading, success, and error states visible.
+
+Safety:
+
+- No owner action is automatic.
+- Runner calls use fixed script names and validated argument arrays.
+- Existing owner review accept-finalize route and legacy owner review action widget remain intact.
+
+Docs:
+
+    projects/internal/ai-company-os/INTERNAL-090.md
+
 ## INTERNAL-087 Handover
 
 Aligned Codex budget gate and dashboard with real Codex CLI limit snapshots.

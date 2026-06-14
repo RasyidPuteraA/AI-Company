@@ -402,6 +402,220 @@ async function loadAgentRuntimeStatus() {
 loadAgentRuntimeStatus();
 setInterval(loadAgentRuntimeStatus, 5000);
 
+const ownerAttentionState = {
+  items: [],
+  expanded: false,
+  loadingTaskKey: "",
+  revisionTaskKey: "",
+  error: "",
+  success: ""
+};
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function ownerAttentionSummary(item) {
+  return item.context_summary || item.handover_note || item.latest_event || "No extra context provided yet.";
+}
+
+function ensureOwnerAttentionWidget() {
+  let widget = document.getElementById("ownerAttentionWidget");
+  if (widget) return widget;
+
+  widget = document.createElement("section");
+  widget.id = "ownerAttentionWidget";
+  widget.className = "owner-attention-widget";
+  widget.setAttribute("aria-live", "polite");
+  document.body.appendChild(widget);
+
+  widget.addEventListener("click", async (event) => {
+    const toggle = event.target.closest("[data-owner-attention-toggle]");
+    if (toggle) {
+      ownerAttentionState.expanded = !ownerAttentionState.expanded;
+      renderOwnerAttentionWidget();
+      return;
+    }
+
+    const revisionToggle = event.target.closest("[data-owner-revision]");
+    if (revisionToggle) {
+      ownerAttentionState.revisionTaskKey = revisionToggle.dataset.ownerRevision || "";
+      ownerAttentionState.error = "";
+      ownerAttentionState.success = "";
+      renderOwnerAttentionWidget();
+      return;
+    }
+
+    const cancelRevision = event.target.closest("[data-owner-revision-cancel]");
+    if (cancelRevision) {
+      ownerAttentionState.revisionTaskKey = "";
+      ownerAttentionState.error = "";
+      renderOwnerAttentionWidget();
+      return;
+    }
+
+    const action = event.target.closest("[data-owner-decision]");
+    if (action) {
+      const taskKey = action.dataset.taskKey || "";
+      const decision = action.dataset.ownerDecision || "";
+      const messageEl = document.getElementById(`ownerMessage-${taskKey}`);
+      const message = messageEl ? messageEl.value.trim() : "";
+      await submitOwnerDecision(taskKey, decision, message);
+    }
+  });
+
+  return widget;
+}
+
+function renderOwnerAttentionItem(item) {
+  const taskKey = escapeHtml(item.task_key);
+  const isLoading = ownerAttentionState.loadingTaskKey === item.task_key;
+  const revisionOpen = ownerAttentionState.revisionTaskKey === item.task_key;
+  const messageId = `ownerMessage-${taskKey}`;
+  const disableAttr = isLoading ? "disabled" : "";
+
+  return `
+    <article class="owner-attention-item">
+      <div class="owner-attention-item-head">
+        <strong>${taskKey}</strong>
+        <span class="badge">${escapeHtml(item.status)}</span>
+      </div>
+      <h3>${escapeHtml(item.title || "Untitled task")}</h3>
+      <div class="owner-attention-meta">
+        <span>Agent: ${escapeHtml(item.agent_key || "unassigned")}</span>
+        <span>Project: ${escapeHtml(item.project_name || item.project_key || "none")}</span>
+        <span>Priority: ${escapeHtml(item.priority || "unknown")}</span>
+      </div>
+      <p>${escapeHtml(ownerAttentionSummary(item))}</p>
+      <div class="owner-attention-recommendation">
+        <span>Owner action</span>
+        <p>${escapeHtml(item.recommended_owner_action)}</p>
+      </div>
+      <div class="owner-attention-actions">
+        <button type="button" data-owner-decision="ACCEPT" data-task-key="${taskKey}" ${disableAttr}>Accept</button>
+        <button type="button" class="danger" data-owner-revision="${taskKey}" ${disableAttr}>Request Revision</button>
+        <button type="button" class="secondary" data-owner-revision="${taskKey}" ${disableAttr}>Reject</button>
+      </div>
+      ${revisionOpen ? `
+        <div class="owner-attention-message">
+          <textarea id="${messageId}" rows="3" placeholder="Explain what needs to change or why this is rejected."></textarea>
+          <div class="owner-attention-message-actions">
+            <button type="button" data-owner-decision="REVISION" data-task-key="${taskKey}" ${disableAttr}>Send Revision</button>
+            <button type="button" class="secondary" data-owner-decision="REJECT" data-task-key="${taskKey}" ${disableAttr}>Send Reject</button>
+            <button type="button" class="ghost-button" data-owner-revision-cancel>Cancel</button>
+          </div>
+        </div>
+      ` : ""}
+    </article>
+  `;
+}
+
+function renderOwnerAttentionWidget() {
+  const widget = ensureOwnerAttentionWidget();
+  const count = ownerAttentionState.items.length;
+  widget.classList.toggle("is-expanded", ownerAttentionState.expanded);
+
+  const body = ownerAttentionState.expanded
+    ? `
+      <div class="owner-attention-body">
+        ${ownerAttentionState.error ? `<div class="owner-attention-status error">${escapeHtml(ownerAttentionState.error)}</div>` : ""}
+        ${ownerAttentionState.success ? `<div class="owner-attention-status success">${escapeHtml(ownerAttentionState.success)}</div>` : ""}
+        ${count === 0 ? `<div class="owner-attention-empty">No owner action needed</div>` : ownerAttentionState.items.map(renderOwnerAttentionItem).join("")}
+      </div>
+    `
+    : "";
+
+  widget.innerHTML = `
+    <button class="owner-attention-toggle" type="button" data-owner-attention-toggle aria-expanded="${ownerAttentionState.expanded ? "true" : "false"}">
+      <span class="owner-attention-icon">!</span>
+      <span>
+        <strong>Owner Attention</strong>
+        <small>${count === 0 ? "No owner action needed" : `${count} item${count === 1 ? "" : "s"} need decision`}</small>
+      </span>
+      <span class="owner-attention-count">${count}</span>
+    </button>
+    ${body}
+  `;
+}
+
+async function loadOwnerAttention() {
+  ensureOwnerAttentionWidget();
+
+  try {
+    const response = await fetch("/api/owner/attention", { cache: "no-store" });
+    const payload = await response.json();
+
+    if (!response.ok) {
+      throw new Error(payload.error || `Owner attention failed: ${response.status}`);
+    }
+
+    ownerAttentionState.items = Array.isArray(payload.items) ? payload.items : [];
+    ownerAttentionState.error = "";
+    renderOwnerAttentionWidget();
+  } catch (error) {
+    ownerAttentionState.error = `Failed to load owner attention: ${error.message}`;
+    renderOwnerAttentionWidget();
+    console.error(error);
+  }
+}
+
+async function submitOwnerDecision(taskKey, decision, message) {
+  if ((decision === "REVISION" || decision === "REJECT") && !message.trim()) {
+    ownerAttentionState.error = `${decision === "REJECT" ? "Reject" : "Revision"} message is required.`;
+    ownerAttentionState.success = "";
+    renderOwnerAttentionWidget();
+    return;
+  }
+
+  ownerAttentionState.loadingTaskKey = taskKey;
+  ownerAttentionState.error = "";
+  ownerAttentionState.success = "";
+  renderOwnerAttentionWidget();
+
+  try {
+    const response = await fetch("/api/owner/decision", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        task_key: taskKey,
+        decision,
+        message
+      })
+    });
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || !payload.ok) {
+      throw new Error(payload.error || `Owner decision failed: ${response.status}`);
+    }
+
+    ownerAttentionState.success = `${decision} recorded for ${taskKey}.`;
+    ownerAttentionState.revisionTaskKey = "";
+    await Promise.all([
+      loadOwnerAttention(),
+      loadSummaryCards(),
+      loadLatestTasks(),
+      loadLatestEvents()
+    ]);
+  } catch (error) {
+    ownerAttentionState.error = error.message;
+    console.error(error);
+  } finally {
+    ownerAttentionState.loadingTaskKey = "";
+    renderOwnerAttentionWidget();
+  }
+}
+
+ensureOwnerAttentionWidget();
+loadOwnerAttention();
+setInterval(loadOwnerAttention, 7000);
+
 /* Pixel Office Runtime Status Integration */
 const runtimeAgentMap = {
   pm_agent: {
