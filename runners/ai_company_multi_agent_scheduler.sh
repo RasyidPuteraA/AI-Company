@@ -238,6 +238,17 @@ role_csv_to_array() {
   done
 }
 
+role_state_for() {
+  local role="$1"
+  local role_state_file="$STATE_DIR/roles/$role.env"
+
+  if [ ! -f "$role_state_file" ] || ! bash -n "$role_state_file" 2>/dev/null; then
+    return 0
+  fi
+
+  bash -c 'source "$1"; printf "%s" "${ROLE_STATE:-}"' _ "$role_state_file" 2>/dev/null || true
+}
+
 select_internal_roles() {
   local -n selected_ref="$1"
   local role_order=()
@@ -367,15 +378,25 @@ run_iteration() {
   log_scheduler_event "RUNNING" "Scheduler cycle started" "Mode=$mode work_hours_mode=$WORK_HOURS_MODE roles=$active_agents client_pending=$client_pending."
 
   pids=()
+  pid_roles=()
   for role in "${roles[@]}"; do
+    rm -f "$STATE_DIR/roles/$role.env"
     AI_COMPANY_WORK_HOURS_MODE="$WORK_HOURS_MODE" ./runners/ai_company_role_cycle.sh "$role" "$mode" &
     pids+=("$!")
+    pid_roles+=("$role")
   done
 
   failed=0
-  for pid in "${pids[@]}"; do
+  for index in "${!pids[@]}"; do
+    pid="${pids[$index]}"
+    role="${pid_roles[$index]}"
     if ! wait "$pid"; then
-      failed=1
+      role_state="$(role_state_for "$role")"
+      if [ "$role_state" = "skipped_overtime" ]; then
+        echo "$role: expected overtime skip; treating as neutral."
+      else
+        failed=1
+      fi
     fi
   done
 

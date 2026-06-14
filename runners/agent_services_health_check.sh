@@ -48,9 +48,32 @@ check_service_health() {
     fi
   fi
 
+  if [ "$active_state" = "inactive" ] &&
+    [ "$sub_state" = "dead" ] &&
+    [ "$result" = "success" ] &&
+    [ "$exec_status" = "0" ] &&
+    service_uses_bounded_iterations "$service"; then
+    echo "- $service: healthy bounded completion active_state=$active_state sub_state=$sub_state result=$result exec_status=$exec_status"
+    return 0
+  fi
+
   echo "- $service: NOT healthy active_state=$active_state sub_state=$sub_state result=$result exec_status=$exec_status"
   systemctl status "$service" --no-pager -l || true
   return 1
+}
+
+service_uses_bounded_iterations() {
+  local service="$1"
+  local unit_text
+
+  unit_text="$(
+    {
+      systemctl show "$service" -p ExecStart --value 2>/dev/null || true
+      systemctl cat "$service" 2>/dev/null || true
+    } | tr '\n' ' '
+  )"
+
+  printf "%s" "$unit_text" | grep -Eq -- '--max-iterations(=|[[:space:]]+)[0-9]+'
 }
 
 echo

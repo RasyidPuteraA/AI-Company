@@ -1955,3 +1955,37 @@ Expected behavior:
 - `/api/summary` returns fast sanitized JSON `503` with `generated_at` when DB timeout/failure persists
 - dashboard health retries `/api/summary` four times and only fails after all attempts fail
 - scheduler and pre-commit no longer fail on one transient dashboard HTTP `000`, while persistent dashboard failures still fail health
+
+## INTERNAL-094 Handover
+
+Stabilized scheduler health during overtime and bounded agent service mode.
+
+Root cause:
+
+- overtime policy can intentionally skip new autonomous discovery while still allowing QA/reporting
+- bounded `ai-company-agent@*.service` loops can finish successfully as inactive/dead with result success and exit status 0
+- QA pre-commit and DevOps dashboard health could hit `/api/summary` at the same time
+
+Changed files:
+
+    runners/ai_company_multi_agent_scheduler.sh
+    runners/agent_services_health_check.sh
+    runners/dashboard_health_check.sh
+    projects/internal/ai-company-os/INTERNAL-094.md
+    projects/internal/ai-company-os/AGENT_HANDOVER.md
+
+Expected behavior:
+
+- `skipped_overtime` remains visible in role state, but is neutral for scheduler cycle completion when caused by policy
+- bounded agent services that exit successfully with `--max-iterations` are reported as `healthy bounded completion`
+- failed/crashed/nonzero agent service exits still fail health
+- dashboard health checks serialize on the existing `dashboard` lock while keeping retry behavior
+
+Verification:
+
+    bash -n runners/ai_company_multi_agent_scheduler.sh runners/agent_services_health_check.sh runners/dashboard_health_check.sh runners/pre_commit_check.sh runners/system_health_check.sh runners/ai_company_lock.sh
+    ./runners/dashboard_health_check.sh
+    ./runners/agent_services_health_check.sh
+    ./runners/pre_commit_check.sh
+    git status --short
+    git diff --stat

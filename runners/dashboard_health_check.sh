@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+cd "$(dirname "$0")/.."
+
+if [ "${AI_COMPANY_DASHBOARD_HEALTH_LOCK_HELD:-0}" != "1" ]; then
+  exec ./runners/ai_company_lock.sh dashboard env AI_COMPANY_DASHBOARD_HEALTH_LOCK_HELD=1 ./runners/dashboard_health_check.sh "$@"
+fi
+
 BASE_URL="${AI_COMPANY_DASHBOARD_URL:-http://127.0.0.1:8787}"
 
 echo "# Dashboard Health Check"
