@@ -1,5 +1,39 @@
 # AGENT_HANDOVER
 
+## INTERNAL-086 Handover
+
+Added safe stale task recovery and autonomous queue cleanup.
+
+New commands:
+
+    ./runners/stale_task_recovery_plan.sh
+    ./runners/stale_task_recovery_apply.sh --dry-run
+    ./runners/agent_runtime_stale_cleanup.sh --dry-run
+
+Reports:
+
+- `company/reports/stale-task-recovery/`
+- `company/reports/stale-task-recovery/latest.md`
+
+Safety behavior:
+
+- default stale task recovery is report-only
+- client tasks are never status-mutated by stale recovery
+- stale tasks are not deleted
+- stale tasks are not marked `DONE` automatically
+- explicit internal/AUTO apply modes require config opt-in and only move safe stale work to `BLOCKED` with a handover note
+- apply skips tasks with active runtime rows or active lock holders
+
+Scheduler/dashboard:
+
+- scheduler runs stale recovery planning after successful cycles when enabled
+- auto-apply remains disabled by default through `AI_COMPANY_STALE_TASK_AUTO_APPLY_INTERNAL=0` and `AI_COMPANY_STALE_TASK_AUTO_APPLY_AUTO=0`
+- dashboard exposes `GET /api/stale-task-recovery/summary` and shows stale counts in the AI Company OS panel
+
+Docs:
+
+    projects/internal/ai-company-os/INTERNAL-086.md
+
 ## INTERNAL-084 Handover
 
 Stabilized the dashboard Codex token card so realtime refresh no longer clears it back to placeholder values.

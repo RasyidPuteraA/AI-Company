@@ -149,6 +149,7 @@ async function loadAiCompanyOsStatus() {
     setText("aiCompanySchedulerRoles", roleSummary || "none");
     setText("aiCompanySchedulerLocks", lockSummary || "none");
     loadPostUpdateSummary().catch(console.error);
+    loadStaleTaskRecoverySummary().catch(console.error);
     setUpdated("aiCompanyOsUpdatedAt");
   } catch (error) {
     toggle.disabled = true;
@@ -163,6 +164,20 @@ async function loadPostUpdateSummary() {
   const status = summary.latest_status || "none";
   const report = summary.latest_report || "No post-update report yet.";
   setText("aiCompanyPostUpdateStatus", `${status} · ${report}`);
+}
+
+async function loadStaleTaskRecoverySummary() {
+  const summary = await loadJson("/api/stale-task-recovery/summary");
+  const total = summary.stale_total || 0;
+  const parts = [
+    `total ${total}`,
+    `internal ${summary.stale_internal || 0}`,
+    `auto ${summary.stale_auto || 0}`,
+    `client ${summary.stale_client || 0}`
+  ];
+  const report = summary.latest_report || "No recovery report yet.";
+  const threshold = summary.threshold_hours || 24;
+  setText("aiCompanyStaleTaskRecovery", `${parts.join(" · ")} · threshold ${threshold}h · ${report}`);
 }
 
 async function loadLearningSummary() {

@@ -16,6 +16,7 @@ const LEARNING_PATTERNS_DIR = path.join(ROOT_DIR, "company", "learning", "patter
 const LEARNING_CONTEXT_FILE = path.join(ROOT_DIR, "company", "learning", "context", "latest-learning-context.md");
 const LEARNING_REPORTS_DIR = path.join(ROOT_DIR, "company", "reports", "learning");
 const POST_UPDATE_REPORTS_DIR = path.join(ROOT_DIR, "company", "reports", "post-update");
+const STALE_TASK_REPORTS_DIR = path.join(ROOT_DIR, "company", "reports", "stale-task-recovery");
 const AI_COMPANY_OS_STATUS_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_os_status.sh");
 const AI_COMPANY_OS_CONTROL_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_os_control.sh");
 
@@ -406,6 +407,50 @@ function getPostUpdateDashboardSummary() {
     latest_status: readReportStatus(text) || "unknown",
     latest_title: title,
     generated_at: readDashField(text, "generated_at")
+  };
+}
+
+function getStaleTaskRecoverySummary() {
+  const reports = listMarkdownFiles(STALE_TASK_REPORTS_DIR);
+  const config = readEnvConfig(LEARNING_CONFIG_FILE);
+  const thresholdHoursRaw = Number(config.AI_COMPANY_STALE_TASK_AGE_HOURS || 24);
+  const thresholdHours = Number.isInteger(thresholdHoursRaw) && thresholdHoursRaw > 0 ? thresholdHoursRaw : 24;
+  const text = runSql(`
+    SELECT
+      COUNT(*) FILTER (
+        WHERE status = 'IN_PROGRESS'
+          AND updated_at < now() - interval '${thresholdHours} hours'
+      ) AS stale_total,
+      COUNT(*) FILTER (
+        WHERE status = 'IN_PROGRESS'
+          AND task_key LIKE 'INTERNAL-%'
+          AND updated_at < now() - interval '${thresholdHours} hours'
+      ) AS stale_internal,
+      COUNT(*) FILTER (
+        WHERE status = 'IN_PROGRESS'
+          AND task_key LIKE 'AUTO-%'
+          AND updated_at < now() - interval '${thresholdHours} hours'
+      ) AS stale_auto,
+      COUNT(*) FILTER (
+        WHERE status = 'IN_PROGRESS'
+          AND task_key NOT LIKE 'INTERNAL-%'
+          AND task_key NOT LIKE 'AUTO-%'
+          AND updated_at < now() - interval '${thresholdHours} hours'
+      ) AS stale_client
+    FROM tasks;
+  `);
+
+  const [stale_total, stale_internal, stale_auto, stale_client] =
+    text.split("|").map((value) => Number(value || 0));
+
+  return {
+    stale_total,
+    stale_internal,
+    stale_auto,
+    stale_client,
+    threshold_hours: thresholdHours,
+    latest_report: reports.length > 0 ? path.relative(ROOT_DIR, reports[0]) : "",
+    generated_at: new Date().toISOString()
   };
 }
 
@@ -833,6 +878,11 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === "/api/post-update/summary" && req.method === "GET") {
       json(res, getPostUpdateDashboardSummary());
+      return;
+    }
+
+    if (pathname === "/api/stale-task-recovery/summary" && req.method === "GET") {
+      json(res, getStaleTaskRecoverySummary());
       return;
     }
 

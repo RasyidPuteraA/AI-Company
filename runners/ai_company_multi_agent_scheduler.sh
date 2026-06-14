@@ -47,6 +47,9 @@ fi
 : "${AI_COMPANY_OVERTIME_ALLOW_REPORTING:=1}"
 : "${AI_COMPANY_LEARNING_ENABLED:=1}"
 : "${AI_COMPANY_AUTO_RESTART_SERVICES:=0}"
+: "${AI_COMPANY_STALE_TASK_RECOVERY_ENABLED:=1}"
+: "${AI_COMPANY_STALE_TASK_AUTO_APPLY_INTERNAL:=0}"
+: "${AI_COMPANY_STALE_TASK_AUTO_APPLY_AUTO:=0}"
 
 if ! [[ "$AI_COMPANY_MAX_PARALLEL_AGENTS" =~ ^[0-9]+$ ]] || [ "$AI_COMPANY_MAX_PARALLEL_AGENTS" -lt 1 ]; then
   AI_COMPANY_MAX_PARALLEL_AGENTS=1
@@ -142,6 +145,47 @@ run_post_update_restart_plan_if_allowed() {
     log_scheduler_event "DONE" "Post-update restart complete" "Auto-restart completed. See $output_file."
   else
     log_scheduler_event "WARN" "Post-update restart warning" "Auto-restart failed or health recovery warned. See $output_file."
+  fi
+}
+
+run_stale_task_recovery_if_allowed() {
+  if [ "${AI_COMPANY_STALE_TASK_RECOVERY_ENABLED:-1}" != "1" ]; then
+    return 0
+  fi
+
+  if [ ! -x ./runners/stale_task_recovery_plan.sh ]; then
+    return 0
+  fi
+
+  local output_file
+  output_file="/tmp/ai-company-stale-task-recovery-plan.out"
+  if ./runners/stale_task_recovery_plan.sh >"$output_file" 2>&1; then
+    log_scheduler_event "REPORT_ONLY" "Stale task recovery plan complete" "Stale task recovery planning completed in report-only mode."
+  else
+    log_scheduler_event "WARN" "Stale task recovery plan warning" "Stale task recovery planning failed; scheduler continued. See $output_file."
+    return 0
+  fi
+
+  if [ ! -x ./runners/stale_task_recovery_apply.sh ]; then
+    return 0
+  fi
+
+  if [ "${AI_COMPANY_STALE_TASK_AUTO_APPLY_INTERNAL:-0}" = "1" ]; then
+    output_file="/tmp/ai-company-stale-task-recovery-apply-internal.out"
+    if AI_COMPANY_STALE_TASK_AUTO_APPLY_INTERNAL=1 ./runners/stale_task_recovery_apply.sh --apply-safe-internal >"$output_file" 2>&1; then
+      log_scheduler_event "DONE" "Stale internal recovery applied" "Safe internal stale task recovery completed. See $output_file."
+    else
+      log_scheduler_event "WARN" "Stale internal recovery warning" "Safe internal stale task recovery failed; scheduler continued. See $output_file."
+    fi
+  fi
+
+  if [ "${AI_COMPANY_STALE_TASK_AUTO_APPLY_AUTO:-0}" = "1" ]; then
+    output_file="/tmp/ai-company-stale-task-recovery-apply-auto.out"
+    if AI_COMPANY_STALE_TASK_AUTO_APPLY_AUTO=1 ./runners/stale_task_recovery_apply.sh --apply-safe-auto >"$output_file" 2>&1; then
+      log_scheduler_event "DONE" "Stale AUTO recovery applied" "Safe AUTO stale task recovery completed. See $output_file."
+    else
+      log_scheduler_event "WARN" "Stale AUTO recovery warning" "Safe AUTO stale task recovery failed; scheduler continued. See $output_file."
+    fi
   fi
 }
 
@@ -324,6 +368,7 @@ run_iteration() {
 
   write_scheduler_state "idle" "$mode" "" "Scheduler cycle complete" "$WORK_HOURS_MODE" "$overtime_info"
   log_scheduler_event "DONE" "Scheduler cycle complete" "Mode=$mode work_hours_mode=$WORK_HOURS_MODE roles=$active_agents completed."
+  run_stale_task_recovery_if_allowed
   run_learning_review_if_allowed
   run_post_update_restart_plan_if_allowed
 }
