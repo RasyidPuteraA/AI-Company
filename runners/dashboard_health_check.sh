@@ -53,14 +53,30 @@ echo "## API smoke tests"
 
 SUMMARY_OUT="$TMP_DIR/summary.out"
 SUMMARY_ERR="$TMP_DIR/summary.err"
-SUMMARY_STATUS="$(curl_status "$BASE_URL/api/summary" "$SUMMARY_OUT" "$SUMMARY_ERR")"
-echo "- /api/summary HTTP $SUMMARY_STATUS"
+SUMMARY_STATUS="000"
+
+for attempt in 1 2 3 4; do
+  SUMMARY_STATUS="$(curl_status "$BASE_URL/api/summary" "$SUMMARY_OUT" "$SUMMARY_ERR")"
+  echo "- /api/summary attempt $attempt HTTP $SUMMARY_STATUS"
+  if [ "$SUMMARY_STATUS" = "200" ]; then
+    break
+  fi
+  sleep 1
+done
 
 if [ "$SUMMARY_STATUS" != "200" ]; then
-  echo "Failed /api/summary stderr:"
-  cat "$SUMMARY_ERR" || true
-  echo "Failed /api/summary response:"
-  cat "$SUMMARY_OUT" || true
+  echo "Failed /api/summary after retries. Last stderr:"
+  if [ -s "$SUMMARY_ERR" ]; then
+    cat "$SUMMARY_ERR" || true
+  else
+    echo "(empty)"
+  fi
+  echo "Last /api/summary response:"
+  if [ -s "$SUMMARY_OUT" ]; then
+    cat "$SUMMARY_OUT" || true
+  else
+    echo "(empty)"
+  fi
   exit 1
 fi
 

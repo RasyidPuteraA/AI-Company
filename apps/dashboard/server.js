@@ -22,26 +22,54 @@ const STALE_TASK_REPORTS_DIR = path.join(ROOT_DIR, "company", "reports", "stale-
 const AI_COMPANY_OS_STATUS_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_os_status.sh");
 const AI_COMPANY_OS_CONTROL_RUNNER = path.join(ROOT_DIR, "runners", "ai_company_os_control.sh");
 
-function runSql(sql) {
-  const output = execFileSync(
-    "docker",
-    [
-      "exec",
-      "ai_company_postgres",
-      "psql",
-      "-U",
-      "ai_company",
-      "-d",
-      "ai_company",
-      "-t",
-      "-A",
-      "-F",
-      "|",
-      "-c",
-      sql
-    ],
-    { encoding: "utf8" }
+function positiveInteger(value, fallback) {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+const DB_EXEC_TIMEOUT_MS = positiveInteger(process.env.AI_COMPANY_DASHBOARD_DB_TIMEOUT_MS, 5000);
+
+function dashboardDbError(error) {
+  const timedOut = error && (
+    error.signal === "SIGTERM"
+    || error.code === "ETIMEDOUT"
+    || /timed out/i.test(String(error.message || ""))
   );
+  const publicError = new Error(timedOut ? "Dashboard database query timed out" : "Dashboard database query failed");
+  publicError.code = timedOut ? "DASHBOARD_DB_TIMEOUT" : "DASHBOARD_DB_ERROR";
+  return publicError;
+}
+
+function runSql(sql) {
+  let output = "";
+
+  try {
+    output = execFileSync(
+      "docker",
+      [
+        "exec",
+        "ai_company_postgres",
+        "psql",
+        "-U",
+        "ai_company",
+        "-d",
+        "ai_company",
+        "-t",
+        "-A",
+        "-F",
+        "|",
+        "-c",
+        sql
+      ],
+      {
+        encoding: "utf8",
+        timeout: DB_EXEC_TIMEOUT_MS,
+        maxBuffer: 1024 * 1024
+      }
+    );
+  } catch (error) {
+    throw dashboardDbError(error);
+  }
 
   return output.trim();
 }
@@ -1324,29 +1352,38 @@ if (pathname === "/api/owner/commands" && req.method === "POST") {
     }
 
 if (pathname === "/api/summary") {
-      const text = runSql(`
-        SELECT
-          COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%' AND task_key NOT LIKE 'AUTO-%') AS client_tasks,
-          COUNT(*) FILTER (WHERE task_key LIKE 'INTERNAL-%') AS internal_tasks,
-          COUNT(*) FILTER (WHERE task_key LIKE 'AUTO-%') AS autonomous_tasks,
-          COUNT(*) FILTER (WHERE status = 'WAITING_OWNER_ACCEPTANCE') AS waiting_owner,
-          COUNT(*) FILTER (WHERE status = 'ACCEPTED') AS accepted,
-          COUNT(*) FILTER (WHERE status IN ('QA_FAILED','NEEDS_REVISION','BLOCKED')) AS needs_attention
-        FROM tasks;
-      `);
+      try {
+        const text = runSql(`
+          SELECT
+            COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%' AND task_key NOT LIKE 'AUTO-%') AS client_tasks,
+            COUNT(*) FILTER (WHERE task_key LIKE 'INTERNAL-%') AS internal_tasks,
+            COUNT(*) FILTER (WHERE task_key LIKE 'AUTO-%') AS autonomous_tasks,
+            COUNT(*) FILTER (WHERE status = 'WAITING_OWNER_ACCEPTANCE') AS waiting_owner,
+            COUNT(*) FILTER (WHERE status = 'ACCEPTED') AS accepted,
+            COUNT(*) FILTER (WHERE status IN ('QA_FAILED','NEEDS_REVISION','BLOCKED')) AS needs_attention
+          FROM tasks;
+        `);
 
-      const [client_tasks, internal_tasks, autonomous_tasks, waiting_owner, accepted, needs_attention] =
-        text.split("|").map((value) => Number(value || 0));
+        const [client_tasks, internal_tasks, autonomous_tasks, waiting_owner, accepted, needs_attention] =
+          text.split("|").map((value) => Number(value || 0));
 
-      return json(res, {
-        client_tasks,
-        internal_tasks,
-        autonomous_tasks,
-        waiting_owner,
-        accepted,
-        needs_attention,
-        generated_at: new Date().toISOString()
-      });
+        return json(res, {
+          client_tasks,
+          internal_tasks,
+          autonomous_tasks,
+          waiting_owner,
+          accepted,
+          needs_attention,
+          generated_at: new Date().toISOString()
+        });
+      } catch (error) {
+        return json(res, {
+          error: "dashboard_summary_unavailable",
+          error_code: error.code || "DASHBOARD_SUMMARY_ERROR",
+          error_note: error.message,
+          generated_at: new Date().toISOString()
+        }, 503);
+      }
     }
 
     if (pathname === "/api/tasks") {

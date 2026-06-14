@@ -1850,3 +1850,37 @@ Safety:
 - service mapping is limited to dashboard, multi-agent scheduler, and known agent worker services
 - database services and containers are never restarted by the new runners
 - failed health recovery writes an owner-visible note under `company/reports/post-update/`
+
+## INTERNAL-091 Handover
+
+Stabilized dashboard health around transient `/api/summary` timeouts.
+
+Root cause:
+
+- dashboard SQL used `docker exec ... psql` without an explicit subprocess timeout
+- `/api/summary` could hold the Node request until health-check curl returned HTTP `000`
+- `runners/dashboard_health_check.sh` retried `/api/tasks`, but `/api/summary` was a single hard failure
+
+Changed files:
+
+    apps/dashboard/server.js
+    runners/dashboard_health_check.sh
+    projects/internal/ai-company-os/INTERNAL-091.md
+    projects/internal/ai-company-os/AGENT_HANDOVER.md
+
+Verification:
+
+    node --check apps/dashboard/server.js
+    bash -n runners/dashboard_health_check.sh
+    ./runners/dashboard_health_check.sh
+    ./runners/pre_commit_check.sh
+    git status --short
+    git diff --stat
+
+Expected behavior:
+
+- dashboard DB execs are bounded by `AI_COMPANY_DASHBOARD_DB_TIMEOUT_MS`, defaulting to 5000 ms
+- `/api/summary` returns fast success JSON when the DB is healthy
+- `/api/summary` returns fast sanitized JSON `503` with `generated_at` when DB timeout/failure persists
+- dashboard health retries `/api/summary` four times and only fails after all attempts fail
+- scheduler and pre-commit no longer fail on one transient dashboard HTTP `000`, while persistent dashboard failures still fail health
