@@ -16,6 +16,32 @@ fi
 : "${AI_COMPANY_STALE_TASK_RECOVERY_ENABLED:=1}"
 : "${AI_COMPANY_STALE_TASK_AGE_HOURS:=24}"
 
+RUNTIME_MODE=0
+REPORT_DIR="company/reports/stale-task-recovery"
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --runtime)
+      RUNTIME_MODE=1
+      REPORT_DIR="company/runtime/stale-task-recovery"
+      shift
+      ;;
+    -h|--help)
+      cat <<'EOF'
+Usage: ./runners/stale_task_recovery_plan.sh [--runtime]
+
+Generate a stale task recovery plan. Use --runtime for scheduler cycle
+artifacts that should not dirty the tracked repo.
+EOF
+      exit 0
+      ;;
+    *)
+      echo "ERROR: unknown argument: $1" >&2
+      exit 2
+      ;;
+  esac
+done
+
 if [ "$AI_COMPANY_STALE_TASK_RECOVERY_ENABLED" != "1" ]; then
   echo "Stale task recovery planning is disabled by AI_COMPANY_STALE_TASK_RECOVERY_ENABLED."
   exit 0
@@ -26,7 +52,6 @@ if ! [[ "$AI_COMPANY_STALE_TASK_AGE_HOURS" =~ ^[0-9]+$ ]] || [ "$AI_COMPANY_STAL
   exit 1
 fi
 
-REPORT_DIR="company/reports/stale-task-recovery"
 mkdir -p "$REPORT_DIR"
 
 STAMP="$(date +%Y%m%dT%H%M%S%z)"
@@ -83,6 +108,7 @@ SQL
   echo
   echo "- generated_at: $(date -Iseconds)"
   echo "- mode: report-only"
+  echo "- output_scope: $([ "$RUNTIME_MODE" = "1" ] && echo runtime || echo tracked-report)"
   echo "- threshold_hours: $AI_COMPANY_STALE_TASK_AGE_HOURS"
   echo "- report_path: $REPORT"
   echo

@@ -7,6 +7,7 @@ MODE=""
 SKIP_PRECHECK=0
 SINCE_REF=""
 REPORT_DIR="company/reports/post-update"
+RUNTIME_MODE=0
 OS_CONFIG="company/config/ai_company_os.env"
 SCHEDULER_CONFIG="company/config/ai_company_scheduler.env"
 OS_STATE_FILE="company/runtime/ai-company-os/state.env"
@@ -33,9 +34,14 @@ while [ "$#" -gt 0 ]; do
       fi
       shift 2
       ;;
+    --runtime)
+      RUNTIME_MODE=1
+      REPORT_DIR="company/runtime/post-update"
+      shift
+      ;;
     -h|--help)
       cat <<'EOF'
-Usage: ./runners/post_update_service_restart.sh --dry-run|--apply [--since-ref REF] [--skip-precheck]
+Usage: ./runners/post_update_service_restart.sh --dry-run|--apply [--since-ref REF] [--skip-precheck] [--runtime]
 
 Restarts only AI Company OS services affected by changed files. The runner
 refuses to mutate services unless --apply is present.
@@ -80,6 +86,9 @@ fi
 plan_args=()
 if [ -n "$SINCE_REF" ]; then
   plan_args+=(--since-ref "$SINCE_REF")
+fi
+if [ "$RUNTIME_MODE" = "1" ]; then
+  plan_args+=(--runtime)
 fi
 
 mapfile -t planned_services < <(./runners/post_update_service_plan.sh "${plan_args[@]}" --services-only | sed '/^[[:space:]]*$/d')
@@ -132,6 +141,7 @@ write_report() {
     echo "# Post-Update Service Restart"
     echo "- generated_at: $timestamp"
     echo "- mode: $MODE"
+    echo "- output_scope: $([ "$RUNTIME_MODE" = "1" ] && echo runtime || echo tracked-report)"
     echo "- status: $status"
     echo "- report: $report"
     echo "- log: $log_file"
@@ -271,7 +281,12 @@ if [ "$restart_failed" -ne 0 ]; then
   exit 1
 fi
 
-if ./runners/post_update_health_recovery.sh >>"$log_file" 2>&1; then
+health_args=()
+if [ "$RUNTIME_MODE" = "1" ]; then
+  health_args+=(--runtime)
+fi
+
+if ./runners/post_update_health_recovery.sh "${health_args[@]}" >>"$log_file" 2>&1; then
   status="PASS"
   summary="Affected services restarted and health recovery checks passed."
   write_report

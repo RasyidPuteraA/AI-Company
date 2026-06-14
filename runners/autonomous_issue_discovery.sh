@@ -13,6 +13,9 @@ CANDIDATES="$RUNTIME_DIR/${STAMP}-candidates.tsv"
 
 touch "$CANDIDATES"
 
+# shellcheck source=runners/ai_company_generated_path_classifier.sh
+source ./runners/ai_company_generated_path_classifier.sh
+
 add_candidate() {
   local signature="$1"
   local title="$2"
@@ -28,29 +31,6 @@ add_candidate() {
     "$phase" \
     "$title" \
     "$description" >> "$CANDIDATES"
-}
-
-generated_report_path() {
-  case "$1" in
-    company/learning/agent-scorecards/*.md) return 0 ;;
-    company/learning/context/latest-learning-context.md) return 0 ;;
-    company/learning/patterns/*.md) return 0 ;;
-    company/learning/lessons/LESSON-*.md) return 0 ;;
-    company/reports/learning/*.md) return 0 ;;
-    company/reports/stale-task-recovery/latest.md) return 0 ;;
-    company/reports/stale-task-recovery/*-stale-task-recovery-plan.md) return 0 ;;
-    company/reports/post-update/*-service-plan.md) return 0 ;;
-    *) return 1 ;;
-  esac
-}
-
-git_status_path() {
-  local line="$1"
-  local path="${line:3}"
-  case "$path" in
-    *" -> "*) printf "%s\n" "${path##* -> }" ;;
-    *) printf "%s\n" "$path" ;;
-  esac
 }
 
 run_check() {
@@ -91,8 +71,8 @@ dirty_source=0
 while IFS= read -r status_line; do
   [ -z "$status_line" ] && continue
   dirty_total=$((dirty_total + 1))
-  status_path="$(git_status_path "$status_line")"
-  if generated_report_path "$status_path"; then
+  status_path="$(ai_company_git_status_path "$status_line")"
+  if ai_company_generated_path "$status_path"; then
     dirty_generated=$((dirty_generated + 1))
   else
     dirty_source=$((dirty_source + 1))
@@ -111,7 +91,7 @@ elif [ "$dirty_generated" -gt 0 ]; then
   add_candidate \
     "generated_report_dirty_worktree" \
     "Review generated report churn" \
-    "The repository has only generated learning/recovery/post-update report changes. Treat this as report-only churn unless source, runner, config, dashboard, or project docs also changed." \
+    "The repository has only generated report/runtime changes. Treat this as report-only churn unless source, runner, config, dashboard, or project docs also changed." \
     "LOW" \
     "pm_agent" \
     "repo_hygiene"

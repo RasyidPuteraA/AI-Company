@@ -1,5 +1,36 @@
 # AGENT_HANDOVER
 
+## INTERNAL-093 Handover
+
+Stabilized routine scheduler cycles against generated-only report churn.
+
+New shared classifier:
+
+    ./runners/ai_company_generated_path_classifier.sh
+
+Generated/report-only paths now include `company/learning/**`, learning/stale/post-update/autonomous-discovery report trees, and `company/runtime/**`. Runners, dashboard code, internal docs, config, package files, and scripts remain source/config/doc changes.
+
+Behavior changes:
+
+- Generated-only HEAD diffs are marked processed by the cadence gate so post-update routines do not generate another tracked report cycle.
+- Scheduler post-update service plans/restarts/health recovery use `company/runtime/post-update/`.
+- Scheduler stale task recovery planning uses `company/runtime/stale-task-recovery/`.
+- Learning daily review exits without touching tracked files if today’s tracked daily review already exists, writing only a runtime skip note.
+- Autonomous discovery does not create a high-priority dirty-worktree task for generated-only changes.
+- Autonomous code guard treats generated-only dirty state as warning/report-only and still blocks real source/config dirty state.
+
+Docs:
+
+    projects/internal/ai-company-os/INTERNAL-093.md
+
+Verification commands:
+
+    bash -n runners/ai_company_generated_path_classifier.sh runners/ai_company_cadence_gate.sh runners/ai_company_multi_agent_scheduler.sh runners/post_update_service_plan.sh runners/post_update_health_recovery.sh runners/post_update_service_restart.sh runners/stale_task_recovery_plan.sh runners/learning_daily_review.sh runners/autonomous_issue_discovery.sh runners/autonomous_code_guard.sh
+    ./runners/dashboard_health_check.sh
+    ./runners/pre_commit_check.sh
+    git status --short
+    git diff --stat
+
 ## INTERNAL-092 Handover
 
 Stabilized generated learning/recovery/post-update report cadence so healthy scheduler cycles do not dirty the repo every cycle.

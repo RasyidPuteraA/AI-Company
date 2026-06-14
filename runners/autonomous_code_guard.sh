@@ -13,19 +13,8 @@ fi
 
 fail=0
 
-generated_report_path() {
-  case "$1" in
-    company/learning/agent-scorecards/*.md) return 0 ;;
-    company/learning/context/latest-learning-context.md) return 0 ;;
-    company/learning/patterns/*.md) return 0 ;;
-    company/learning/lessons/LESSON-*.md) return 0 ;;
-    company/reports/learning/*.md) return 0 ;;
-    company/reports/stale-task-recovery/latest.md) return 0 ;;
-    company/reports/stale-task-recovery/*-stale-task-recovery-plan.md) return 0 ;;
-    company/reports/post-update/*-service-plan.md) return 0 ;;
-    *) return 1 ;;
-  esac
-}
+# shellcheck source=runners/ai_company_generated_path_classifier.sh
+source ./runners/ai_company_generated_path_classifier.sh
 
 changed_files="$(
   {
@@ -41,7 +30,7 @@ generated_changed_count=0
 
 while IFS= read -r file; do
   [ -z "$file" ] && continue
-  if generated_report_path "$file"; then
+  if ai_company_generated_path "$file"; then
     generated_changed_count=$((generated_changed_count + 1))
   else
     source_changed_files="${source_changed_files}${file}"$'\n'
@@ -58,7 +47,7 @@ echo "- max changed files: $AI_COMPANY_AUTO_MAX_CHANGED_FILES"
 echo
 
 if [ "$source_changed_count" -eq 0 ] && [ "$generated_changed_count" -gt 0 ]; then
-  echo "WARN: dirty worktree contains only generated learning/recovery/post-update reports."
+  echo "WARN: dirty worktree contains only generated report/runtime changes."
   echo "Autonomous code guard passed in report-only mode."
   exit 0
 fi

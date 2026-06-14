@@ -6,6 +6,10 @@ cd "$(dirname "$0")/.."
 SINCE_REF=""
 SERVICES_ONLY=0
 REPORT_DIR="company/reports/post-update"
+RUNTIME_MODE=0
+
+# shellcheck source=runners/ai_company_generated_path_classifier.sh
+source ./runners/ai_company_generated_path_classifier.sh
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -21,12 +25,18 @@ while [ "$#" -gt 0 ]; do
       SERVICES_ONLY=1
       shift
       ;;
+    --runtime)
+      RUNTIME_MODE=1
+      REPORT_DIR="company/runtime/post-update"
+      shift
+      ;;
     -h|--help)
       cat <<'EOF'
-Usage: ./runners/post_update_service_plan.sh [--since-ref REF]
+Usage: ./runners/post_update_service_plan.sh [--since-ref REF] [--runtime]
 
 Detect changed files and report which AI Company OS systemd services would need
-a post-update restart. This runner is report-only.
+a post-update restart. This runner is report-only. Use --runtime for scheduler
+cycle artifacts that should not dirty the tracked repo.
 EOF
       exit 0
       ;;
@@ -94,7 +104,13 @@ affected_services_for_file() {
   esac
 }
 
-mapfile -t files < <(changed_files | sed '/^[[:space:]]*$/d' | grep -Ev '^company/reports/post-update/' | sort -u)
+mapfile -t files < <(
+  changed_files | sed '/^[[:space:]]*$/d' | sort -u | while IFS= read -r file; do
+    if ! ai_company_generated_path "$file"; then
+      printf "%s\n" "$file"
+    fi
+  done
+)
 services=()
 for file in "${files[@]}"; do
   affected_services_for_file "$file" services
@@ -108,6 +124,7 @@ report="$REPORT_DIR/${stamp}-service-plan.md"
   echo "# Post-Update Service Restart Plan"
   echo "- generated_at: $timestamp"
   echo "- mode: report-only"
+  echo "- output_scope: $([ "$RUNTIME_MODE" = "1" ] && echo runtime || echo tracked-report)"
   echo "- since_ref: ${SINCE_REF:-none}"
   echo
   echo "## Changed Files"

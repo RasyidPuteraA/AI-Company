@@ -4,6 +4,31 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 REPORT_DIR="company/reports/post-update"
+RUNTIME_MODE=0
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --runtime)
+      RUNTIME_MODE=1
+      REPORT_DIR="company/runtime/post-update"
+      shift
+      ;;
+    -h|--help)
+      cat <<'EOF'
+Usage: ./runners/post_update_health_recovery.sh [--runtime]
+
+Run post-update health checks and write the report. Use --runtime for scheduler
+cycle artifacts that should not dirty the tracked repo.
+EOF
+      exit 0
+      ;;
+    *)
+      echo "ERROR: unknown argument: $1" >&2
+      exit 2
+      ;;
+  esac
+done
+
 mkdir -p "$REPORT_DIR"
 
 timestamp="$(date -Iseconds)"
@@ -62,6 +87,7 @@ done
   echo "# Post-Update Health Recovery"
   echo "- generated_at: $timestamp"
   echo "- status: $status"
+  echo "- output_scope: $([ "$RUNTIME_MODE" = "1" ] && echo runtime || echo tracked-report)"
   echo
   echo "## Checks"
   for row in "${results[@]}"; do

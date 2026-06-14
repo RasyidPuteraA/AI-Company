@@ -5,9 +5,10 @@ cd "$(dirname "$0")/.."
 
 CONFIG="company/config/ai_company_scheduler.env"
 REPORT_DIR="company/reports/learning"
+RUNTIME_DIR="company/runtime/learning"
 TASK_PROPOSAL_FILE="$REPORT_DIR/proposed-internal-tasks.md"
 
-mkdir -p "$REPORT_DIR"
+mkdir -p "$REPORT_DIR" "$RUNTIME_DIR"
 
 if [ -f "$CONFIG" ]; then
   # shellcheck disable=SC1091
@@ -19,7 +20,21 @@ fi
 : "${AI_COMPANY_LEARNING_CREATE_TASKS:=1}"
 
 timestamp="$(date -Iseconds)"
-report_path="$REPORT_DIR/$(date +%F)-daily-learning-review.md"
+today="$(date +%F)"
+report_path="$REPORT_DIR/${today}-daily-learning-review.md"
+runtime_note="$RUNTIME_DIR/${today}-daily-learning-review.skip"
+
+if [ -f "$report_path" ]; then
+  {
+    echo "skipped_at=$timestamp"
+    echo "reason=tracked daily learning review already exists"
+    echo "report=$report_path"
+  } > "$runtime_note"
+  echo "Learning daily review already completed today."
+  echo "report=$report_path"
+  echo "runtime_note=$runtime_note"
+  exit 0
+fi
 
 if [ "$AI_COMPANY_LEARNING_ENABLED" != "1" ]; then
   {

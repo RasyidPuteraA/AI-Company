@@ -136,8 +136,8 @@ run_post_update_restart_plan_if_allowed() {
   fi
 
   output_file="/tmp/ai-company-post-update-service-plan.out"
-  if ./runners/post_update_service_plan.sh >"$output_file" 2>&1; then
-    log_scheduler_event "DONE" "Post-update restart plan complete" "Post-update service plan completed in report-only mode."
+  if ./runners/post_update_service_plan.sh --runtime >"$output_file" 2>&1; then
+    log_scheduler_event "DONE" "Post-update restart plan complete" "Post-update service plan completed in runtime report-only mode."
   else
     log_scheduler_event "WARN" "Post-update restart plan warning" "Post-update service plan failed; scheduler continued. See $output_file."
     return 0
@@ -154,7 +154,7 @@ run_post_update_restart_plan_if_allowed() {
   fi
 
   output_file="/tmp/ai-company-post-update-service-restart.out"
-  if ./runners/post_update_service_restart.sh --apply >"$output_file" 2>&1; then
+  if ./runners/post_update_service_restart.sh --apply --runtime >"$output_file" 2>&1; then
     ./runners/ai_company_cadence_gate.sh mark-git-head service-check "$post_update_state_dir" >/dev/null 2>&1 || true
     log_scheduler_event "DONE" "Post-update restart complete" "Auto-restart completed. See $output_file."
   else
@@ -177,9 +177,9 @@ run_stale_task_recovery_if_allowed() {
 
   local output_file
   output_file="/tmp/ai-company-stale-task-recovery-plan.out"
-  if ./runners/stale_task_recovery_plan.sh >"$output_file" 2>&1; then
+  if ./runners/stale_task_recovery_plan.sh --runtime >"$output_file" 2>&1; then
     ./runners/ai_company_cadence_gate.sh mark-interval stale-task-recovery-plan >/dev/null 2>&1 || true
-    log_scheduler_event "REPORT_ONLY" "Stale task recovery plan complete" "Stale task recovery planning completed in report-only mode."
+    log_scheduler_event "REPORT_ONLY" "Stale task recovery plan complete" "Stale task recovery planning completed in runtime report-only mode."
   else
     log_scheduler_event "WARN" "Stale task recovery plan warning" "Stale task recovery planning failed; scheduler continued. See $output_file."
     return 0

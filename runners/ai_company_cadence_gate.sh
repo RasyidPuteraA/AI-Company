@@ -5,6 +5,9 @@ cd "$(dirname "$0")/.."
 
 DEFAULT_STATE_DIR="company/runtime/cadence"
 
+# shellcheck source=runners/ai_company_generated_path_classifier.sh
+source ./runners/ai_company_generated_path_classifier.sh
+
 usage() {
   cat <<'EOF'
 Usage:
@@ -104,6 +107,12 @@ case "$cmd" in
       exit 2
     fi
     last="$(read_first_line "$state_dir/$name.head")"
+    if [ -n "$last" ] && [ "$last" != "$head" ] && git rev-parse --verify "$last^{commit}" >/dev/null 2>&1; then
+      if git diff --name-only "$last" "$head" 2>/dev/null | ai_company_paths_generated_only; then
+        write_atomic "$state_dir/$name.head" "$head"
+        exit 1
+      fi
+    fi
     [ "$last" != "$head" ]
     ;;
   mark-git-head)
