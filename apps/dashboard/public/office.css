@@ -1,530 +1,88 @@
-/* INTERNAL-048: Final Pixel Office Stylesheet
-   This file is loaded after styles.css and becomes the final source of truth
-   for Pixel Office layout, map viewport, JIK sprites, and agent placement. */
+/* AI Company OS — Pixel Office Canvas Stylesheet v2
+   Source of truth for #tilemapOffice and canvas renderer.
+   Replaces INTERNAL-048..073D accumulated !important layers. */
 
+/* ─── Office Stage Container ─────────────────────────────────────── */
 body.wireframe-dashboard .office-main-card {
-  min-height: 860px !important;
+  min-height: 860px;
 }
 
-body.wireframe-dashboard .pixel-office.tilemap-office-v1,
 #tilemapOffice {
-  position: relative !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 100% !important;
-  height: 800px !important;
-  min-height: 800px !important;
-  max-width: none !important;
-  padding: 14px !important;
-  overflow: hidden !important;
-  border: 4px solid #334155 !important;
-  border-radius: 22px !important;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-height: clamp(500px, 64vh, 760px);
+  padding: 14px;
+  overflow: hidden;
+  border: 4px solid #334155;
+  border-radius: 22px;
   background:
     radial-gradient(circle at center, rgba(56, 189, 248, 0.06), transparent 34%),
-    #0f172a !important;
+    #0f172a;
   box-shadow:
     inset 0 0 0 3px rgba(2, 6, 23, 0.86),
-    0 24px 80px rgba(0, 0, 0, 0.28) !important;
-  image-rendering: pixelated !important;
+    0 24px 80px rgba(0, 0, 0, 0.28);
+  image-rendering: pixelated;
 }
 
+/* ─── Tilemap Stage ──────────────────────────────────────────────── */
 #tilemapOffice .tilemap-stage {
-  position: relative !important;
-  width: min(100%, 1480px) !important;
-  height: auto !important;
-  max-width: none !important;
-  max-height: none !important;
-  aspect-ratio: 24 / 13 !important;
-  overflow: hidden !important;
-  border: 3px solid rgba(71, 85, 105, 0.88) !important;
-  border-radius: 14px !important;
-  background-image: url("/assets/custom-office/maps/office-map-v1.png") !important;
-  background-size: contain !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-color: #111827 !important;
+  position: relative;
+  height: clamp(490px, 62vh, 735px);
+  max-height: clamp(490px, 62vh, 735px);
+  width: 100%;
+  overflow: hidden;
+  border: 3px solid rgba(71, 85, 105, 0.88);
+  border-radius: 14px;
+  background: #070b18;
   box-shadow:
     inset 0 0 0 3px rgba(2, 6, 23, 0.86),
-    0 18px 60px rgba(0, 0, 0, 0.28) !important;
-  image-rendering: pixelated !important;
+    0 18px 60px rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  image-rendering: pixelated;
 }
 
-/* Disable older DOM tile grid rendering. The accepted baseline uses one stable PNG map. */
-#tilemapOffice .tilemap-grid,
-#tilemapOffice .map-tile {
-  display: none !important;
+/* ─── Canvas Mode (production-floorplan-mode) ────────────────────── */
+#tilemapOffice.production-floorplan-mode .tilemap-stage {
+  background: #070b18;
 }
 
-/* Hide older experimental room layers if still present. */
-#tilemapOffice .clean-room,
-#tilemapOffice .office-room,
-#tilemapOffice .office-hallway,
-#tilemapOffice .office-sim-bg,
-#tilemapOffice .clean-office-floor {
-  display: none !important;
-}
-
-/* Keep labels/zones small and readable. */
-#tilemapOffice .room-zone {
-  position: absolute !important;
-  z-index: 7 !important;
-  pointer-events: none !important;
-  display: grid !important;
-  gap: 2px !important;
-  color: #e0f2fe !important;
-  text-shadow: 2px 2px 0 #020617 !important;
-  transform: none !important;
-}
-
-#tilemapOffice .room-zone span {
-  font-size: 11px !important;
-  line-height: 1 !important;
-  font-weight: 900 !important;
-  letter-spacing: normal !important;
-}
-
-#tilemapOffice .room-zone small {
-  color: #93c5fd !important;
-  font-size: 9px !important;
-  line-height: 1 !important;
-  font-weight: 800 !important;
-}
-
-#tilemapOffice .room-zone-pm { left: 8%; top: 16%; }
-#tilemapOffice .room-zone-engineer { left: 39%; top: 16%; }
-#tilemapOffice .room-zone-qa { left: 70%; top: 16%; }
-#tilemapOffice .room-zone-devops { left: 8%; top: 64%; }
-#tilemapOffice .room-zone-meeting { left: 39%; top: 64%; }
-#tilemapOffice .room-zone-owner { left: 70%; top: 64%; }
-
-/* Props remain separate overlays for now. */
-#tilemapOffice .map-prop {
-  position: absolute !important;
-  z-index: 6 !important;
-  image-rendering: pixelated !important;
-}
-
-#tilemapOffice .prop-desk {
-  width: 74px !important;
-  height: 30px !important;
-  border: 3px solid #020617 !important;
-  background: linear-gradient(180deg, #92400e, #78350f) !important;
-  box-shadow: 5px 5px 0 rgba(2, 6, 23, 0.30) !important;
-}
-
-#tilemapOffice .prop-computer {
-  width: 28px !important;
-  height: 18px !important;
-  border: 3px solid #020617 !important;
-  background: #38bdf8 !important;
-  box-shadow: 0 8px 0 #334155 !important;
-}
-
-#tilemapOffice .prop-server {
-  width: 48px !important;
-  height: 84px !important;
-  border: 3px solid #020617 !important;
-  background:
-    linear-gradient(#22c55e 0 4px, transparent 4px 14px),
-    linear-gradient(#38bdf8 0 4px, transparent 4px 14px),
-    #111827 !important;
-  background-size: 100% 18px !important;
-}
-
-#tilemapOffice .prop-table {
-  width: 130px !important;
-  height: 46px !important;
-  border: 3px solid #020617 !important;
-  background: linear-gradient(180deg, #7c3aed, #4c1d95) !important;
-}
-
-#tilemapOffice .prop-board {
-  width: 92px !important;
-  height: 46px !important;
-  border: 3px solid #020617 !important;
-  background: #dbeafe !important;
-  color: #0f172a !important;
-  display: grid !important;
-  place-items: center !important;
-  font-size: 9px !important;
-  font-weight: 900 !important;
-}
-
-#tilemapOffice .prop-safe {
-  width: 40px !important;
-  height: 40px !important;
-  border: 3px solid #020617 !important;
-  background: #334155 !important;
-  box-shadow: inset 0 0 0 5px #475569 !important;
-}
-
-#tilemapOffice .pm-desk { left: 10%; top: 34%; }
-#tilemapOffice .pm-computer { left: 12%; top: 29%; }
-
-#tilemapOffice .engineer-desk { left: 42%; top: 34%; width: 104px !important; }
-#tilemapOffice .engineer-computer { left: 45%; top: 29%; width: 42px !important; }
-
-#tilemapOffice .qa-desk { left: 72%; top: 34%; }
-#tilemapOffice .qa-computer { left: 74%; top: 29%; }
-
-#tilemapOffice .devops-server { left: 9%; top: 69%; }
-#tilemapOffice .devops-desk { left: 14%; top: 80%; }
-
-#tilemapOffice .meeting-table { left: 43%; top: 78%; }
-#tilemapOffice .meeting-board { left: 56%; top: 68%; }
-
-#tilemapOffice .owner-desk {
-  left: 72%;
-  top: 80%;
-  background: linear-gradient(180deg, #0f766e, #134e4a) !important;
-}
-#tilemapOffice .owner-safe { left: 86%; top: 77%; }
-
-/* Final JIK agent rendering. */
-#tilemapOffice .tile-agent {
-  position: absolute !important;
-  z-index: 9 !important;
-  display: block !important;
-  width: 72px !important;
-  height: 84px !important;
-  font-size: 0 !important;
-  transform: translate(-50%, -50%) !important;
-  transition:
-    left 0.55s cubic-bezier(.2,.8,.2,1),
-    top 0.55s cubic-bezier(.2,.8,.2,1) !important;
-  filter: drop-shadow(5px 6px 0 rgba(2, 6, 23, 0.38)) !important;
-}
-
-#tilemapOffice .tile-agent .agent-body {
-  display: none !important;
-}
-
-#tilemapOffice .tile-agent .agent-shadow {
-  position: absolute !important;
-  left: 50% !important;
-  bottom: 8px !important;
-  width: 40px !important;
-  height: 16px !important;
-  transform: translateX(-50%) !important;
-  background-image: url("/assets/jik/metrocity-characters/shadow.png") !important;
-  background-repeat: no-repeat !important;
-  background-size: 40px 40px !important;
-  background-position: center !important;
-  opacity: 0.78 !important;
-  border-radius: 0 !important;
-}
-
-#tilemapOffice .jik-sprite-frame {
-  position: absolute !important;
-  left: 50% !important;
-  top: 4px !important;
-  width: 32px !important;
-  height: 32px !important;
-  transform: translateX(-50%) scale(2) !important;
-  transform-origin: top center !important;
-  background-repeat: no-repeat !important;
-  background-size: 32px 32px !important;
-  background-position: center !important;
-  image-rendering: pixelated !important;
-  filter: drop-shadow(2px 3px 0 rgba(2, 6, 23, 0.45)) !important;
-}
-
-#tilemapOffice .pm-sprite .jik-sprite-frame {
-  background-image: url("/assets/jik/metrocity-characters/pm.png") !important;
-}
-
-#tilemapOffice .engineer-sprite .jik-sprite-frame {
-  background-image: url("/assets/jik/metrocity-characters/engineer.png") !important;
-}
-
-#tilemapOffice .qa-sprite .jik-sprite-frame {
-  background-image: url("/assets/jik/metrocity-characters/qa.png") !important;
-}
-
-#tilemapOffice .devops-sprite .jik-sprite-frame {
-  background-image: url("/assets/jik/metrocity-characters/devops.png") !important;
-}
-
-#tilemapOffice .owner-sprite .jik-sprite-frame {
-  background-image: url("/assets/jik/metrocity-characters/owner.png") !important;
-}
-
-#tilemapOffice .tile-agent .agent-name {
-  position: absolute !important;
-  top: 72px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  color: #eff6ff !important;
-  font-size: 10px !important;
-  font-weight: 900 !important;
-  text-shadow: 1px 1px 0 #020617 !important;
-  white-space: nowrap !important;
-}
-
-#tilemapOffice .tile-agent .agent-bubble {
-  position: absolute !important;
-  display: none !important;
-  left: 50% !important;
-  bottom: 88px !important;
-  min-width: 52px !important;
-  max-width: 135px !important;
-  transform: translateX(-50%) !important;
-  border: 2px solid rgba(226, 232, 240, 0.72) !important;
-  border-radius: 8px !important;
-  padding: 5px 7px !important;
-  background: rgba(15, 23, 42, 0.96) !important;
-  color: #e0f2fe !important;
-  font-size: 9px !important;
-  line-height: 1.2 !important;
-  text-align: center !important;
-  white-space: nowrap !important;
-  box-shadow: 4px 4px 0 rgba(2, 6, 23, 0.42) !important;
-}
-
-#tilemapOffice .tile-agent.state-working .agent-bubble,
-#tilemapOffice .tile-agent.state-blocked .agent-bubble,
-#tilemapOffice .tile-agent.state-failed .agent-bubble {
-  display: block !important;
-}
-
-#tilemapOffice .tile-agent.state-working .jik-sprite-frame {
-  animation: office-agent-idle-bob 0.72s steps(2) infinite !important;
-}
-
-@keyframes office-agent-idle-bob {
-  0% { top: 4px; }
-  100% { top: 1px; }
-}
-
-/* Agent positions on accepted custom map baseline. */
-#tilemapOffice .tile-agent[data-room="pm"] {
-  left: 17% !important;
-  top: 35% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="engineer"] {
-  left: 50% !important;
-  top: 35% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="qa"] {
-  left: 83% !important;
-  top: 35% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="devops"] {
-  left: 17% !important;
-  top: 78% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="meeting"] {
-  left: 50% !important;
-  top: 78% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="owner"] {
-  left: 83% !important;
-  top: 78% !important;
-}
-
-@media (max-width: 900px) {
-  body.wireframe-dashboard .pixel-office.tilemap-office-v1,
-  #tilemapOffice {
-    height: 520px !important;
-    min-height: 520px !important;
-    padding: 8px !important;
-  }
-
-  #tilemapOffice .tile-agent {
-    width: 58px !important;
-    height: 70px !important;
-  }
-
-  #tilemapOffice .jik-sprite-frame {
-    transform: translateX(-50%) scale(1.7) !important;
-  }
-}
-
-/* INTERNAL-049: LimeZu Modern Office Map v1 */
-#tilemapOffice .tilemap-stage {
-  background-image: url("/assets/limezu/maps/office-map-v2.png") !important;
-}
-
-/* INTERNAL-049 polish: LimeZu map already contains furniture/rooms.
-   Keep only JIK agents as live overlays. */
-#tilemapOffice .room-zone,
-#tilemapOffice .map-prop {
-  display: none !important;
-}
-
-/* Move live JIK agents to better spots on LimeZu office-map-v2. */
-#tilemapOffice .tile-agent[data-room="pm"] {
-  left: 17% !important;
-  top: 36% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="engineer"] {
-  left: 50% !important;
-  top: 36% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="qa"] {
-  left: 83% !important;
-  top: 36% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="devops"] {
-  left: 17% !important;
-  top: 78% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="meeting"] {
-  left: 50% !important;
-  top: 78% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="owner"] {
-  left: 83% !important;
-  top: 78% !important;
-}
-
-/* INTERNAL-049 polish v2: align agents with polished LimeZu map */
-#tilemapOffice .tile-agent[data-room="pm"] {
-  left: 17% !important;
-  top: 38% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="engineer"] {
-  left: 50% !important;
-  top: 38% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="qa"] {
-  left: 83% !important;
-  top: 38% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="devops"] {
-  left: 17% !important;
-  top: 77% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="meeting"] {
-  left: 50% !important;
-  top: 77% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="owner"] {
-  left: 83% !important;
-  top: 77% !important;
-}
-
-/* INTERNAL-049 floorplan mode: reference-inspired LimeZu office is 24x16 tiles */
-#tilemapOffice .tilemap-stage {
-  aspect-ratio: 3 / 2 !important;
-  width: min(100%, 1260px) !important;
-}
-
-/* Softer live agent labels on floorplan map */
-#tilemapOffice .tile-agent .agent-name {
-  top: 69px !important;
-  font-size: 9px !important;
-  opacity: 0.95 !important;
-}
-
-/* Floorplan mode agent anchors */
-#tilemapOffice .tile-agent[data-room="pm"] {
-  left: 24% !important;
-  top: 44% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="engineer"] {
-  left: 50% !important;
-  top: 44% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="qa"] {
-  left: 76% !important;
-  top: 44% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="devops"] {
-  left: 34% !important;
-  top: 78% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="meeting"] {
-  left: 50% !important;
-  top: 76% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="owner"] {
-  left: 76% !important;
-  top: 78% !important;
-}
-
-/* INTERNAL-049 reference floorplan v2 */
-#tilemapOffice .tilemap-stage {
-  aspect-ratio: 24 / 17 !important;
-  width: min(100%, 1220px) !important;
-}
-
-#tilemapOffice .tile-agent[data-room="pm"] {
-  left: 24% !important;
-  top: 42% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="engineer"] {
-  left: 50% !important;
-  top: 42% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="qa"] {
-  left: 76% !important;
-  top: 42% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="devops"] {
-  left: 36% !important;
-  top: 78% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="meeting"] {
-  left: 54% !important;
-  top: 78% !important;
-}
-
-#tilemapOffice .tile-agent[data-room="owner"] {
-  left: 78% !important;
-  top: 78% !important;
-}
-
-/* INTERNAL-050: Canvas Pixel Office mode */
-#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
-  background-image: none !important;
-  background-color: #10101c !important;
-  aspect-ratio: 10 / 7 !important;
-  width: min(100%, 1180px) !important;
-  display: grid !important;
-  place-items: center !important;
-}
-
+#tilemapOffice.production-floorplan-mode #officeCanvas,
 #tilemapOffice.canvas-floorplan-mode #officeCanvas {
-  width: 100% !important;
-  height: 100% !important;
-  display: block !important;
-  image-rendering: pixelated !important;
-  image-rendering: crisp-edges !important;
+  display: block;
+  width: auto;
+  height: calc(100% - 18px);
+  max-width: calc(100% - 18px);
+  max-height: calc(100% - 18px);
+  margin: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
+/* Hide all legacy DOM office elements when canvas is active */
+#tilemapOffice.production-floorplan-mode .tilemap-grid,
+#tilemapOffice.production-floorplan-mode .office-grid,
+#tilemapOffice.production-floorplan-mode .office-room,
+#tilemapOffice.production-floorplan-mode .office-hallway,
+#tilemapOffice.production-floorplan-mode .clean-office-floor,
+#tilemapOffice.production-floorplan-mode .room-zone,
+#tilemapOffice.production-floorplan-mode .map-prop,
+#tilemapOffice.production-floorplan-mode .tile-agent,
+#tilemapOffice.production-floorplan-mode .office-agent,
+#tilemapOffice.canvas-floorplan-mode .tilemap-grid,
 #tilemapOffice.canvas-floorplan-mode .room-zone,
 #tilemapOffice.canvas-floorplan-mode .map-prop,
 #tilemapOffice.canvas-floorplan-mode .tile-agent {
   display: none !important;
 }
 
-#tilemapOffice.canvas-floorplan-mode .tilemap-stage::after {
+/* Subtle scanline overlay */
+#tilemapOffice.production-floorplan-mode .tilemap-stage::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -532,147 +90,25 @@ body.wireframe-dashboard .pixel-office.tilemap-office-v1,
     0deg,
     transparent 0px,
     transparent 2px,
-    rgba(0,0,0,0.07) 2px,
-    rgba(0,0,0,0.07) 4px
+    rgba(0, 0, 0, 0.06) 2px,
+    rgba(0, 0, 0, 0.06) 4px
   );
   pointer-events: none;
   z-index: 5;
 }
 
-/* INTERNAL-051: polish Canvas Pixel Office sizing */
-#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
-  height: min(100%, 760px) !important;
-  width: auto !important;
-  aspect-ratio: 10 / 7 !important;
-  max-width: min(100%, 1480px) !important;
-}
+/* ─── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  #tilemapOffice {
+    max-height: clamp(360px, 52vh, 540px);
+  }
 
-#tilemapOffice.canvas-floorplan-mode #officeCanvas {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-}
+  #tilemapOffice .tilemap-stage {
+    height: clamp(350px, 50vh, 520px);
+    max-height: clamp(350px, 50vh, 520px);
+  }
 
-#tilemapOffice.canvas-floorplan-mode {
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-/* INTERNAL-072: Production canvas map should own the office stage.
-   This prevents older CSS background maps from flashing before canvas render. */
-#tilemapOffice.production-floorplan-mode .tilemap-stage,
-#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
-  background-image: none !important;
-  background: #070b18 !important;
-}
-
-#tilemapOffice.production-floorplan-mode .tilemap-grid,
-#tilemapOffice.production-floorplan-mode .office-grid,
-#tilemapOffice.production-floorplan-mode .office-room,
-#tilemapOffice.production-floorplan-mode .office-hallway,
-#tilemapOffice.production-floorplan-mode .office-sim-bg,
-#tilemapOffice.production-floorplan-mode .clean-office-floor,
-#tilemapOffice.production-floorplan-mode .room-zone,
-#tilemapOffice.production-floorplan-mode .map-prop,
-#tilemapOffice.production-floorplan-mode .tile-agent,
-#tilemapOffice.production-floorplan-mode .office-agent {
-  display: none !important;
-}
-
-#tilemapOffice.production-floorplan-mode #officeCanvas {
-  display: block !important;
-  width: 100% !important;
-  height: auto !important;
-  image-rendering: pixelated !important;
-}
-
-/* INTERNAL-073: Better production map fit and visual polish */
-#tilemapOffice.production-floorplan-mode .tilemap-stage,
-#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 8px !important;
-  overflow: hidden !important;
-}
-
-#tilemapOffice.production-floorplan-mode #officeCanvas,
-#tilemapOffice.canvas-floorplan-mode #officeCanvas {
-  max-width: 100% !important;
-  max-height: 100% !important;
-  object-fit: contain !important;
-  image-rendering: pixelated !important;
-}
-
-/* INTERNAL-073B: height-driven fit so wide production map fills the office frame better */
-#tilemapOffice.production-floorplan-mode,
-#tilemapOffice.canvas-floorplan-mode {
-  height: 100% !important;
-}
-
-#tilemapOffice.production-floorplan-mode .tilemap-stage,
-#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
-  min-height: 0 !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-#tilemapOffice.production-floorplan-mode #officeCanvas,
-#tilemapOffice.canvas-floorplan-mode #officeCanvas {
-  width: auto !important;
-  height: calc(100% - 18px) !important;
-  max-width: calc(100% - 18px) !important;
-  max-height: calc(100% - 18px) !important;
-  margin: auto !important;
-  image-rendering: pixelated !important;
-}
-
-/* INTERNAL-073C: keep office map clear from summary/cards row below */
-body.wireframe-dashboard .office-stage {
-  margin-bottom: 22px !important;
-}
-
-body.wireframe-dashboard .office-main-card {
-  overflow: hidden !important;
-}
-
-#tilemapOffice.production-floorplan-mode,
-#tilemapOffice.canvas-floorplan-mode {
-  max-height: clamp(420px, 56vh, 620px) !important;
-}
-
-#tilemapOffice.production-floorplan-mode .tilemap-stage,
-#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
-  height: clamp(410px, 54vh, 600px) !important;
-  max-height: clamp(410px, 54vh, 600px) !important;
-  padding: 10px !important;
-}
-
-#tilemapOffice.production-floorplan-mode #officeCanvas,
-#tilemapOffice.canvas-floorplan-mode #officeCanvas {
-  height: calc(100% - 20px) !important;
-  max-height: calc(100% - 20px) !important;
-}
-
-/* INTERNAL-073D: balanced office map size, larger than 073C but still clear from summary row */
-#tilemapOffice.production-floorplan-mode,
-#tilemapOffice.canvas-floorplan-mode {
-  max-height: clamp(500px, 64vh, 760px) !important;
-}
-
-#tilemapOffice.production-floorplan-mode .tilemap-stage,
-#tilemapOffice.canvas-floorplan-mode .tilemap-stage {
-  height: clamp(490px, 62vh, 735px) !important;
-  max-height: clamp(490px, 62vh, 735px) !important;
-  padding: 10px !important;
-}
-
-#tilemapOffice.production-floorplan-mode #officeCanvas,
-#tilemapOffice.canvas-floorplan-mode #officeCanvas {
-  height: calc(100% - 18px) !important;
-  max-height: calc(100% - 18px) !important;
-  width: auto !important;
-  max-width: calc(100% - 18px) !important;
+  body.wireframe-dashboard .office-main-card {
+    min-height: 560px;
+  }
 }
