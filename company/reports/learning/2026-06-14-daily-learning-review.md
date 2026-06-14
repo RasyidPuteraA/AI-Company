@@ -1,6 +1,6 @@
 # Daily Learning Review
 
-- generated_at: 2026-06-14T12:15:12+07:00
+- generated_at: 2026-06-14T12:17:48+07:00
 - auto_apply: 0
 - create_tasks: 1
 - safety: no model fine-tuning, no automatic code/policy application, no raw secret log dumps
@@ -8,7 +8,7 @@
 ## Lesson Extraction
 
 created_lessons=1
-company/learning/lessons/LESSON-20260614121513-e93ce84126.md
+company/learning/lessons/LESSON-20260614121748-c5d3e6fe71.md
 report=company/reports/learning/2026-06-14-lesson-extraction.md
 
 - exit_status: 0
