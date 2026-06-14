@@ -1,20 +1,22 @@
 # Daily Learning Review
 
-- generated_at: 2026-06-14T01:04:17+07:00
+- generated_at: 2026-06-14T11:10:47+07:00
 - auto_apply: 0
 - create_tasks: 1
 - safety: no model fine-tuning, no automatic code/policy application, no raw secret log dumps
 
 ## Lesson Extraction
 
-created_lessons=0
+created_lessons=1
+company/learning/lessons/LESSON-20260614111048-cff68af401.md
 report=company/reports/learning/2026-06-14-lesson-extraction.md
 
 - exit_status: 0
 
 ## Failure Pattern Detection
 
-patterns_written=1
+patterns_written=2
+company/learning/patterns/PATTERN-dashboard-health.md
 company/learning/patterns/PATTERN-runner-errors.md
 report=company/reports/learning/2026-06-14-failure-patterns.md
 

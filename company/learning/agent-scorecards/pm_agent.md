@@ -1,9 +1,9 @@
 # Agent Learning Scorecard: pm_agent
 
-- generated_at: 2026-06-14T01:04:19+07:00
+- generated_at: 2026-06-14T11:10:49+07:00
 - agent_key: pm_agent
 - completed_tasks: 6
-- failed_error_events: 2
+- failed_error_events: 3
 - blocked_tasks: 0
 - in_progress_stale_tasks: 0
 - successful_reports: 4

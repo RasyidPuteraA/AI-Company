@@ -1,9 +1,9 @@
 # Stale Task Recovery Plan
 
-- generated_at: 2026-06-14T11:10:45+07:00
+- generated_at: 2026-06-14T10:48:45+07:00
 - mode: report-only
 - threshold_hours: 24
-- report_path: company/reports/stale-task-recovery/20260614T111045+0700-stale-task-recovery-plan.md
+- report_path: company/reports/stale-task-recovery/20260614T104845+0700-stale-task-recovery-plan.md
 
 ## Safety
 
@@ -16,7 +16,7 @@
 
         task_key        |                       title                       |     agent      |   status    |         updated_at         | age_hours | task_category | has_active_runtime | has_active_lock |  recommended_action   
 ------------------------+---------------------------------------------------+----------------+-------------+----------------------------+-----------+---------------+--------------------+-----------------+-----------------------
- INTERNAL-038           | Add Minimal Chat Command Bar UI                   | engineer_agent | IN_PROGRESS | 2026-06-11 18:08:03.628654 |        58 | internal      | f                  | f               | release_claim_if_safe
+ INTERNAL-038           | Add Minimal Chat Command Bar UI                   | engineer_agent | IN_PROGRESS | 2026-06-11 18:08:03.628654 |        57 | internal      | f                  | f               | release_claim_if_safe
  INTERNAL-044           | Clean Pixel Office and Add AI Usage Widget        | engineer_agent | IN_PROGRESS | 2026-06-11 20:28:04.632588 |        55 | internal      | f                  | f               | release_claim_if_safe
  INTERNAL-045           | Add Tilemap Office Renderer v1                    | engineer_agent | IN_PROGRESS | 2026-06-11 20:40:36.786241 |        55 | internal      | f                  | f               | release_claim_if_safe
  INTERNAL-048           | Clean Pixel Office CSS and Sprite Frame Selection | engineer_agent | IN_PROGRESS | 2026-06-12 03:36:22.191435 |        48 | internal      | f                  | f               | release_claim_if_safe

@@ -1,9 +1,9 @@
 # Stale Task Recovery Plan
 
-- generated_at: 2026-06-14T11:10:45+07:00
+- generated_at: 2026-06-14T11:09:09+07:00
 - mode: report-only
 - threshold_hours: 24
-- report_path: company/reports/stale-task-recovery/20260614T111045+0700-stale-task-recovery-plan.md
+- report_path: company/reports/stale-task-recovery/20260614T110909+0700-stale-task-recovery-plan.md
 
 ## Safety
 

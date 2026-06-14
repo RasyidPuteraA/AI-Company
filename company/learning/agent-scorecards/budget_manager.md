@@ -1,6 +1,6 @@
 # Agent Learning Scorecard: budget_manager
 
-- generated_at: 2026-06-14T01:04:19+07:00
+- generated_at: 2026-06-14T11:10:49+07:00
 - agent_key: budget_manager
 - completed_tasks: 1
 - failed_error_events: 0
