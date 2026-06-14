@@ -221,7 +221,7 @@ role_csv_to_array() {
 
 select_internal_roles() {
   local -n selected_ref="$1"
-  local roles=()
+  local role_order=()
   local enabled_roles=()
   local cursor=0
   local count
@@ -229,8 +229,8 @@ select_internal_roles() {
   local idx
   local role
 
-  role_csv_to_array "$AI_COMPANY_INTERNAL_ROLE_ORDER" roles
-  for role in "${roles[@]}"; do
+  role_csv_to_array "$AI_COMPANY_INTERNAL_ROLE_ORDER" role_order
+  for role in "${role_order[@]}"; do
     if role_enabled "$role"; then
       enabled_roles+=("$role")
     fi
@@ -256,10 +256,10 @@ select_internal_roles() {
 
 select_client_roles() {
   local -n selected_ref="$1"
-  local roles=()
+  local role_order=()
   local role
-  role_csv_to_array "$AI_COMPANY_SCHEDULER_ROLE_ORDER" roles
-  for role in "${roles[@]}"; do
+  role_csv_to_array "$AI_COMPANY_SCHEDULER_ROLE_ORDER" role_order
+  for role in "${role_order[@]}"; do
     if [ "${#selected_ref[@]}" -ge "$AI_COMPANY_MAX_PARALLEL_AGENTS" ]; then
       break
     fi
