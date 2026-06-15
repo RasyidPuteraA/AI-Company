@@ -4,6 +4,19 @@ const path = require("path");
 const { execFileSync } = require("child_process");
 const os = require("os");
 
+// Simple TTL cache — avoids repeated docker exec / shell script spawning per request
+const _cache = new Map();
+function cached(key, ttlMs, fn) {
+  const entry = _cache.get(key);
+  if (entry && Date.now() - entry.ts < ttlMs) return entry.val;
+  const val = fn();
+  _cache.set(key, { val, ts: Date.now() });
+  return val;
+}
+function invalidateCache(...keys) {
+  keys.forEach((k) => _cache.delete(k));
+}
+
 const PORT = process.env.PORT || 8787;
 const HOST = process.env.HOST || "127.0.0.1";
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -93,7 +106,11 @@ function serveStatic(res, filePath) {
     ".js": "application/javascript"
   }[ext] || "text/plain";
 
-  res.writeHead(200, { "Content-Type": type });
+  const headers = { "Content-Type": type };
+  // Cache static assets for 5 minutes; never cache HTML so dashboard stays fresh
+  if (ext !== ".html") headers["Cache-Control"] = "public, max-age=300, must-revalidate";
+
+  res.writeHead(200, headers);
   res.end(fs.readFileSync(filePath));
 }
 
@@ -1163,43 +1180,45 @@ const server = http.createServer(async (req, res) => {
 
 
     if (pathname === "/api/codex/usage" && req.method === "GET") {
-      json(res, getCodexUsageDashboardSummary());
+      json(res, cached("codex/usage", 30000, getCodexUsageDashboardSummary));
       return;
     }
 
     if (pathname === "/api/ai/usage" && req.method === "GET") {
-      json(res, getAiUsageSummary());
+      json(res, cached("ai/usage", 300000, getAiUsageSummary));
       return;
     }
 
     if (pathname === "/api/ai-company-os/status" && req.method === "GET") {
-      json(res, runAiCompanyOsStatus());
+      json(res, cached("ai-company-os/status", 15000, runAiCompanyOsStatus));
       return;
     }
 
     if (pathname === "/api/learning/summary" && req.method === "GET") {
-      json(res, getLearningDashboardSummary());
+      json(res, cached("learning/summary", 60000, getLearningDashboardSummary));
       return;
     }
 
     if (pathname === "/api/post-update/summary" && req.method === "GET") {
-      json(res, getPostUpdateDashboardSummary());
+      json(res, cached("post-update/summary", 60000, getPostUpdateDashboardSummary));
       return;
     }
 
     if (pathname === "/api/stale-task-recovery/summary" && req.method === "GET") {
-      json(res, getStaleTaskRecoverySummary());
+      json(res, cached("stale-task-recovery/summary", 60000, getStaleTaskRecoverySummary));
       return;
     }
 
     if (pathname === "/api/ai-company-os/control" && req.method === "POST") {
       const payload = await readJson(req);
-      json(res, setAiCompanyOsPower(payload.action));
+      const result = setAiCompanyOsPower(payload.action);
+      invalidateCache("ai-company-os/status", "agents/runtime");
+      json(res, result);
       return;
     }
 
     if (pathname === "/api/system/metrics" && req.method === "GET") {
-      json(res, getSystemMetrics());
+      json(res, cached("system/metrics", 5000, getSystemMetrics));
       return;
     }
 
@@ -1316,30 +1335,11 @@ if (pathname === "/api/uploads" && req.method === "GET") {
       return json(res, result, 201);
     }
 
-if (pathname === "/api/owner/commands" && req.method === "GET") {
-      return json(res, getOwnerCommands());
+    if (pathname === "/api/owner/commands" && req.method === "GET") {
+      return json(res, cached("owner/commands", 10000, getOwnerCommands));
     }
 
-    
-    
-    if (pathname === "/api/uploads/attach-context" && req.method === "POST") {
-      const body = await readJson(req);
-      const result = attachUploadsToPmContext(body);
-      return json(res, result, 201);
-    }
-
-if (pathname === "/api/uploads" && req.method === "GET") {
-      const projectKey = requestUrl.searchParams.get("project_key") || "";
-      return json(res, getProjectUploads(projectKey));
-    }
-
-    if (pathname === "/api/uploads" && req.method === "POST") {
-      const body = await readJson(req);
-      const upload = saveProjectUpload(body);
-      return json(res, upload, 201);
-    }
-
-if (pathname === "/api/owner/commands" && req.method === "POST") {
+    if (pathname === "/api/owner/commands" && req.method === "POST") {
       const body = await readJson(req);
       const commandText = String(body.command_text || "").trim();
 
@@ -1348,34 +1348,28 @@ if (pathname === "/api/owner/commands" && req.method === "POST") {
       }
 
       const command = createOwnerCommand(commandText, "dashboard");
+      invalidateCache("owner/commands", "summary/main", "tasks/latest");
       return json(res, command, 201);
     }
 
-if (pathname === "/api/summary") {
+    if (pathname === "/api/summary") {
       try {
-        const text = runSql(`
-          SELECT
-            COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%' AND task_key NOT LIKE 'AUTO-%') AS client_tasks,
-            COUNT(*) FILTER (WHERE task_key LIKE 'INTERNAL-%') AS internal_tasks,
-            COUNT(*) FILTER (WHERE task_key LIKE 'AUTO-%') AS autonomous_tasks,
-            COUNT(*) FILTER (WHERE status = 'WAITING_OWNER_ACCEPTANCE') AS waiting_owner,
-            COUNT(*) FILTER (WHERE status = 'ACCEPTED') AS accepted,
-            COUNT(*) FILTER (WHERE status IN ('QA_FAILED','NEEDS_REVISION','BLOCKED')) AS needs_attention
-          FROM tasks;
-        `);
-
-        const [client_tasks, internal_tasks, autonomous_tasks, waiting_owner, accepted, needs_attention] =
-          text.split("|").map((value) => Number(value || 0));
-
-        return json(res, {
-          client_tasks,
-          internal_tasks,
-          autonomous_tasks,
-          waiting_owner,
-          accepted,
-          needs_attention,
-          generated_at: new Date().toISOString()
+        const data = cached("summary/main", 10000, () => {
+          const text = runSql(`
+            SELECT
+              COUNT(*) FILTER (WHERE task_key NOT LIKE 'INTERNAL-%' AND task_key NOT LIKE 'AUTO-%') AS client_tasks,
+              COUNT(*) FILTER (WHERE task_key LIKE 'INTERNAL-%') AS internal_tasks,
+              COUNT(*) FILTER (WHERE task_key LIKE 'AUTO-%') AS autonomous_tasks,
+              COUNT(*) FILTER (WHERE status = 'WAITING_OWNER_ACCEPTANCE') AS waiting_owner,
+              COUNT(*) FILTER (WHERE status = 'ACCEPTED') AS accepted,
+              COUNT(*) FILTER (WHERE status IN ('QA_FAILED','NEEDS_REVISION','BLOCKED')) AS needs_attention
+            FROM tasks;
+          `);
+          const [client_tasks, internal_tasks, autonomous_tasks, waiting_owner, accepted, needs_attention] =
+            text.split("|").map((value) => Number(value || 0));
+          return { client_tasks, internal_tasks, autonomous_tasks, waiting_owner, accepted, needs_attention };
         });
+        return json(res, { ...data, generated_at: new Date().toISOString() });
       } catch (error) {
         return json(res, {
           error: "dashboard_summary_unavailable",
@@ -1387,32 +1381,63 @@ if (pathname === "/api/summary") {
     }
 
     if (pathname === "/api/tasks") {
-      const text = runSql(`
-        SELECT
-          task_key,
-          title,
-          status,
-          COALESCE(assigned_agent_key, ''),
-          CASE
-            WHEN task_key LIKE 'INTERNAL-%' THEN 'internal'
-            WHEN task_key LIKE 'AUTO-%' THEN 'autonomous'
-            ELSE 'client'
-          END AS task_category,
-          updated_at
-        FROM tasks
-        ORDER BY updated_at DESC, id DESC
-        LIMIT 20;
-      `);
-
-      return json(res, parseRows(text, ["task_key", "title", "status", "agent", "task_category", "updated_at"]));
+      const rows = cached("tasks/latest", 10000, () => {
+        const text = runSql(`
+          SELECT
+            task_key,
+            title,
+            status,
+            COALESCE(assigned_agent_key, ''),
+            CASE
+              WHEN task_key LIKE 'INTERNAL-%' THEN 'internal'
+              WHEN task_key LIKE 'AUTO-%' THEN 'autonomous'
+              ELSE 'client'
+            END AS task_category,
+            updated_at
+          FROM tasks
+          ORDER BY updated_at DESC, id DESC
+          LIMIT 20;
+        `);
+        return parseRows(text, ["task_key", "title", "status", "agent", "task_category", "updated_at"]);
+      });
+      return json(res, rows);
     }
 
     if (pathname === "/api/events") {
-      return json(res, getLatestEvents());
+      return json(res, cached("events/latest", 5000, getLatestEvents));
     }
 
     if (pathname === "/api/agents/runtime") {
-      return json(res, getAgentRuntimeStatus());
+      return json(res, cached("agents/runtime", 2000, getAgentRuntimeStatus));
+    }
+
+    if (pathname === "/api/agents/detailed-status") {
+      const rows = cached("agents/runtime", 2000, getAgentRuntimeStatus);
+      const STATUS_ANIM_MAP = {
+        idle: "idle", done: "idle", completed: "idle",
+        claimed: "typing", planning: "talking",
+        working: "typing", implementing: "typing", in_progress: "typing",
+        reviewing: "thinking", testing: "thinking",
+        deploying: "typing", monitoring: "typing",
+        failed: "stressed", stuck: "stressed", blocked: "stressed",
+        sleeping: "sleeping"
+      };
+      const now = Date.now();
+      const enriched = rows.map((agent) => {
+        const s = String(agent.runtime_status || "idle").toLowerCase();
+        const updated = new Date(String(agent.updated_at || "").replace(" ", "T"));
+        const elapsedSeconds = Number.isNaN(updated.getTime()) ? 0 : Math.floor((now - updated.getTime()) / 1000);
+        const isActive = s !== "idle" && s !== "done" && s !== "completed";
+        const animationState = (isActive && elapsedSeconds > 600) ? "sleeping" : (STATUS_ANIM_MAP[s] || (isActive ? "typing" : "idle"));
+        return {
+          ...agent,
+          elapsed_seconds: elapsedSeconds,
+          is_stuck: elapsedSeconds > 300 && s !== "idle" && s !== "done",
+          animation_state: animationState,
+          has_task: Boolean(agent.current_task_key)
+        };
+      });
+      return json(res, enriched);
     }
 
     if (pathname === "/api/events/live") {
@@ -1428,7 +1453,7 @@ if (pathname === "/api/summary") {
       let lastPayload = "";
       const timer = setInterval(() => {
         try {
-          const events = getLatestEvents();
+          const events = cached("events/latest", 5000, getLatestEvents);
           const payload = JSON.stringify(events);
 
           if (payload !== lastPayload) {
@@ -1440,7 +1465,7 @@ if (pathname === "/api/summary") {
         } catch (error) {
           writeSse(res, "error", { message: error.message });
         }
-      }, 3000);
+      }, 10000);
 
       req.on("close", () => {
         clearInterval(timer);
@@ -1450,7 +1475,7 @@ if (pathname === "/api/summary") {
     }
 
     if (pathname === "/api/owner/attention" && req.method === "GET") {
-      return json(res, getOwnerAttention());
+      return json(res, cached("owner/attention", 15000, getOwnerAttention));
     }
 
     if (pathname === "/api/owner/decision" && req.method === "POST") {
@@ -1463,6 +1488,7 @@ if (pathname === "/api/summary") {
 
       try {
         const result = applyOwnerDecision(body);
+        if (result.ok) invalidateCache("owner/attention", "tasks/latest", "summary/main");
         return json(res, result, result.ok ? 200 : 400);
       } catch (error) {
         return json(res, {
