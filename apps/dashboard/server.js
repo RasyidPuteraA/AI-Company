@@ -1414,7 +1414,7 @@ if (pathname === "/api/uploads" && req.method === "GET") {
     if (pathname === "/api/agents/detailed-status") {
       const rows = cached("agents/runtime", 2000, getAgentRuntimeStatus);
       const STATUS_ANIM_MAP = {
-        idle: "idle", done: "idle", completed: "idle",
+        idle: "idle", done: "done", completed: "idle",
         claimed: "typing", planning: "talking",
         working: "typing", implementing: "typing", in_progress: "typing",
         reviewing: "thinking", testing: "thinking",

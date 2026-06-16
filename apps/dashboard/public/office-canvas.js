@@ -87,7 +87,9 @@
 
   function getAnimState(runtimeStatus, elapsedSec) {
     const s = String(runtimeStatus || "idle").toLowerCase().replace(/[-\s]/g, "_");
-    const activeStatus = s !== "idle" && s !== "done" && s !== "completed";
+    // "failed" maps to STRESSED in STATUS_ANIM_MAP — exclude it from sleeping fallback
+    const restingOrTerminal = new Set(["idle", "done", "completed", "failed", "stuck", "blocked"]);
+    const activeStatus = !restingOrTerminal.has(s);
     if (activeStatus && elapsedSec > 600) return ANIM_SLEEPING;
     return STATUS_ANIM_MAP[s] || (s !== "idle" ? ANIM_TYPING : ANIM_IDLE);
   }
@@ -261,7 +263,8 @@
     const status = String(runtime.runtime_status || "").toLowerCase();
 
     // Idle/done agents go to break room — ignore stale location field (e.g. "system")
-    const restingStates = new Set(["idle", "done", "completed", "failed", ""]);
+    // "failed" agents stay at their desk (stressed pose), not the break room
+    const restingStates = new Set(["idle", "done", "completed", ""]);
     if (restingStates.has(status)) {
       return LOCATION_TILES.break_room;
     }
